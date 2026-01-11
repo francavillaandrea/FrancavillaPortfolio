@@ -381,5 +381,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Initial setup
-    resetGame();
+    resetGame(); // Ensure initial state is correctly set, including button visibility
+    // startGame() should not be called automatically here. It should be triggered by newGameBtn click.
 });
