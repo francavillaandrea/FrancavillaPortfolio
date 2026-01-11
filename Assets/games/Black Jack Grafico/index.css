@@ -1,5 +1,5 @@
 :root {
-    --green-felt: #004d00; /* Darker green for richer felt */
+    --green-felt: #004d00;
     --darker-felt: #003300;
     --card-bg: #f8f8f8;
     --card-border: #333;
@@ -12,97 +12,97 @@
 body, html {
     height: 100%;
     margin: 0;
-    font-family: 'Montserrat', sans-serif; /* Modern font */
-    overflow: hidden; /* Prevent scrolling */
+    font-family: 'Montserrat', sans-serif;
+    overflow: hidden;
 }
 
 .game-table {
     background-color: var(--green-felt);
     background-image: radial-gradient(ellipse at center, var(--green-felt) 0%, var(--darker-felt) 100%);
     min-height: 100vh;
-    padding: 15px; /* Reduced padding */
+    padding: 10px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     color: var(--text-light);
-    border: 8px solid var(--gold); /* Thinner border */
-    box-shadow: inset 0 0 40px rgba(0,0,0,0.4); /* Softer inner shadow */
+    border: 5px solid var(--gold);
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
 }
 
 h1 {
-    font-family: 'Cinzel Decorative', cursive; /* Decorative font for title */
-    font-size: 3rem; /* Reduced font size */
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 2.5rem;
     color: var(--gold);
-    text-shadow: 0 0 8px rgba(255,215,0,0.7), 0 0 15px rgba(255,215,0,0.3);
+    text-shadow: 0 0 6px rgba(255,215,0,0.6), 0 0 10px rgba(255,215,0,0.2);
 }
 
 .dealer-area {
-    min-height: 180px; /* Reduced min-height */
-    padding-bottom: 15px;
-    border-bottom: 1px dashed rgba(255,255,255,0.2); /* Thinner separator */
+    min-height: 160px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed rgba(255,255,255,0.15);
 }
 
 .players-area {
     display: flex;
     flex-grow: 1;
-    align-items: flex-end; /* Align players to bottom */
+    align-items: flex-end;
     justify-content: center;
-    gap: 20px; /* Reduced gap */
-    padding-top: 15px; /* Reduced padding */
-    flex-wrap: wrap; /* Allow players to wrap on smaller screens */
+    gap: 15px;
+    padding-top: 10px;
+    flex-wrap: wrap;
 }
 
 .player {
-    background-color: rgba(0, 0, 0, 0.4); /* Slightly darker, more transparent */
-    backdrop-filter: blur(3px); /* Frosted glass effect */
-    padding: 15px; /* Reduced padding */
-    border-radius: 12px; /* Slightly smaller radius */
-    border: 2px solid rgba(255,215,0,0.5); /* Softer gold border */
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,215,0,0.4);
     text-align: center;
-    width: 260px; /* Reduced width */
-    transition: all 0.4s ease-out; /* Smoother transition */
-    box-shadow: 0 0 15px rgba(0,0,0,0.6);
+    width: 240px;
+    transition: all 0.4s ease-out;
+    box-shadow: 0 0 12px rgba(0,0,0,0.5);
     position: relative;
 }
 
 .player.active {
     border-color: var(--gold);
-    box-shadow: 0 0 25px 4px var(--gold), inset 0 0 12px 1px rgba(255,215,0,0.5);
-    transform: scale(1.02) translateY(-4px); /* Slightly less prominent */
+    box-shadow: 0 0 20px 3px var(--gold), inset 0 0 10px 1px rgba(255,215,0,0.4);
+    transform: scale(1.01) translateY(-3px);
     z-index: 10;
 }
 
 .player.busted {
-    background-color: rgba(139, 0, 0, 0.6);
+    background-color: rgba(139, 0, 0, 0.5);
     border-color: var(--red-alert);
-    box-shadow: 0 0 20px 4px var(--red-alert), inset 0 0 12px 1px rgba(220,53,69,0.7);
+    box-shadow: 0 0 15px 3px var(--red-alert), inset 0 0 10px 1px rgba(220,53,69,0.6);
     transform: scale(0.98);
     opacity: 0.8;
 }
 
 .player.winner {
-    background-color: rgba(0, 128, 0, 0.6);
+    background-color: rgba(0, 128, 0, 0.5);
     border-color: var(--bs-success);
-    box-shadow: 0 0 20px 4px var(--bs-success), inset 0 0 12px 1px rgba(0,128,0,0.7);
-    transform: scale(1.02) translateY(-4px);
+    box-shadow: 0 0 15px 3px var(--bs-success), inset 0 0 10px 1px rgba(0,128,0,0.6);
+    transform: scale(1.01) translateY(-3px);
 }
 
 .hand {
-    min-height: 100px; /* Reduced space for cards */
+    min-height: 90px;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 8px;
     perspective: 1000px;
 }
 
 .card {
-    width: 100px; /* Increased card width for readability */
-    height: 140px; /* Increased card height for readability */
+    width: 90px;
+    height: 125px;
     background-color: var(--card-bg);
     border: 1px solid var(--card-border);
-    border-radius: 8px;
-    box-shadow: 2px 2px 12px rgba(0,0,0,0.8);
+    border-radius: 6px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.7);
     transition: transform 0.4s ease-out, box-shadow 0.3s ease;
     position: relative;
     transform-origin: bottom center;
@@ -110,12 +110,12 @@ h1 {
 }
 
 .card:not(:first-child) {
-    margin-left: -50px; /* Adjusted overlap for larger cards */
+    margin-left: -40px;
 }
 
 .card:hover {
-    transform: translateY(-10px) rotateZ(5deg); /* Slightly more prominent hover */
-    box-shadow: 5px 5px 18px rgba(0,0,0,0.9);
+    transform: translateY(-8px) rotateZ(4deg);
+    box-shadow: 4px 4px 12px rgba(0,0,0,0.8);
     z-index: 2;
 }
 
@@ -126,13 +126,13 @@ h1 {
 
 /* Dealing animation */
 .card.dealt {
-    animation: dealCard 0.6s ease-out forwards;
+    animation: dealCard 0.5s ease-out forwards;
 }
 
 @keyframes dealCard {
     0% {
         opacity: 0;
-        transform: translateY(-180px) rotateY(120deg) scale(0.2); /* Adjusted for new size */
+        transform: translateY(-150px) rotateY(120deg) scale(0.2);
     }
     100% {
         opacity: 1;
@@ -141,88 +141,88 @@ h1 {
 }
 
 .score-display, .player-name, .player-status {
-    font-size: 1.2rem; /* Reduced font size */
+    font-size: 1.1rem;
     font-weight: bold;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
     color: var(--text-light);
 }
 
 .game-status {
-    font-size: 1.6rem; /* Reduced font size */
+    font-size: 1.4rem;
     font-weight: bold;
-    min-height: 40px; /* Reduced min-height */
-    margin-bottom: 15px;
-    text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+    min-height: 35px;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
     color: var(--gold);
     animation: pulseGlow 1.2s infinite alternate;
 }
 
 @keyframes pulseGlow {
-    from { text-shadow: 0 0 6px var(--gold); }
-    to { text-shadow: 0 0 18px var(--gold), 0 0 30px rgba(255,215,0,0.5); }
+    from { text-shadow: 0 0 5px var(--gold); }
+    to { text-shadow: 0 0 15px var(--gold), 0 0 25px rgba(255,215,0,0.4); }
 }
 
 .controls-area {
-    padding: 20px 0; /* Reduced padding */
-    border-top: 1px dashed rgba(255,255,255,0.3); /* Thinner separator */
-    margin-top: 20px;
+    padding: 15px 0;
+    border-top: 1px dashed rgba(255,255,255,0.2);
+    margin-top: 15px;
 }
 
 .btn-group-custom {
     display: flex;
     justify-content: center;
-    gap: 10px; /* Reduced gap */
+    gap: 8px;
     flex-wrap: wrap;
 }
 
 .btn-blackjack {
-    background-color: rgba(0,0,0,0.6);
-    border: 2px solid var(--gold);
+    background-color: rgba(0,0,0,0.5);
+    border: 1px solid var(--gold);
     color: var(--gold);
     font-weight: bold;
-    padding: 10px 25px; /* Reduced padding */
-    font-size: 1rem; /* Reduced font size */
+    padding: 8px 20px;
+    font-size: 0.9rem;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    box-shadow: 0 1px 5px rgba(0,0,0,0.3);
 }
 
 .btn-blackjack:hover:not(:disabled) {
-    background-color: rgba(0,0,0,0.8);
+    background-color: rgba(0,0,0,0.7);
     border-color: var(--text-light);
     color: var(--text-light);
     transform: translateY(-2px) scale(1.01);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.5);
 }
 
 .add-player-form {
     position: fixed;
-    top: 15px; /* Reduced position */
-    left: 15px;
-    width: 300px; /* Reduced width */
+    top: 10px;
+    left: 10px;
+    width: 280px;
     z-index: 1050;
-    background-color: rgba(0,0,0,0.5);
-    backdrop-filter: blur(4px); /* Slightly less blur */
-    border-radius: 12px; /* Slightly smaller radius */
-    border: 1px solid rgba(255,255,255,0.2);
-    padding: 12px; /* Reduced padding */
-    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    background-color: rgba(0,0,0,0.4);
+    backdrop-filter: blur(3px);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
 }
 
 .add-player-form .input-group .form-control {
     background-color: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
     color: var(--text-light);
-    font-size: 1rem; /* Reduced font size */
+    font-size: 0.9rem;
 }
 
 .add-player-form .input-group .form-control::placeholder {
-    color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.5);
 }
 
 .add-player-form .input-group .form-control:focus {
-    background-color: rgba(255,255,255,0.2);
+    background-color: rgba(255,255,255,0.15);
     border-color: var(--gold);
-    box-shadow: 0 0 0 0.2rem rgba(255,215,0,0.2);
+    box-shadow: 0 0 0 0.15rem rgba(255,215,0,0.15);
     color: var(--text-light);
 }
 
@@ -232,6 +232,8 @@ h1 {
     color: var(--text-dark);
     font-weight: bold;
     transition: all 0.3s ease;
+    padding: 6px 15px; /* Further reduced padding */
+    font-size: 0.9rem; /* Further reduced font size */
 }
 
 .add-player-form .input-group .btn-secondary:hover {
@@ -242,132 +244,132 @@ h1 {
 
 #how-to-play-btn {
     position: fixed;
-    bottom: 15px; /* Reduced position */
-    right: 15px;
-    width: 60px; /* Reduced size */
-    height: 60px;
+    bottom: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     z-index: 1050;
     background-color: var(--bs-info);
     color: white;
-    box-shadow: 0 0 12px rgba(0,0,0,0.5);
-    font-size: 1.5rem; /* Reduced font size */
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    font-size: 1.3rem;
 }
 
 #how-to-play-btn:hover {
-    transform: scale(1.1); /* Slightly less prominent hover */
-    box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    transform: scale(1.08);
+    box-shadow: 0 0 15px rgba(0,0,0,0.6);
 }
 
 .modal-content {
     background-color: var(--darker-felt);
     color: var(--text-light);
     border: 1px solid var(--gold);
-    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.7);
 }
 
 .modal-header, .modal-footer {
-    border-color: rgba(255,215,0,0.35);
+    border-color: rgba(255,215,0,0.25);
 }
 
 /* Responsive adjustments */
 @media (max-width: 992px) {
     h1 {
-        font-size: 2.5rem; /* Further reduced font size */
+        font-size: 2.2rem; /* Further reduced font size */
     }
     .player {
-        width: 210px; /* Further reduced width */
-        padding: 10px; /* Further reduced padding */
+        width: 180px; /* Further reduced width */
+        padding: 8px; /* Further reduced padding */
     }
     .card {
-        width: 90px;
-        height: 125px; /* Adjusted card height */
+        width: 80px;
+        height: 110px;
     }
     .card:not(:first-child) {
-        margin-left: -45px; /* Adjusted overlap */
+        margin-left: -40px; /* Adjusted overlap */
     }
     .add-player-form {
-        width: 280px;
-        left: 15px;
-        top: 15px;
+        width: 250px;
+        left: 10px;
+        top: 10px;
     }
     #how-to-play-btn {
-        right: 15px;
-        bottom: 15px;
+        right: 10px;
+        bottom: 10px;
     }
 }
 
 @media (max-width: 768px) {
     .game-table {
-        padding: 5px; /* Further reduced padding */
-        border-width: 3px; /* Thinner border */
+        padding: 5px;
+        border-width: 3px;
     }
     h1 {
-        font-size: 2rem;
+        font-size: 1.8rem;
         margin-top: 5px;
     }
     .dealer-area {
-        min-height: 140px; /* Further reduced min-height */
-        padding-bottom: 8px;
+        min-height: 120px;
+        padding-bottom: 5px;
     }
     .players-area {
-        gap: 5px; /* Further reduced gap */
+        gap: 5px;
         flex-direction: column;
         align-items: center;
     }
     .player {
         width: 98%;
-        max-width: 280px; /* Further reduced max-width */
-        padding: 8px; /* Further reduced padding */
+        max-width: 250px;
+        padding: 5px;
     }
     .hand {
-        min-height: 80px; /* Further reduced min-height */
+        min-height: 70px;
         margin-top: 5px;
     }
     .card {
-        width: 70px; /* Further reduced card width */
-        height: 95px; /* Further reduced card height */
+        width: 60px;
+        height: 85px; /* Adjusted height for smaller width */
     }
     .card:not(:first-child) {
-        margin-left: -30px; /* Further reduced overlap */
+        margin-left: -28px; /* Adjusted overlap */
     }
     .score-display, .player-name, .player-status {
-        font-size: 1.1rem; /* Further reduced font size */
+        font-size: 1rem;
     }
     .game-status {
-        font-size: 1.4rem; /* Further reduced font size */
-        min-height: 35px;
-        margin-bottom: 10px;
+        font-size: 1.2rem;
+        min-height: 30px;
+        margin-bottom: 8px;
     }
     .controls-area {
-        padding: 15px 0; /* Further reduced padding */
-        margin-top: 10px;
+        padding: 10px 0;
+        margin-top: 8px;
     }
     .btn-blackjack {
-        padding: 8px 15px; /* Further reduced padding */
-        font-size: 0.9rem; /* Further reduced font size */
+        padding: 6px 12px;
+        font-size: 0.8rem;
     }
     .add-player-form {
         position: static;
         width: 100%;
-        margin-top: 10px;
+        margin-top: 8px;
         left: auto;
         top: auto;
-        padding: 5px; /* Further reduced padding */
+        padding: 5px;
     }
     .add-player-form .input-group .form-control {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
     }
     .add-player-form .input-group .btn-secondary {
-        padding: 6px 10px;
-        font-size: 0.8rem;
+        padding: 5px 10px;
+        font-size: 0.75rem;
     }
     #how-to-play-btn {
         position: static;
-        margin-top: 8px;
+        margin-top: 5px;
         width: auto;
         height: auto;
-        font-size: 0.9rem;
-        padding: 8px 15px;
+        font-size: 0.8rem;
+        padding: 6px 12px;
     }
 }
