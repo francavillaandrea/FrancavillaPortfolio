@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    const Game = {
+    window.Game = {
         words: {
             all: [
                 "Italia", "Lavagna", "Pizza", "Lasagne", "Spiedino", "Ananas", "Gnocchi", 
@@ -45,8 +45,8 @@ $(document).ready(function() {
         _howToPlayModal: null, // Reference for the modal
 
         init: function() {
-            this.loadStats();
             this.cacheElements();
+            this.loadStats();
             this.setupEventListeners();
             this.resetGame(); // Initialize game state and UI
         },
@@ -70,7 +70,8 @@ $(document).ready(function() {
             this._gameOverTitle = document.getElementById("game-over-title");
             this._gameOverMessage = document.getElementById("game-over-message");
             this._keyboardButtons = document.querySelectorAll(".key-btn");
-            this._howToPlayModal = new bootstrap.Modal(document.getElementById('howToPlayModal')); // Cache modal instance
+            // Modal Bootstrap non disponibile nel contesto di questo gioco
+            // this._howToPlayModal = new bootstrap.Modal(document.getElementById('howToPlayModal'));
         },
 
         setupEventListeners: function() {
@@ -85,11 +86,11 @@ $(document).ready(function() {
                 }
             });
 
-            this._txtLettera.addEventListener("input", this.converti);
+            this._txtLettera.addEventListener("input", (event) => this.converti(event));
 
             this._btnInvia.addEventListener("click", () => this.elabora());
             this._btnReset.addEventListener("click", () => this.resetGame());
-            document.getElementById('how-to-play-btn').addEventListener('click', () => this.showHowToPlay());
+            document.getElementById('how-to-play-btn')?.addEventListener('click', () => this.showHowToPlay());
 
             this._keyboardButtons.forEach(btn => {
                 btn.addEventListener("click", () => {
@@ -126,7 +127,6 @@ $(document).ready(function() {
             document.getElementById("txtParola").classList.remove("revealed");
             
             this.selectWord();
-            this.updateCategoryHint();
 
             // Show hint after a delay if word is selected and game is ready
             setTimeout(() => {
@@ -252,7 +252,7 @@ $(document).ready(function() {
                     }
                 }
                 this.parolaMostrata = nuovaParolaMostrata;
-                thisThis.aggiornaParola();
+                this.aggiornaParola();
                 
                 if (trovata) {
                     this._txtParola.classList.add("revealed");
@@ -313,7 +313,7 @@ $(document).ready(function() {
                 this._gameOverTitle.textContent = "🎉 Complimenti!";
                 this._gameOverMessage.textContent = `Hai indovinato la parola: "${this.parolaSegreta}"`;
                 this._txtParola.textContent = this.parolaSegreta;
-                this._txtParola.classList.The.add("revealed");
+                this._txtParola.classList.add("revealed");
             } else {
                 this.gamesLost++;
                 this._gameOverTitle.textContent = "💀 Hai Perso!";
@@ -329,26 +329,7 @@ $(document).ready(function() {
         },
 
         resetGame: function() {
-            if (this.isGameStarted) {
-                this.isGameStarted = false;
-                this.canClick = false;
-                $('.color-btn').addClass("disabled");
-            }
-            
-            this.sequenza = [];
-            this.sequenzaUtente = [];
-            this.livello = 0;
-            this.score = 0;
-            
-            $('#level').text(this.livello);
-            $('#score').text(this.score);
-            $('#txtStatus').text("Premi 'Start' per iniziare").removeClass("observing playing error");
-            $('#btnStart').prop("disabled", false).show();
-            $('#btnReset').hide();
-            $('#game-over').addClass("hidden");
-            
-            $('.color-btn').removeClass("active correct wrong disabled");
-            this.initGame(); // Re-initialize specific game logic after reset
+            this.initGame();
         },
 
         updateStats: function() {
@@ -372,8 +353,33 @@ $(document).ready(function() {
 
         random: function(min, max) {
             return Math.floor((max - min) * Math.random()) + min;
+        },
+
+        converti: function(event) {
+            event.target.value = event.target.value.toUpperCase().replace(/[^A-Z]/g, '');
         }
     };
 
-    Game.init();
+    window.Game.init();
 });
+
+// Global functions for HTML onclick handlers
+function elabora() {
+    if (window.Game) {
+        window.Game.elabora();
+    }
+}
+
+function resetGame() {
+    if (window.Game) {
+        window.Game.resetGame();
+    }
+}
+
+function showHowToPlay() {
+    if (window.Game && window.Game._howToPlayModal) {
+        window.Game._howToPlayModal.show();
+    } else {
+        alert("Come si gioca: Indovina la parola! Inserisci una lettera alla volta. Hai 6 tentativi sbagliati.");
+    }
+}

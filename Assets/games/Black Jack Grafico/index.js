@@ -31,7 +31,12 @@ document.addEventListener('DOMContentLoaded', () => {
     hitBtn.addEventListener('click', () => playerAction('hit'));
     standBtn.addEventListener('click', () => playerAction('stand'));
     howToPlayBtn.addEventListener('click', () => howToPlayModal.show());
-
+    // Also add event listener for the player name input to add player on Enter key
+    playerNameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            addPlayer();
+        }
+    });
 
     function createDeck() {
         const suits = ['c', 'd', 'h', 's']; // clubs, diamonds, hearts, spades
@@ -106,21 +111,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function dealCard(participant, isHidden = false) {
         return new Promise(resolve => {
-            setTimeout(() => {
-                const card = deck.pop();
-                card.isHidden = isHidden;
-                participant.hand.push(card);
-                renderHands();
-                calculateScores();
-                resolve();
-            }, 300); // Stagger card dealing animation
+            const card = deck.pop();
+            card.isHidden = isHidden;
+            participant.hand.push(card);
+            
+            // Render the new card with dealing animation
+            const cardEl = document.createElement('div');
+            cardEl.className = `card ${card.isHidden ? 'hidden' : ''} dealt`;
+            if (!card.isHidden) {
+                cardEl.style.backgroundImage = `url('${card.img}')`;
+            }
+            participant.handElement.appendChild(cardEl);
+            
+            // Remove 'dealt' class after animation to allow hover effects
+            setTimeout(() => cardEl.classList.remove('dealt'), 500); // Match animation duration
+
+            calculateScores(); // Recalculate scores after each card dealt
+            resolve();
         });
     }
 
     function renderHands() {
-        // Render player hands
+        // This function is now simplified as individual cards are rendered by dealCard
+        // It's mostly for initial setup or full re-render, but dealCard handles animation for new cards
         for (const player of players) {
-            player.handElement.innerHTML = '';
+            player.handElement.innerHTML = ''; // Clear existing cards
             for (const card of player.hand) {
                 const cardEl = document.createElement('div');
                 cardEl.className = 'card';
@@ -129,8 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Render dealer hand
-        dealer.element.innerHTML = '';
+        dealer.element.innerHTML = ''; // Clear existing cards
         for (const card of dealer.hand) {
             const cardEl = document.createElement('div');
             cardEl.className = `card ${card.isHidden ? 'hidden' : ''}`;
@@ -164,16 +178,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (player.score > 21) {
                 player.isBusted = true;
-                player.statusElement.textContent = 'Sballato!';
+                player.statusElement.textContent = 'Sballato! Hai Perso.'; // Updated message
                 player.element.classList.add('busted');
             }
         }
 
-        // Calculate dealer score (only visible card)
+        // Calculate dealer score (only visible card for initial display)
         let dealerScore = 0;
         let dealerAceCount = 0;
         for (const card of dealer.hand) {
-            if (card.isHidden) continue;
+            if (card.isHidden) continue; // Only count visible card initially
             let value = card.value > 10 ? 10 : card.value;
             if (value === 1) {
                 dealerAceCount++;
@@ -191,20 +205,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function startNextPlayerTurn() {
-        currentPlayerIndex++;
-        if (currentPlayerIndex >= players.length) {
+        // First, check if there are any players whose turn needs to be processed
+        let nextPlayerFound = false;
+        while(currentPlayerIndex < players.length){
+            currentPlayerIndex++;
+            if(currentPlayerIndex < players.length){
+                const currentPlayer = players[currentPlayerIndex];
+                if (!currentPlayer.isBusted && !currentPlayer.hasStood) {
+                    nextPlayerFound = true;
+                    break;
+                }
+            }
+        }
+
+        if (!nextPlayerFound) {
             dealerTurn();
             return;
         }
 
         const currentPlayer = players[currentPlayerIndex];
-        if (currentPlayer.isBusted) {
-            startNextPlayerTurn();
-            return;
-        }
         
         updateGameStatus(`È il turno di ${currentPlayer.name}.`);
-        playerControls.style.display = 'block';
+        playerControls.style.display = 'flex'; // Use flex for button group
         players.forEach(p => p.element.classList.remove('active'));
         currentPlayer.element.classList.add('active');
     }
@@ -214,7 +236,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!currentPlayer || !gameInProgress) return;
 
         if (action === 'hit') {
-            dealCard(currentPlayer).then(() => {
+            // dealCard now directly appends to participant.handElement.
+            dealCard(currentPlayer).then(() => { 
                 if (currentPlayer.isBusted) {
                     playerAction('stand'); // Automatically stand if busted
                 }
@@ -227,38 +250,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function dealerTurn() {
         playerControls.style.display = 'none';
-        players.forEach(p => p.element.classList.remove('active'));
+        players.forEach(p => p.element.classList.remove('active', 'winner')); // Clear active/winner states
         updateGameStatus('Turno del Banco.');
 
         // Reveal hidden card
         const hiddenCard = dealer.hand.find(c => c.isHidden);
         if (hiddenCard) {
             hiddenCard.isHidden = false;
-            renderHands();
+            // Update the specific card element to reveal it
+            const hiddenCardEl = dealer.element.querySelector('.card.hidden');
+            if(hiddenCardEl){
+                 hiddenCardEl.classList.remove('hidden');
+                 hiddenCardEl.style.backgroundImage = `url('${hiddenCard.img}')`;
+            }
         }
         
-        // Recalculate full score for dealer
+        // Recalculate full score for dealer after revealing card
         let fullScore = 0;
         let aceCount = 0;
         dealer.hand.forEach(card => {
             let value = card.value > 10 ? 10 : card.value;
-            if (value === 1) {
-                aceCount++;
-                fullScore += 11;
-            } else {
-                fullScore += value;
-            }
+            if (value === 1) { aceCount++; fullScore += 11; } else { fullScore += value; }
         });
-        while (fullScore > 21 && aceCount > 0) {
-            fullScore -= 10;
-            aceCount--;
-        }
+        while (fullScore > 21 && aceCount > 0) { fullScore -= 10; aceCount--; }
         dealer.score = fullScore;
         dealer.scoreElement.textContent = dealer.score;
 
+
         // Dealer hits until 17 or more
         while (dealer.score < 17) {
-            await dealCard(dealer);
+            await dealCard(dealer); // dealCard directly appends to participant.handElement
             // Recalculate score after each hit
             fullScore = 0;
             aceCount = 0;
@@ -280,11 +301,14 @@ document.addEventListener('DOMContentLoaded', () => {
         
         for (const player of players) {
             if (player.isBusted) {
-                player.statusElement.textContent = 'Hai Perso!';
+                player.statusElement.textContent = 'Sballato! Hai Perso.';
+                player.element.classList.add('busted');
             } else if (dealerBusted || player.score > dealerScore) {
                 player.statusElement.textContent = 'Hai Vinto!';
+                player.element.classList.add('winner');
             } else if (player.score < dealerScore) {
-                player.statusElement.textContent = 'Hai Perso!';
+                player.statusElement.textContent = 'Hai Perso.';
+                player.element.classList.add('busted'); // Indicate loss with busted style
             } else {
                 player.statusElement.textContent = 'Pareggio!';
             }
@@ -302,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
             p.score = 0;
             p.isBusted = false;
             p.hasStood = false;
-            p.element.classList.remove('busted', 'active');
+            p.element.classList.remove('busted', 'active', 'winner'); // Clear all states
             p.statusElement.textContent = '';
             p.handElement.innerHTML = '';
             p.scoreElement.textContent = '0';
@@ -314,6 +338,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         currentPlayerIndex = -1;
         playerControls.style.display = 'none';
+        addPlayerForm.style.display = 'block'; // Ensure add player form is visible
+        newGameBtn.style.display = 'block'; // Ensure new game button is visible
         updateGameStatus('Aggiungi giocatori e premi Inizia Partita.');
     }
 

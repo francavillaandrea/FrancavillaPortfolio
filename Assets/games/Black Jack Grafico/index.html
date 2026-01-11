@@ -7,11 +7,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="index.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container-fluid game-table">
         <!-- Dealer's Area -->
         <div class="text-center dealer-area">
+            <h1 class="mb-4">Black Jack</h1> <!-- Changed to h1 for consistent styling -->
             <h2 id="dealer-name">Banco</h2>
             <div id="dealer-hand" class="hand"></div>
             <p class="score-display">Punteggio: <span id="dealer-score">0</span></p>
@@ -23,16 +27,16 @@
         <!-- Game Controls & Status -->
         <div class="controls-area text-center">
             <div id="game-status" class="game-status mb-3"></div>
-            <div id="player-controls" class="player-controls">
-                <button id="btn-hit" class="btn btn-success btn-lg">
+            <div id="player-controls" class="player-controls btn-group-custom">
+                <button id="btn-hit" class="btn btn-blackjack btn-lg">
                     <i class="bi bi-plus-circle"></i> Pesca
                 </button>
-                <button id="btn-stand" class="btn btn-warning btn-lg">
+                <button id="btn-stand" class="btn btn-blackjack btn-lg">
                     <i class="bi bi-pause-circle"></i> Stai
                 </button>
             </div>
             <div id="game-management-controls">
-                <button id="btn-new-game" class="btn btn-primary btn-lg">
+                <button id="btn-new-game" class="btn btn-blackjack btn-lg">
                     <i class="bi bi-play-fill"></i> Inizia Partita
                 </button>
             </div>
@@ -87,6 +91,7 @@
     </div>
 
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer src="../../js/theme.js"></script>
     <script defer type="text/javascript" src="index.js"></script>
 </body>
 </html>

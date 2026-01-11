@@ -1,17 +1,19 @@
 :root {
-    --green-felt: #006400;
-    --darker-felt: #005000;
-    --card-bg: #ffffff;
-    --card-border: #000000;
+    --green-felt: #004d00; /* Darker green for richer felt */
+    --darker-felt: #003300;
+    --card-bg: #f8f8f8;
+    --card-border: #333;
     --text-light: #ffffff;
-    --text-dark: #000000;
+    --text-dark: #333333;
     --gold: #FFD700;
+    --red-alert: #dc3545;
 }
 
 body, html {
     height: 100%;
     margin: 0;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Montserrat', sans-serif; /* Modern font */
+    overflow: hidden; /* Prevent scrolling */
 }
 
 .game-table {
@@ -23,81 +25,177 @@ body, html {
     flex-direction: column;
     justify-content: space-between;
     color: var(--text-light);
+    border: 10px solid var(--gold); /* Gold trim around the table */
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.5); /* Inner shadow for depth */
 }
 
-.dealer-area, .players-area, .controls-area {
-    width: 100%;
+h1 {
+    font-family: 'Cinzel Decorative', cursive; /* Decorative font for title */
+    font-size: 3.5rem;
+    color: var(--gold);
+    text-shadow: 0 0 10px rgba(255,215,0,0.8), 0 0 20px rgba(255,215,0,0.4);
 }
 
 .dealer-area {
     min-height: 200px;
+    padding-bottom: 20px;
+    border-bottom: 2px dashed rgba(255,255,255,0.3); /* Separator */
 }
 
 .players-area {
     display: flex;
     flex-grow: 1;
-    align-items: center;
+    align-items: flex-end; /* Align players to bottom */
     justify-content: center;
     gap: 30px;
+    padding-top: 20px;
+    flex-wrap: wrap; /* Allow players to wrap on smaller screens */
 }
 
 .player {
-    background-color: rgba(0, 0, 0, 0.3);
-    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.4); /* Slightly darker, more transparent */
+    backdrop-filter: blur(3px); /* Frosted glass effect */
+    padding: 20px;
     border-radius: 15px;
-    border: 2px solid var(--gold);
+    border: 2px solid rgba(255,215,0,0.5); /* Softer gold border */
     text-align: center;
-    width: 250px;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    width: 280px; /* Slightly wider */
+    transition: all 0.4s ease-out; /* Smoother transition */
+    box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    position: relative; /* For active indicator */
 }
 
 .player.active {
-    box-shadow: 0 0 25px var(--gold);
-    transform: scale(1.05);
+    border-color: var(--gold);
+    box-shadow: 0 0 30px 5px var(--gold), inset 0 0 15px 2px rgba(255,215,0,0.6); /* More prominent glow */
+    transform: scale(1.03) translateY(-5px); /* Lift and grow slightly */
+    z-index: 10; /* Bring active player to front */
 }
 
 .player.busted {
-    opacity: 0.6;
-    background-color: rgba(139, 0, 0, 0.5);
+    background-color: rgba(139, 0, 0, 0.6); /* Darker red */
+    border-color: var(--red-alert);
+    box-shadow: 0 0 25px 5px var(--red-alert), inset 0 0 15px 2px rgba(220,53,69,0.8);
+    transform: scale(0.98);
+    opacity: 0.8;
+}
+
+.player.winner {
+    background-color: rgba(0, 128, 0, 0.6); /* Green for winner */
+    border-color: var(--bs-success);
+    box-shadow: 0 0 25px 5px var(--bs-success), inset 0 0 15px 2px rgba(0,128,0,0.8);
+    transform: scale(1.03) translateY(-5px);
 }
 
 .hand {
-    min-height: 100px;
+    min-height: 120px; /* More space for cards */
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 15px;
+    perspective: 1000px; /* For 3D card effects */
 }
 
 .card {
-    width: 72px;
-    height: 96px;
-    background-size: cover;
-    margin: 0 -15px;
-    border-radius: 6px;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
-    transition: transform 0.3s ease;
+    width: 80px; /* Slightly larger cards */
+    height: 110px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+    transition: transform 0.4s ease-out, box-shadow 0.3s ease;
+    position: relative;
+    transform-origin: bottom center; /* For dealing animation */
+    z-index: 1; /* For overlapping cards */
+}
+
+.card:not(:first-child) {
+    margin-left: -30px; /* Overlap cards */
+}
+
+.card:hover {
+    transform: translateY(-5px) rotateZ(3deg); /* Subtle hover lift and tilt */
+    box-shadow: 4px 4px 12px rgba(0,0,0,0.8);
+    z-index: 2; /* Bring hovered card to front */
 }
 
 .card.hidden {
     background-image: url('img/dorso.gif');
+    background-size: cover;
+}
+
+/* Dealing animation */
+.card.dealt {
+    animation: dealCard 0.5s ease-out forwards;
+}
+
+@keyframes dealCard {
+    0% {
+        opacity: 0;
+        transform: translateY(-100px) rotateY(90deg) scale(0.5);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) rotateY(0deg) scale(1);
+    }
 }
 
 .score-display, .player-name, .player-status {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: bold;
-    text-shadow: 1px 1px 3px #000;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+    color: var(--text-light);
 }
 
 .game-status {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: bold;
-    min-height: 30px;
+    min-height: 40px;
+    margin-bottom: 15px;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.8);
+    color: var(--gold);
+    animation: pulseGlow 1.5s infinite alternate; /* Subtle pulse for status */
+}
+
+@keyframes pulseGlow {
+    from { text-shadow: 0 0 5px var(--gold); }
+    to { text-shadow: 0 0 15px var(--gold), 0 0 25px rgba(255,215,0,0.5); }
 }
 
 .controls-area {
     padding: 20px 0;
+    border-top: 2px dashed rgba(255,255,255,0.3); /* Separator */
+    margin-top: 20px;
+}
+
+.btn-group-custom {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-blackjack {
+    background-color: rgba(0,0,0,0.6);
+    border: 2px solid var(--gold);
+    color: var(--gold);
+    font-weight: bold;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.btn-blackjack:hover:not(:disabled) {
+    background-color: rgba(0,0,0,0.8);
+    border-color: var(--text-light);
+    color: var(--text-light);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+}
+
+.btn-blackjack:active:not(:disabled) {
+    transform: translateY(0) scale(1);
 }
 
 .add-player-form {
@@ -116,10 +214,80 @@ body, html {
     height: 60px;
     border-radius: 50%;
     z-index: 1050;
+    background-color: var(--bs-info);
+    color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+#how-to-play-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.7);
 }
 
 .modal-content {
     background-color: var(--darker-felt);
     color: var(--text-light);
     border: 1px solid var(--gold);
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+}
+
+.modal-header, .modal-footer {
+    border-color: rgba(255,215,0,0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+    .player {
+        width: 220px;
+        padding: 15px;
+    }
+    .card {
+        width: 70px;
+        height: 100px;
+    }
+    .card:not(:first-child) {
+        margin-left: -25px;
+    }
+}
+
+@media (max-width: 768px) {
+    .game-table {
+        padding: 10px;
+    }
+    h1 {
+        font-size: 2rem;
+        margin-top: 10px;
+    }
+    .players-area {
+        gap: 15px;
+        flex-direction: column; /* Stack players vertically */
+        align-items: center;
+    }
+    .player {
+        width: 90%;
+        max-width: 300px;
+    }
+    .add-player-form {
+        position: static; /* Unfix position */
+        width: 100%;
+        margin-top: 20px;
+        left: auto;
+        bottom: auto;
+    }
+    #how-to-play-btn {
+        position: static;
+        margin-top: 20px;
+        width: auto;
+        height: auto;
+        border-radius: 8px;
+    }
+    .btn-group-custom {
+        flex-direction: column;
+    }
+    .btn-blackjack {
+        width: 100%;
+    }
 }
