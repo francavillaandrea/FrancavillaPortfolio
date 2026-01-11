@@ -97,12 +97,12 @@ h1 {
 }
 
 .card {
-    width: 80px; /* Slightly larger cards */
-    height: 110px;
+    width: 90px; /* Increased card width */
+    height: 120px; /* Increased card height */
     background-color: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 8px;
-    box-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.7); /* Stronger shadow */
     transition: transform 0.4s ease-out, box-shadow 0.3s ease;
     position: relative;
     transform-origin: bottom center; /* For dealing animation */
@@ -110,12 +110,12 @@ h1 {
 }
 
 .card:not(:first-child) {
-    margin-left: -30px; /* Overlap cards */
+    margin-left: -40px; /* More overlap for fanned look */
 }
 
 .card:hover {
-    transform: translateY(-5px) rotateZ(3deg); /* Subtle hover lift and tilt */
-    box-shadow: 4px 4px 12px rgba(0,0,0,0.8);
+    transform: translateY(-8px) rotateZ(5deg); /* More prominent hover lift and tilt */
+    box-shadow: 4px 4px 15px rgba(0,0,0,0.9); /* Stronger hover shadow */
     z-index: 2; /* Bring hovered card to front */
 }
 
@@ -126,13 +126,13 @@ h1 {
 
 /* Dealing animation */
 .card.dealt {
-    animation: dealCard 0.5s ease-out forwards;
+    animation: dealCard 0.6s ease-out forwards; /* Slightly longer animation */
 }
 
 @keyframes dealCard {
     0% {
         opacity: 0;
-        transform: translateY(-100px) rotateY(90deg) scale(0.5);
+        transform: translateY(-150px) rotateY(120deg) scale(0.3); /* More dramatic start */
     }
     100% {
         opacity: 1;
@@ -141,31 +141,31 @@ h1 {
 }
 
 .score-display, .player-name, .player-status {
-    font-size: 1.3rem;
+    font-size: 1.4rem; /* Slightly larger text */
     font-weight: bold;
-    text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.9); /* Stronger text shadow */
     color: var(--text-light);
 }
 
 .game-status {
-    font-size: 1.8rem;
+    font-size: 2rem; /* Larger status messages */
     font-weight: bold;
-    min-height: 40px;
-    margin-bottom: 15px;
-    text-shadow: 1px 1px 5px rgba(0,0,0,0.8);
+    min-height: 45px; /* More space */
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 7px rgba(0,0,0,0.9);
     color: var(--gold);
-    animation: pulseGlow 1.5s infinite alternate; /* Subtle pulse for status */
+    animation: pulseGlow 1.2s infinite alternate; /* Faster pulse */
 }
 
 @keyframes pulseGlow {
-    from { text-shadow: 0 0 5px var(--gold); }
-    to { text-shadow: 0 0 15px var(--gold), 0 0 25px rgba(255,215,0,0.5); }
+    from { text-shadow: 0 0 8px var(--gold); }
+    to { text-shadow: 0 0 20px var(--gold), 0 0 35px rgba(255,215,0,0.6); } /* More prominent glow */
 }
 
 .controls-area {
-    padding: 20px 0;
-    border-top: 2px dashed rgba(255,255,255,0.3); /* Separator */
-    margin-top: 20px;
+    padding: 25px 0; /* More padding */
+    border-top: 2px dashed rgba(255,255,255,0.4); /* Stronger separator */
+    margin-top: 25px;
 }
 
 .btn-group-custom {
@@ -200,75 +200,136 @@ h1 {
 
 .add-player-form {
     position: fixed;
-    bottom: 20px;
-    left: 20px;
-    width: 300px;
+    bottom: 25px; /* Adjust position */
+    left: 25px;
+    width: 320px; /* Slightly wider */
     z-index: 1050;
+    background-color: rgba(0,0,0,0.5); /* Background for the form */
+    backdrop-filter: blur(5px); /* Frosted glass for form */
+    border-radius: 15px;
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 15px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.7);
+}
+
+.add-player-form .input-group .form-control {
+    background-color: rgba(255,255,255,0.1); /* Transparent input */
+    border: 1px solid rgba(255,255,255,0.3);
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+.add-player-form .input-group .form-control::placeholder {
+    color: rgba(255,255,255,0.6);
+}
+
+.add-player-form .input-group .form-control:focus {
+    background-color: rgba(255,255,255,0.2);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 0.25rem rgba(255,215,0,0.25);
+    color: var(--text-light);
+}
+
+.add-player-form .input-group .btn-secondary {
+    background-color: var(--gold); /* Gold button */
+    border-color: var(--gold);
+    color: var(--text-dark);
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.add-player-form .input-group .btn-secondary:hover {
+    background-color: var(--text-light);
+    border-color: var(--text-light);
+    color: var(--text-dark);
 }
 
 #how-to-play-btn {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
+    bottom: 25px; /* Adjust position */
+    right: 25px;
+    width: 65px; /* Slightly larger */
+    height: 65px;
     border-radius: 50%;
     z-index: 1050;
     background-color: var(--bs-info);
     color: white;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    box-shadow: 0 0 15px rgba(0,0,0,0.6);
+    font-size: 1.6rem; /* Larger icon */
 }
 
 #how-to-play-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+    transform: scale(1.15); /* More prominent hover */
+    box-shadow: 0 0 25px rgba(0,0,0,0.8);
 }
 
 .modal-content {
     background-color: var(--darker-felt);
     color: var(--text-light);
     border: 1px solid var(--gold);
-    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    box-shadow: 0 0 25px rgba(0,0,0,0.9); /* Stronger modal shadow */
 }
 
 .modal-header, .modal-footer {
-    border-color: rgba(255,215,0,0.3);
+    border-color: rgba(255,215,0,0.4); /* Stronger border */
 }
 
 /* Responsive adjustments */
 @media (max-width: 992px) {
     h1 {
-        font-size: 2.5rem;
+        font-size: 3rem;
     }
     .player {
-        width: 220px;
+        width: 250px; /* Adjust for smaller screens */
         padding: 15px;
     }
     .card {
-        width: 70px;
-        height: 100px;
+        width: 85px; /* Adjust card width */
+        height: 115px; /* Adjust card height */
     }
     .card:not(:first-child) {
-        margin-left: -25px;
+        margin-left: -38px; /* Adjust overlap */
+    }
+    .add-player-form {
+        width: 300px;
+        left: 20px;
+        bottom: 20px;
+    }
+    #how-to-play-btn {
+        right: 20px;
+        bottom: 20px;
     }
 }
 
 @media (max-width: 768px) {
     .game-table {
         padding: 10px;
+        border-width: 5px; /* Thinner border */
     }
     h1 {
-        font-size: 2rem;
-        margin-top: 10px;
+        font-size: 2.2rem;
+        margin-top: 5px;
+    }
+    .dealer-area {
+        min-height: 180px;
+        padding-bottom: 15px;
     }
     .players-area {
-        gap: 15px;
+        gap: 10px;
         flex-direction: column; /* Stack players vertically */
         align-items: center;
     }
     .player {
-        width: 90%;
-        max-width: 300px;
+        width: 95%;
+        max-width: 320px;
+        padding: 15px;
+    }
+    .card {
+        width: 75px; /* Adjust card width */
+        height: 100px; /* Adjust card height */
+    }
+    .card:not(:first-child) {
+        margin-left: -32px; /* Adjust overlap */
     }
     .add-player-form {
         position: static; /* Unfix position */
@@ -276,16 +337,33 @@ h1 {
         margin-top: 20px;
         left: auto;
         bottom: auto;
+        padding: 10px;
+        box-shadow: none; /* No shadow when static */
+        background-color: transparent; /* Transparent background */
+        backdrop-filter: none;
+        border: none;
+    }
+    .add-player-form .input-group .form-control {
+        background-color: var(--bs-tertiary-bg); /* Match theme */
+        border-color: var(--bs-border-color);
+    }
+    .add-player-form .input-group .btn-secondary {
+        background-color: var(--bs-primary); /* Use primary color */
+        border-color: var(--bs-primary);
+        color: white;
     }
     #how-to-play-btn {
         position: static;
-        margin-top: 20px;
+        margin-top: 15px;
         width: auto;
         height: auto;
         border-radius: 8px;
+        font-size: 1.1rem;
+        padding: 10px 20px;
     }
     .btn-group-custom {
         flex-direction: column;
+        gap: 10px;
     }
     .btn-blackjack {
         width: 100%;
