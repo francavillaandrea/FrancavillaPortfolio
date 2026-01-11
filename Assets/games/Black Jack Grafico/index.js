@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         element: document.getElementById('dealer-hand'),
         scoreElement: document.getElementById('dealer-score')
     };
-    let deck = [];
+    let deckId = null; // Store the deck_id from the API
     let currentPlayerIndex = -1;
     let gameInProgress = false;
 
@@ -31,24 +31,23 @@ document.addEventListener('DOMContentLoaded', () => {
     hitBtn.addEventListener('click', () => playerAction('hit'));
     standBtn.addEventListener('click', () => playerAction('stand'));
     howToPlayBtn.addEventListener('click', () => howToPlayModal.show());
-    // Also add event listener for the player name input to add player on Enter key
+    // Add event listener for the player name input to add player on Enter key
     playerNameInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             addPlayer();
         }
     });
 
-    function createDeck() {
-        const suits = ['c', 'd', 'h', 's']; // clubs, diamonds, hearts, spades
-        const values = Array.from({ length: 13 }, (_, i) => i + 1);
-        deck = [];
-        for (const suit of suits) {
-            for (const value of values) {
-                deck.push({ suit, value, img: `img/${suit}${value}.gif` });
-            }
+    async function createNewShuffledDeck() {
+        try {
+            const response = await fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1');
+            const data = await response.json();
+            deckId = data.deck_id;
+            console.log('New deck created with ID:', deckId);
+        } catch (error) {
+            console.error('Error creating new deck:', error);
+            updateGameStatus('Errore nel caricamento del mazzo. Riprova.');
         }
-        // Shuffle deck
-        deck.sort(() => Math.random() - 0.5);
     }
 
     function addPlayer() {
@@ -80,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    function startGame() {
+    async function startGame() {
         if (players.length === 0) {
             updateGameStatus('Aggiungi almeno un giocatore per iniziare!');
             return;
@@ -91,8 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
         newGameBtn.style.display = 'none';
         
         resetGame();
-        createDeck();
-        dealInitialCards();
+        await createNewShuffledDeck(); // Create deck before dealing
+        await dealInitialCards();
     }
 
     async function dealInitialCards() {
@@ -109,37 +108,75 @@ document.addEventListener('DOMContentLoaded', () => {
         startNextPlayerTurn();
     }
 
-    function dealCard(participant, isHidden = false) {
-        return new Promise(resolve => {
-            const card = deck.pop();
-            card.isHidden = isHidden;
-            participant.hand.push(card);
-            
-            // Render the new card with dealing animation
-            const cardEl = document.createElement('div');
-            cardEl.className = `card ${card.isHidden ? 'hidden' : ''} dealt`;
-            if (!card.isHidden) {
-                cardEl.style.backgroundImage = `url('${card.img}')`;
-            }
-            participant.handElement.appendChild(cardEl);
-            
-            // Remove 'dealt' class after animation to allow hover effects
-            setTimeout(() => cardEl.classList.remove('dealt'), 500); // Match animation duration
+    async function dealCard(participant, isHidden = false) {
+        if (!deckId) {
+            console.error('No deck ID available to draw cards.');
+            return;
+        }
+        
+        try {
+            const response = await fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`);
+            const data = await response.json();
 
-            calculateScores(); // Recalculate scores after each card dealt
-            resolve();
-        });
+            if (data.cards && data.cards.length > 0) {
+                const apiCard = data.cards[0];
+                const card = {
+                    code: apiCard.code,
+                    value: convertCardValue(apiCard.value),
+                    suit: apiCard.suit,
+                    image: apiCard.image, // API provided image URL
+                    isHidden: isHidden
+                };
+                
+                participant.hand.push(card);
+                
+                // Render the new card with dealing animation
+                const cardEl = document.createElement('div');
+                cardEl.className = `card ${card.isHidden ? 'hidden' : ''} dealt`;
+                if (!card.isHidden) {
+                    cardEl.style.backgroundImage = `url('${card.image}')`; // Use API image
+                }
+                participant.handElement.appendChild(cardEl);
+                
+                // Remove 'dealt' class after animation to allow hover effects
+                setTimeout(() => cardEl.classList.remove('dealt'), 500); // Match animation duration
+
+                calculateScores(); // Recalculate scores after each card dealt
+            } else {
+                console.warn('No cards left in the deck or error drawing card.');
+                updateGameStatus('Non ci sono più carte nel mazzo!');
+                // Handle reshuffle or end game here
+            }
+        } catch (error) {
+            console.error('Error drawing card:', error);
+            updateGameStatus('Errore nel pescare una carta. Riprova.');
+        }
     }
 
+    // Helper to convert API string values (KING, QUEEN, ACE) to numeric
+    function convertCardValue(apiValue) {
+        switch (apiValue) {
+            case 'ACE': return 1;
+            case 'KING':
+            case 'QUEEN':
+            case 'JACK': return 10;
+            default: return parseInt(apiValue);
+        }
+    }
+
+    // renderHands function is simplified as dealCard now handles individual card rendering
     function renderHands() {
-        // This function is now simplified as individual cards are rendered by dealCard
-        // It's mostly for initial setup or full re-render, but dealCard handles animation for new cards
+        // This function is mostly for initial setup or full re-render after a reset, not for dealing animations
         for (const player of players) {
             player.handElement.innerHTML = ''; // Clear existing cards
             for (const card of player.hand) {
                 const cardEl = document.createElement('div');
                 cardEl.className = 'card';
-                cardEl.style.backgroundImage = `url('${card.img}')`;
+                if (card.isHidden) {
+                    cardEl.classList.add('hidden');
+                } else {
+                    cardEl.style.backgroundImage = `url('${card.image}')`;
+                }
                 player.handElement.appendChild(cardEl);
             }
         }
@@ -149,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const cardEl = document.createElement('div');
             cardEl.className = `card ${card.isHidden ? 'hidden' : ''}`;
             if (!card.isHidden) {
-                cardEl.style.backgroundImage = `url('${card.img}')`;
+                cardEl.style.backgroundImage = `url('${card.image}')`;
             }
             dealer.element.appendChild(cardEl);
         }
@@ -161,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let score = 0;
             let aceCount = 0;
             for (const card of player.hand) {
-                let value = card.value > 10 ? 10 : card.value;
+                let value = card.value; // Already converted to numeric in dealCard
                 if (value === 1) {
                     aceCount++;
                     score += 11;
@@ -178,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (player.score > 21) {
                 player.isBusted = true;
-                player.statusElement.textContent = 'Sballato! Hai Perso.'; // Updated message
+                player.statusElement.textContent = 'Sballato! Hai Perso.';
                 player.element.classList.add('busted');
             }
         }
@@ -187,8 +224,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let dealerScore = 0;
         let dealerAceCount = 0;
         for (const card of dealer.hand) {
-            if (card.isHidden) continue; // Only count visible card initially
-            let value = card.value > 10 ? 10 : card.value;
+            if (card.isHidden) continue; 
+            let value = card.value;
             if (value === 1) {
                 dealerAceCount++;
                 dealerScore += 11;
@@ -201,11 +238,10 @@ document.addEventListener('DOMContentLoaded', () => {
             dealerAceCount--;
         }
         dealer.score = dealerScore;
-        dealer.scoreElement.textContent = dealerScore;
+        dealer.scoreElement.textContent = dealer.score;
     }
     
     function startNextPlayerTurn() {
-        // First, check if there are any players whose turn needs to be processed
         let nextPlayerFound = false;
         while(currentPlayerIndex < players.length){
             currentPlayerIndex++;
@@ -226,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentPlayer = players[currentPlayerIndex];
         
         updateGameStatus(`È il turno di ${currentPlayer.name}.`);
-        playerControls.style.display = 'flex'; // Use flex for button group
+        playerControls.style.display = 'flex';
         players.forEach(p => p.element.classList.remove('active'));
         currentPlayer.element.classList.add('active');
     }
@@ -236,7 +272,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!currentPlayer || !gameInProgress) return;
 
         if (action === 'hit') {
-            // dealCard now directly appends to participant.handElement.
             dealCard(currentPlayer).then(() => { 
                 if (currentPlayer.isBusted) {
                     playerAction('stand'); // Automatically stand if busted
@@ -250,18 +285,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function dealerTurn() {
         playerControls.style.display = 'none';
-        players.forEach(p => p.element.classList.remove('active', 'winner')); // Clear active/winner states
+        players.forEach(p => p.element.classList.remove('active', 'winner'));
         updateGameStatus('Turno del Banco.');
 
         // Reveal hidden card
         const hiddenCard = dealer.hand.find(c => c.isHidden);
         if (hiddenCard) {
             hiddenCard.isHidden = false;
-            // Update the specific card element to reveal it
             const hiddenCardEl = dealer.element.querySelector('.card.hidden');
             if(hiddenCardEl){
                  hiddenCardEl.classList.remove('hidden');
-                 hiddenCardEl.style.backgroundImage = `url('${hiddenCard.img}')`;
+                 hiddenCardEl.style.backgroundImage = `url('${hiddenCard.image}')`; // Use API image
             }
         }
         
@@ -269,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let fullScore = 0;
         let aceCount = 0;
         dealer.hand.forEach(card => {
-            let value = card.value > 10 ? 10 : card.value;
+            let value = card.value;
             if (value === 1) { aceCount++; fullScore += 11; } else { fullScore += value; }
         });
         while (fullScore > 21 && aceCount > 0) { fullScore -= 10; aceCount--; }
@@ -279,12 +313,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Dealer hits until 17 or more
         while (dealer.score < 17) {
-            await dealCard(dealer); // dealCard directly appends to participant.handElement
-            // Recalculate score after each hit
+            await dealCard(dealer);
             fullScore = 0;
             aceCount = 0;
             dealer.hand.forEach(card => {
-                let value = card.value > 10 ? 10 : card.value;
+                let value = card.value;
                 if (value === 1) { aceCount++; fullScore += 11; } else { fullScore += value; }
             });
             while (fullScore > 21 && aceCount > 0) { fullScore -= 10; aceCount--; }
@@ -308,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 player.element.classList.add('winner');
             } else if (player.score < dealerScore) {
                 player.statusElement.textContent = 'Hai Perso.';
-                player.element.classList.add('busted'); // Indicate loss with busted style
+                player.element.classList.add('busted');
             } else {
                 player.statusElement.textContent = 'Pareggio!';
             }
@@ -326,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
             p.score = 0;
             p.isBusted = false;
             p.hasStood = false;
-            p.element.classList.remove('busted', 'active', 'winner'); // Clear all states
+            p.element.classList.remove('busted', 'active', 'winner');
             p.statusElement.textContent = '';
             p.handElement.innerHTML = '';
             p.scoreElement.textContent = '0';
@@ -338,8 +371,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         currentPlayerIndex = -1;
         playerControls.style.display = 'none';
-        addPlayerForm.style.display = 'block'; // Ensure add player form is visible
-        newGameBtn.style.display = 'block'; // Ensure new game button is visible
+        addPlayerForm.style.display = 'block';
+        newGameBtn.style.display = 'block';
         updateGameStatus('Aggiungi giocatori e premi Inizia Partita.');
     }
 
