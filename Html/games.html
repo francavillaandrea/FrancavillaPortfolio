@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="it" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giochi - Francavilla Andrea</title>
+
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../Css/styles.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../Assets/img/Favicon/favicon.ico" sizes="96x96">
+    <link rel="apple-touch-icon" sizes="180x180" href="../Assets/img/Favicon/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="Francavilla Andrea">
+    <link rel="manifest" href="../Assets/img/Favicon/site.webmanifest">
+
+    <!-- Scripts -->
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next@21.6.10/dist/umd/i18next.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@1.3.0/dist/umd/i18nextHttpBackend.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next-browser-languagedetector@6.1.3/dist/umd/i18nextBrowserLanguageDetector.min.js"></script>
+    
+    <script>
+        // i18next initialization
+        i18next
+            .use(i18nextHttpBackend)
+            .use(i18nextBrowserLanguageDetector)
+            .init({
+                fallbackLng: 'it',
+                backend: {
+                    loadPath: '../Assets/locales/{{lng}}/{{lng}}.json'
+                }
+            })
+            .then(function(t) {
+                updateContent();
+            });
+
+        function updateContent() {
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                element.textContent = i18next.t(key);
+            });
+        }
+
+        i18next.on('languageChanged', () => {
+            updateContent();
+            document.documentElement.lang = i18next.language;
+        });
+
+        // Language selector
+        document.addEventListener('DOMContentLoaded', () => {
+            const languageSelect = document.getElementById('languageSelect');
+            if (languageSelect) {
+                languageSelect.addEventListener('change', (e) => {
+                    i18next.changeLanguage(e.target.value);
+                });
+                languageSelect.value = i18next.language;
+            }
+        });
+    </script>
+    <script defer src="../Js/theme.js"></script>
+    <script defer src="../Js/hover.js"></script>
+    <script defer src="../Js/smoothScroll.js"></script>
+
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Relief:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="min-vh-100 d-flex flex-column">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary border border-1 rounded-bottom sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand text-decoration-none" href="#">Francavilla Andrea</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html" data-translate="nav.home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./chisono.html" data-translate="nav.about">Chi Sono</a>
+                    </li>
+                    <li class="nav-item dropdown" id="hobbyDropdown">
+                        <a class="nav-link dropdown-toggle text-decoration-none focus-ring-0" href="./hobby.html" data-translate="nav.hobby">
+                            Hobby
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item text-decoration-none focus-ring-0"
+                                    href="./moto.html" data-translate="hobby.moto">Moto</a></li>
+                            <li><a class="dropdown-item text-decoration-none focus-ring-0"
+                                    href="./musica.html" data-translate="hobby.music">Musica</a></li>
+                            <li><a class="dropdown-item text-decoration-none focus-ring-0" 
+                                    href="./sport.html" data-translate="hobby.sport">Sport</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-decoration-none focus-ring-0" href="./contact.html" data-translate="nav.contacts">Contatti</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="d-flex align-items-center">
+                <select class="form-select form-select-sm me-2" id="languageSelect">
+                    <option value="it">🇮🇹</option>
+                    <option value="en">🇬🇧</option>
+                    <option value="fr">🇫🇷</option>
+                    <option value="de">🇩🇪</option>
+                </select>
+                <!-- Theme Switcher -->
+                <div class="mode-switch d-flex gap-1">
+                    <button class="btn btn-outline-secondary btn-sm" id="light">
+                        <i class="bi bi-sun-fill"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" id="dark">
+                        <i class="bi bi-moon-fill"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" id="system">
+                        <i class="bi bi-circle-half"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div class="scroll-progress"></div>
+
+    <!-- Main Content -->
+    <main class="flex-grow-1">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-12">
+                    <h1 class="text-center mb-5" data-translate="games.title">I Miei Giochi</h1>
+                    <p class="text-center mb-5 lead" data-translate="games.subtitle">
+                        Una collezione di giochi sviluppati durante il mio percorso di studi
+                    </p>
+
+                    <!-- Games Grid -->
+                    <div class="row g-4">
+                        <!-- Impiccato -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card bg-body-tertiary h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-question-circle display-4 text-primary"></i>
+                                    </div>
+                                    <h5 class="card-title text-center mb-3">Impiccato</h5>
+                                    <p class="card-text flex-grow-1">
+                                        Classico gioco dell'impiccato dove devi indovinare la parola segreta lettera per lettera.
+                                    </p>
+                                    <a href="../Assets/games/08_Impiccato/index.html" target="_blank" class="btn btn-primary mt-auto">
+                                        <i class="bi bi-play-fill"></i> Gioca
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Black Jack -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card bg-body-tertiary h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-suit-spade display-4 text-danger"></i>
+                                    </div>
+                                    <h5 class="card-title text-center mb-3">Black Jack</h5>
+                                    <p class="card-text flex-grow-1">
+                                        Gioco di carte Black Jack con interfaccia grafica. Cerca di avvicinarti il più possibile a 21.
+                                    </p>
+                                    <a href="../Assets/games/19_Black_jack_grafico/index.html" target="_blank" class="btn btn-primary mt-auto">
+                                        <i class="bi bi-play-fill"></i> Gioca
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Morra Cinese -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card bg-body-tertiary h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-hand-index display-4 text-warning"></i>
+                                    </div>
+                                    <h5 class="card-title text-center mb-3">Morra Cinese</h5>
+                                    <p class="card-text flex-grow-1">
+                                        Sasso, carta, forbice! Il classico gioco dove devi battere il computer.
+                                    </p>
+                                    <a href="../Assets/games/20_Morra Cinese/index.html" target="_blank" class="btn btn-primary mt-auto">
+                                        <i class="bi bi-play-fill"></i> Gioca
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quindici Numeri -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card bg-body-tertiary h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-grid-3x3 display-4 text-info"></i>
+                                    </div>
+                                    <h5 class="card-title text-center mb-3">Quindici Numeri</h5>
+                                    <p class="card-text flex-grow-1">
+                                        Puzzle numerico dove devi ordinare i numeri da 1 a 15 spostando le tessere.
+                                    </p>
+                                    <a href="../Assets/games/24_Quindici Numeri/index.html" target="_blank" class="btn btn-primary mt-auto">
+                                        <i class="bi bi-play-fill"></i> Gioca
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Accendi le Luci -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card bg-body-tertiary h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-lightbulb display-4 text-warning"></i>
+                                    </div>
+                                    <h5 class="card-title text-center mb-3">Accendi le Luci</h5>
+                                    <p class="card-text flex-grow-1">
+                                        Puzzle logico dove devi accendere tutte le luci cliccando sulle caselle.
+                                    </p>
+                                    <a href="../Assets/games/25_Accendi le luci/index.html" target="_blank" class="btn btn-primary mt-auto">
+                                        <i class="bi bi-play-fill"></i> Gioca
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Campo Minato -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card bg-body-tertiary h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-exclamation-triangle display-4 text-danger"></i>
+                                    </div>
+                                    <h5 class="card-title text-center mb-3">Campo Minato</h5>
+                                    <p class="card-text flex-grow-1">
+                                        Il classico Minesweeper. Trova tutte le mine senza farle esplodere!
+                                    </p>
+                                    <a href="../Assets/games/26_Campo Minato/index.html" target="_blank" class="btn btn-primary mt-auto">
+                                        <i class="bi bi-play-fill"></i> Gioca
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Forza Quattro -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card bg-body-tertiary h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-circle display-4 text-primary"></i>
+                                    </div>
+                                    <h5 class="card-title text-center mb-3">Forza Quattro</h5>
+                                    <p class="card-text flex-grow-1">
+                                        Connetti quattro pedine in fila per vincere questo classico gioco di strategia.
+                                    </p>
+                                    <a href="../Assets/games/27_Forza Quattro/index.html" target="_blank" class="btn btn-primary mt-auto">
+                                        <i class="bi bi-play-fill"></i> Gioca
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MasterMind -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card bg-body-tertiary h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-puzzle display-4 text-success"></i>
+                                    </div>
+                                    <h5 class="card-title text-center mb-3">MasterMind</h5>
+                                    <p class="card-text flex-grow-1">
+                                        Indovina la combinazione segreta di colori usando la logica e il ragionamento.
+                                    </p>
+                                    <a href="../Assets/games/28_MasterMind/index.html" target="_blank" class="btn btn-primary mt-auto">
+                                        <i class="bi bi-play-fill"></i> Gioca
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2048 -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card bg-body-tertiary h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-8-square display-4 text-warning"></i>
+                                    </div>
+                                    <h5 class="card-title text-center mb-3">2048</h5>
+                                    <p class="card-text flex-grow-1">
+                                        Puzzle numerico dove devi combinare le tessere per raggiungere il numero 2048.
+                                    </p>
+                                    <a href="../Assets/games/29_2048/index.html" target="_blank" class="btn btn-primary mt-auto">
+                                        <i class="bi bi-play-fill"></i> Gioca
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bomba -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card bg-body-tertiary h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-bomb display-4 text-danger"></i>
+                                    </div>
+                                    <h5 class="card-title text-center mb-3">Bomba</h5>
+                                    <p class="card-text flex-grow-1">
+                                        Gioco di reattività dove devi disinnescare la bomba prima che esploda!
+                                    </p>
+                                    <a href="../Assets/games/35_Bomba/index.html" target="_blank" class="btn btn-primary mt-auto">
+                                        <i class="bi bi-play-fill"></i> Gioca
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Snake -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card bg-body-tertiary h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-controller display-4 text-success"></i>
+                                    </div>
+                                    <h5 class="card-title text-center mb-3">Snake</h5>
+                                    <p class="card-text flex-grow-1">
+                                        Il classico gioco del serpente. Mangia il cibo e cresci senza sbattere contro i muri!
+                                    </p>
+                                    <a href="../Assets/games/36_Snake/snake/index.html" target="_blank" class="btn btn-primary mt-auto">
+                                        <i class="bi bi-play-fill"></i> Gioca
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Memory -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card bg-body-tertiary h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-eye display-4 text-info"></i>
+                                    </div>
+                                    <h5 class="card-title text-center mb-3">Memory</h5>
+                                    <p class="card-text flex-grow-1">
+                                        Gioco di memoria dove devi trovare le coppie di carte corrispondenti. Allena la tua memoria!
+                                    </p>
+                                    <a href="../Assets/games/3. Memory/index.html" target="_blank" class="btn btn-primary mt-auto">
+                                        <i class="bi bi-play-fill"></i> Gioca
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SpeedType -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card bg-body-tertiary h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-keyboard display-4 text-warning"></i>
+                                    </div>
+                                    <h5 class="card-title text-center mb-3">SpeedType</h5>
+                                    <p class="card-text flex-grow-1">
+                                        Gioco di digitazione veloce. Digita le parole il più velocemente possibile!
+                                    </p>
+                                    <a href="../Assets/games/4. SpeedType/index.html" target="_blank" class="btn btn-primary mt-auto">
+                                        <i class="bi bi-play-fill"></i> Gioca
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ColorSequence -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card bg-body-tertiary h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-palette display-4 text-danger"></i>
+                                    </div>
+                                    <h5 class="card-title text-center mb-3">ColorSequence</h5>
+                                    <p class="card-text flex-grow-1">
+                                        Memorizza e ripeti la sequenza di colori mostrata. Più lunga è la sequenza, più difficile diventa!
+                                    </p>
+                                    <a href="../Assets/games/5. ColorSequence/index.html" target="_blank" class="btn btn-primary mt-auto">
+                                        <i class="bi bi-play-fill"></i> Gioca
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Acchiappa la talpa -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card bg-body-tertiary h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-mouse display-4 text-success"></i>
+                                    </div>
+                                    <h5 class="card-title text-center mb-3">Acchiappa la Talpa</h5>
+                                    <p class="card-text flex-grow-1">
+                                        Gioco di reattività e precisione. Clicca sulle talpe prima che spariscano!
+                                    </p>
+                                    <a href="../Assets/games/8. Acchiappa la talpa/index.html" target="_blank" class="btn btn-primary mt-auto">
+                                        <i class="bi bi-play-fill"></i> Gioca
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stelle Cadenti -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card bg-body-tertiary h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-stars display-4 text-warning"></i>
+                                    </div>
+                                    <h5 class="card-title text-center mb-3">Stelle Cadenti</h5>
+                                    <p class="card-text flex-grow-1">
+                                        Gioco arcade dove devi evitare le stelle cadenti. Muoviti velocemente per sopravvivere!
+                                    </p>
+                                    <a href="../Assets/games/9. Stelle Cadenti/index.html" target="_blank" class="btn btn-primary mt-auto">
+                                        <i class="bi bi-play-fill"></i> Gioca
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-3 border border-1 rounded-top bg-body-tertiary">
+        <div class="container-fluid px-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="https://www.instagram.com/andrea.francavilla/"
+                        class="link-body-emphasis text-decoration-none" target="_blank">
+                        <i class="bi bi-instagram fs-5"></i>
+                    </a>
+                </div>
+                <div class="text-center flex-grow-1 mx-4">
+                    <p class="mb-0" data-translate="footer.copyright">© Author Francavilla Andrea 2024 All Rights Reserved.</p>
+                </div>
+                <div>
+                    <a href="https://github.com/francavillaandrea" class="link-body-emphasis text-decoration-none"
+                        target="_blank">
+                        <i class="bi bi-github fs-5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

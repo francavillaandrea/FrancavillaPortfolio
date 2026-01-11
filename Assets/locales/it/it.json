@@ -1,0 +1,158 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "Chi Sono",
+    "hobby": "Hobby",
+    "contacts": "Contatti"
+  },  "hobby": {
+    "title": "I Miei Hobby",
+    "moto": "Moto",
+    "music": "Musica",
+    "sport": "Sport",
+    "motoDesc": "La mia passione per le due ruote...",
+    "musicDesc": "Il mio amore per la musica...",
+    "sportDesc": "La mia passione per lo sport..."
+  },
+  "moto": {
+    "title": "La Mia Passione per le Moto",
+    "betaTitle": "Beta RR 50",
+    "betaDescription": "La Beta RR 50 è una moto da enduro leggera e maneggevole, perfetta per iniziare nel mondo dell'off-road. Con il suo motore a 2 tempi raffreddato a liquido, offre un ottimo compromesso tra prestazioni e maneggevolezza. L'ho scelta come mia prima moto per la sua affidabilità e versatilità.",
+    "specsTitle": "Caratteristiche Tecniche",
+    "specs": {
+      "engine": "Motore",
+      "engineValue": "Monocilindrico 2 Tempi",
+      "displacement": "Cilindrata",
+      "displacementValue": "50 cc",
+      "cooling": "Raffreddamento",
+      "coolingValue": "A liquido",
+      "power": "Potenza",
+      "powerValue": "3 CV",
+      "weight": "Peso",
+      "weightValue": "85 kg a secco"
+    },
+    "workshopTitle": "La Mia Officina",
+    "workshopDescription": "Una delle cose che mi appassiona di più è la meccanica della moto. Mi piace dedicare il mio tempo libero a smontare e rimontare vari componenti del Beta, studiandone il funzionamento nei minimi dettagli. Questa pratica non solo mi permette di acquisire una conoscenza più approfondita della mia moto, ma mi dà anche la possibilità di effettuare personalmente la manutenzione ordinaria e le piccole riparazioni.",
+    "experiencesTitle": "Le Mie Esperienze",
+    "experiencesDescription": "Ho iniziato a guidare le moto all'età di 15 anni. Da allora, questa passione è cresciuta sempre di più. La mia Beta RR 50 mi ha accompagnato in numerose avventure off-road, permettendomi di esplorare sentieri e migliorare le mie capacità di guida. L'enduro non è solo uno sport per me, ma un vero e proprio stile di vita.",
+    "familyPassionTitle": "Una Passione di Famiglia",
+    "familyPassionDescription": "La passione per le moto non è nata per caso. Mio padre, grande appassionato delle due ruote, mi ha trasmesso questo amore fin da piccolo. Nel corso degli anni, ha avuto l'opportunità di guidare diverse moto, ognuna con le sue caratteristiche uniche. Attraverso i suoi racconti e le sue esperienze, ho imparato ad apprezzare non solo l'aspetto tecnico delle moto, ma anche la libertà e le emozioni che solo guidare una moto può regalare. È grazie a lui se oggi posso dire che le moto non sono solo un mezzo di trasporto, ma una vera e propria passione che ci unisce.",
+    "fatherPassionTitle": "La Passione di Mio Padre",
+    "vtrTitle": "Honda VTR 1000",
+    "vtrDescription": "La Honda VTR 1000 Firestorm è stata una delle moto più amate da mio padre. Con il suo potente motore V-twin da 996cc, questa sportiva rappresentava il perfetto equilibrio tra prestazioni e comfort. Il caratteristico rombo del bicilindrico e la sua versatilità la rendevano ideale sia per i viaggi lunghi che per le uscite domenicali. Mio padre ricorda con particolare affetto le lunghe gite in montagna con i suoi amici e le emozioni che questa moto sapeva regalare.",
+    "cagivaTitle": "Cagiva Freccia C12R",
+    "cagivaDescription": "La Cagiva Freccia C12R è stata la prima vera moto di mio padre. Prodotta negli anni '90, questa 125cc rappresentava il sogno di molti giovani ragazzi dell'epoca. Con il suo design accattivante e il caratteristico motore due tempi, la Freccia era una moto che si faceva notare sia per l'estetica che per le prestazioni. Mio padre la ricorda con particolare nostalgia, essendo stata la moto con cui ha iniziato ad appassionarsi veramente al mondo delle due ruote. Ancora oggi conserva alcune foto di quei momenti, che testimoniano l'inizio di questa grande passione che poi mi ha trasmesso. Con questa moto ha vissuto numerose avventure con i suoi amici, esperienze che non dimenticherà mai.",
+    "adventuresTitle": "Le Mie Avventure",
+    "misanoTitle": "Misano World Circuit",
+    "misanoDescription": "Ho avuto l'incredibile opportunità di visitare il Misano World Circuit Marco Simoncelli, uno dei circuiti più iconici del motomondiale. Respirare l'atmosfera del mondo delle corse è stato emozionante."
+  },  "common": {
+    "readMore": "Leggi di più"
+  },
+  "modals": {
+    "webDev": {
+      "title": "Web Developing",
+      "skillsTitle": "Competenze nel Web Developing:",
+      "skills": {
+        "html": "Conoscenze consolidate di HTML",
+        "css": "Conoscenze consolidate di CSS",
+        "js": "Una conoscenza minima e non consolidata di JavaScript"
+      },
+      "projectsTitle": "Progetti Realizzati:",
+      "projects": {
+        "portfolio": {
+          "title": "Portfolio Personale",
+          "description": "Sito portfolio personale realizzato con:",
+          "features": {
+            "html": "HTML5 semantico",
+            "bootstrap": "Bootstrap 5 per il layout",
+            "animations": "Animazioni CSS personalizzate",
+            "theme": "Tema chiaro/scuro dinamico"
+          }
+        },
+        "other": {
+          "title": "Altri Progetti",
+          "description": "Altri progetti in arrivo prossimamente..."        }
+      }
+    },    "bash": {
+      "title": "Command Line (Bash)",
+      "skillsTitle": "Competenze Bash:",
+      "skills": {
+        "files": "Gestione file e directory",
+        "permissions": "Gestione permessi",
+        "pipeline": "Pipeline e redirezione"
+      },
+      "scriptsTitle": "Esempi di Script:",
+      "scripts": {
+        "other": {
+          "title": "Altri Script",
+          "description": "Altri script in arrivo prossimamente..."
+        }
+      }
+    },
+    "clike": {
+      "title": "Linguaggi C-like",
+      "skillsTitle": "Competenze:",
+      "skills": {
+        "c": "C, nel quale ho una conoscenza abbastanza consolidata",
+        "cpp": "C++, nel quale ho conoscenze minime dato che è un linguaggio a cui mi sono approcciato recentemente",
+        "csharp": "C#, nel quale ho delle buone conoscenze ma poco approfondite"
+      },
+      "projectsTitle": "Progetti realizzati:",
+      "projects": {
+        "other": {
+          "title": "Altri Progetti",
+          "description": "Altri progetti in arrivo prossimamente..."
+        }
+      }
+    }
+  },"music": {
+    "title": "La Musica nella Mia Vita",
+    "relationship": {
+      "title": "Il Mio Rapporto con la Musica",
+      "description1": "La musica è una parte fondamentale della mia routine quotidiana. Senza di essa, probabilmente non riuscirei a vivere allo stesso modo, perché rappresenta per me uno strumento capace di rilassarmi, ma anche di influenzare profondamente il mio umore. Insieme ad altre passioni, come la moto, la musica è ciò che mi fa sentire davvero vivo.",
+      "description2": "Attraverso ciò che ascolto, riesco a esprimere le mie emozioni e a dare voce a quello che spesso non riesco a dire a parole. Tra gli artisti che ascolto più frequentemente ci sono Playboi Carti, Travis Scott, Chief Keef, King Von e Ken Carson, che rappresentano per me l'essenza di un certo stile e di un'energia che mi coinvolge totalmente.",
+      "description3": "Oltre alla scena americana, seguo anche molti artisti della trap italiana, come Sfera Ebbasta, Artie 5ive, Shiva e Kid Yugi, che, partendo da contesti difficili o periferici, riescono a raccontare attraverso la musica le realtà da cui provengono. Le loro esperienze personali si riflettono nei testi, spesso crudi e diretti, e affrontano tematiche sociali ed esistenziali con cui riesco a entrare in sintonia.",
+      "description4": "Non mancano poi artisti italiani come Caparezza e Fabri Fibra, che, seppur con stili diversi, hanno avuto un grande impatto su di me. Caparezza, con i suoi testi ironici e impegnati, mi fa riflettere e sorridere allo stesso tempo, mentre Fabri Fibra, con il suo linguaggio diretto e provocatorio, ha saputo raccontare realtà spesso nascoste, mantenendo una forte identità nel panorama musicale italiano."
+    },
+    "genres": {
+      "title": "I Miei Generi Preferiti",
+      "trap": {
+        "name": "Trap",
+        "description": "Un sottogenere del rap con suoni elettronici"
+      },
+      "hiphop": {
+        "name": "Hip-Hop",
+        "description": "Il genere base da cui tutto è partito"
+      },
+      "rap": {
+        "name": "Rap",
+        "description": "In tutte le sue forme e sottogeneri"
+      },
+      "drill": {
+        "name": "Drill",
+        "description": "Una variante più aggressiva della trap"
+      }
+    },
+    "playlists": {
+      "title": "Le Mie Playlist",
+      "description": "La musica mi accompagna in ogni momento della giornata. Ho diverse playlist per ogni occasione: dall'allenamento alla guida, dallo studio al relax. La musica ha il potere di influenzare il mio umore e di darmi la giusta energia per affrontare qualsiasi situazione.",
+      "followBtn": "Seguimi su Spotify"
+    }
+  },
+  "about": {
+    "title": "Chi Sono",
+    "personalInfo": "Informazioni Personali",
+    "personalData": {
+      "name": "Nome: Andrea Francavilla",
+      "age": "Età: 17 anni",
+      "location": "Residenza: Carrù, Italia",
+      "occupation": "Occupazione: Studente"
+    },
+    "path": "Il Mio Percorso",
+    "pathDesc": "Sono uno studente dell'IIS Vallauri di Fossano, dove studio informatica...",
+    "interests": "Interessi e Passioni",
+    "interestsDesc": "Al di fuori dello studio, ho diverse passioni che coltivo nel tempo libero..."
+  },
+  "footer": {
+    "copyright": "© Author Francavilla Andrea 2024 All Rights Reserved."
+  }
+}

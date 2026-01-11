@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="it" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Sono - Francavilla Andrea</title>
+
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../Css/styles.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../Assets/img/Favicon/favicon.ico" sizes="96x96">
+    <link rel="apple-touch-icon" sizes="180x180" href="../Assets/img/Favicon/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="Francavilla Andrea">
+    <link rel="manifest" href="../Assets/img/Favicon/site.webmanifest">
+
+    <!-- Scripts  -->
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer src="../Js/theme.js"></script>
+    <script defer src="../Js/hover.js"></script>
+    <script defer src="../Js/smoothScroll.js"></script>
+    <script defer src="./Js/translations.js"></script>
+    <script defer src="./Js/language.js"></script>
+
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Relief:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- i18next scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/i18next@21.6.10/dist/umd/i18next.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@1.3.0/dist/umd/i18nextHttpBackend.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next-browser-languagedetector@6.1.3/dist/umd/i18nextBrowserLanguageDetector.min.js"></script>
+
+    <script>
+        // Configurazione i18next inline
+        const resources = {
+            it: {
+                translation: {
+                    about: {
+                        title: "Chi Sono",
+                        personalInfo: "Informazioni Personali",
+                        personalDesc: "Mi chiamo Andrea Francavilla, ho 18 anni e frequento l'ITIS E. Majorana di Grugliasco.",
+                        path: "Il Mio Percorso",
+                        pathDesc: "Ho scelto l'indirizzo informatico perché sono sempre stato appassionato di tecnologia...",
+                        interests: "Interessi e Passioni",
+                        interestsDesc: "Oltre all'informatica, ho diverse passioni che coltivo nel tempo libero..."
+                    }
+                }
+            },
+            en: {
+                translation: {
+                    about: {
+                        title: "About Me",
+                        personalInfo: "Personal Information",
+                        personalDesc: "My name is Andrea Francavilla, I'm 18 years old and I attend ITIS E. Majorana in Grugliasco.",
+                        path: "My Path",
+                        pathDesc: "I chose computer science because I've always been passionate about technology...",
+                        interests: "Interests and Hobbies",
+                        interestsDesc: "Besides computer science, I have several passions that I pursue in my free time..."
+                    }
+                }
+            },
+            fr: {
+                translation: {
+                    about: {
+                        title: "Qui Suis-je",
+                        personalInfo: "Informations Personnelles",
+                        personalDesc: "Je m'appelle Andrea Francavilla, j'ai 18 ans et je fréquente l'ITIS E. Majorana à Grugliasco.",
+                        path: "Mon Parcours",
+                        pathDesc: "J'ai choisi l'informatique car j'ai toujours été passionné par la technologie...",
+                        interests: "Intérêts et Passions",
+                        interestsDesc: "Outre l'informatique, j'ai plusieurs passions que je cultive pendant mon temps libre..."
+                    }
+                }
+            },
+            de: {
+                translation: {
+                    about: {
+                        title: "Über Mich",
+                        personalInfo: "Persönliche Informationen",
+                        personalDesc: "Ich heiße Andrea Francavilla, bin 18 Jahre alt und besuche das ITIS E. Majorana in Grugliasco.",
+                        path: "Mein Werdegang",
+                        pathDesc: "Ich habe Informatik gewählt, weil ich schon immer von Technologie begeistert war...",
+                        interests: "Interessen und Hobbys",
+                        interestsDesc: "Neben der Informatik habe ich verschiedene Leidenschaften, die ich in meiner Freizeit pflege..."
+                    }
+                }
+            }
+        };
+
+        // Inizializzazione i18next
+        i18next.init({
+            resources,
+            lng: localStorage.getItem('preferred-language') || 'it',
+            fallbackLng: 'it'
+        }).then(function(t) {
+            updateContent();
+        });
+
+        function updateContent() {
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                element.textContent = i18next.t(key);
+            });
+        }
+
+        // Gestione cambio lingua
+        document.addEventListener('DOMContentLoaded', () => {
+            const languageSelect = document.getElementById('languageSelect');
+            languageSelect.value = i18next.language;
+            
+            languageSelect.addEventListener('change', (e) => {
+                const lang = e.target.value;
+                localStorage.setItem('preferred-language', lang);
+                i18next.changeLanguage(lang).then(() => {
+                    updateContent();
+                    document.documentElement.lang = lang;
+                });
+            });
+        });
+    </script>
+</head>
+
+<body class="min-vh-100 d-flex flex-column">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary border border-1 rounded-bottom sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand text-decoration-none" href="#">Francavilla Andrea</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html" data-translate="nav.home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./Html/chisono.html" data-translate="nav.about">Me</a>
+                    </li>
+                    <li class="nav-item dropdown" id="hobbyDropdown">
+                        <a class="nav-link dropdown-toggle text-decoration-none focus-ring-0" href="./hobby.html">
+                            Hobby
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item text-decoration-none focus-ring-0" href="./moto.html">Moto</a>
+                            </li>
+                            <li><a class="dropdown-item text-decoration-none focus-ring-0"
+                                    href="./musica.html">Musica</a></li>
+                            <li><a class="dropdown-item text-decoration-none focus-ring-0" href="./sport.html">Sport</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-decoration-none focus-ring-0" href="./contact.html">Contatti</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="d-flex align-items-center">
+                <select class="form-select form-select-sm me-2" id="languageSelect">
+                    <option value="it">🇮🇹</option>
+                    <option value="en">🇬🇧</option>
+                    <option value="fr">🇫🇷</option>
+                    <option value="de">🇩🇪</option>
+                </select>
+                <!-- Theme Switcher -->
+                <div class="mode-switch d-flex gap-1">
+                    <button class="btn btn-outline-secondary btn-sm" id="light">
+                        <i class="bi bi-sun-fill"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" id="dark">
+                        <i class="bi bi-moon-fill"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" id="system">
+                        <i class="bi bi-circle-half"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div class="scroll-progress"></div>
+
+    <!-- Main Content -->
+    <main class="flex-grow-1">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-8">
+                    <div class="text-center mb-5">
+                        <img src="../Assets/img/chisono.jpg" alt="Andrea Francavilla" class="rounded mb-4"
+                            style="width: 200px; height: 200px; object-fit: cover; transition: transform .2s; border-radius: 15px;"
+                            onmouseover="this.style.transform='scale(1.05)'"
+                            onmouseout="this.style.transform='scale(1)'">
+                        <h1 class="display-4" data-i18n="about.title">Chi Sono</h1>
+                    </div>
+
+                    <div class="card bg-body-tertiary mb-4">
+                        <div class="card-body">
+                            <h2 class="card-title mb-3" data-i18n="about.personalInfo">Informazioni Personali</h2>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><strong>Nome:</strong> Andrea Francavilla</li>
+                                <li class="mb-2"><strong>Età:</strong> 17 anni</li>
+                                <li class="mb-2"><strong>Residenza:</strong> Carrù, Italia</li>
+                                <li class="mb-2"><strong>Occupazione:</strong> Studente</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card bg-body-tertiary mb-4">
+                        <div class="card-body">
+                            <h2 class="card-title mb-3" data-i18n="about.path">Il Mio Percorso</h2>
+                            <p class="card-text" data-i18n="about.pathDesc">
+                                Sono uno studente dell'IIS Vallauri di Fossano, dove studio informatica. La mia passione
+                                per la tecnologia
+                                e la programmazione mi ha portato a scegliere questo percorso che mi sta fornendo le
+                                basi per il
+                                mio futuro.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card bg-body-tertiary">
+                        <div class="card-body">
+                            <h2 class="card-title mb-3" data-i18n="about.interests">Interessi e Passioni</h2>
+                            <p class="card-text" data-i18n="about.interestsDesc">
+                                Al di fuori dello studio, ho diverse passioni che coltivo nel tempo libero. La moto,
+                                la musica e lo sport sono parte integrante della mia vita quotidiana e contribuiscono
+                                a definire chi sono.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-3 border border-1 rounded-top bg-body-tertiary">
+        <div class="container-fluid px-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="https://www.instagram.com/andrea.francavilla/"
+                        class="link-body-emphasis text-decoration-none" target="_blank">
+                        <i class="bi bi-instagram fs-5"></i>
+                    </a>
+                </div>
+                <div class="text-center flex-grow-1 mx-4">
+                    <p class="mb-0">© Author Francavilla Andrea 2024 All Rights Reserved.</p>
+                </div>
+                <div>
+                    <a href="https://github.com/francavillaandrea" class="link-body-emphasis text-decoration-none"
+                        target="_blank">
+                        <i class="bi bi-github fs-5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

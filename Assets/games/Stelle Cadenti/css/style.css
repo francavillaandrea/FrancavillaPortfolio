@@ -1,0 +1,81 @@
+body {
+  background: radial-gradient(circle at center, #000011 0%, #000000 80%);
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  user-select: none;
+  text-align: center;
+}
+
+h1 {
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ffd700;
+  text-shadow: 0 0 10px #ffd700, 0 0 20px #ffea00;
+  margin-top: 2rem;
+}
+
+p {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: #bbb;
+}
+
+#score, #timer {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 6px #fff, 0 0 12px #00ffff;
+}
+
+#gameContainer {
+  position: relative;
+  width: 280px;  /* 4 colonne * 70px */
+  height: 300px; /* 3 righe * 100px */
+  margin: 0 auto 1rem;
+  background: linear-gradient(to bottom, #001a33, #000a1a);
+  border-radius: 15px;
+  box-shadow: 0 0 30px 5px #0ff;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.star {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle at center, #ffff66 0%, #ffcc00 70%, #ffaa00 100%);
+  border-radius: 50%;
+  box-shadow:
+    0 0 12px 4px #fffebb,
+    0 0 20px 10px #ffea00,
+    0 0 30px 15px #ffb300;
+  cursor: pointer;
+  filter: drop-shadow(0 0 3px #ffdd44);
+  transition: transform 0.2s ease;
+}
+
+.star:hover {
+  transform: scale(1.2) rotate(20deg);
+  box-shadow:
+    0 0 15px 6px #fff,
+    0 0 25px 12px #ffe400,
+    0 0 35px 20px #ffbb00;
+}
+
+.btn-primary {
+  background-color: #0099ff;
+  border-color: #007acc;
+  font-weight: 600;
+  padding: 0.5rem 1.5rem;
+  font-size: 1.1rem;
+  box-shadow: 0 0 8px #00ccff;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: #00ccff;
+  border-color: #0099ff;
+  box-shadow: 0 0 15px 4px #00ffff;
+}

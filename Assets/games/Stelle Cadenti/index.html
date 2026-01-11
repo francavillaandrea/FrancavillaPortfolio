@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Verifica JQuery</title>
+    <!-- Bootstrap CSS -->
+    <link href="./css/bootstrap.min.css" rel="stylesheet" />
+    <link href="./css/style.css" rel="stylesheet" />
+    <!-- Bootstrap JS -->
+    <script src="./js/bootstrap.min.js"></script>
+    <!-- Jquery JS -->
+    <script src="./js/jquery-3.7.1.min.js"></script>
+
+    <!-- Game JS -->
+    <script src="./js/script.js" defer></script>
+</head>
+
+<body class="text-center">
+    <div class="container">
+        <h1 class="mt-5">Cattura le stelle cadenti!</h1>
+        <p>Clicca sulle stelle prima che tocchino il fondo!</p>
+        <div id="score" class="mb-3">Punteggio: 0</div>
+        <div id="timer" class="mb-3">Tempo rimasto: 30s</div>
+        <div class="game-container" id="gameContainer" style="position: relative; height: 300px;"></div>
+        <button class="btn btn-primary mt-3" id="restartBtn">Ricomincia</button>
+    </div>
+</body>
+</html>

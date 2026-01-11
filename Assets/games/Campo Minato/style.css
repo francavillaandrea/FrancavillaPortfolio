@@ -1,0 +1,207 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    font-family: "Comic Relief", system-ui;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container {
+    max-width: 600px;
+    width: 100%;
+}
+
+h1 {
+    color: var(--bs-body-color);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    font-weight: 700;
+}
+
+.lead {
+    color: var(--bs-body-color);
+    opacity: 0.8;
+    margin-bottom: 20px;
+}
+
+.info-box {
+    background-color: var(--bs-tertiary-bg);
+    border: 2px solid var(--bs-border-color);
+    border-radius: 10px;
+    padding: 15px 25px;
+    min-width: 120px;
+}
+
+.info-label {
+    font-size: 0.9rem;
+    color: var(--bs-body-color);
+    opacity: 0.7;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.info-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--bs-body-color);
+}
+
+#game-container {
+    position: relative;
+    background-color: var(--bs-tertiary-bg);
+    border: 2px solid var(--bs-border-color);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    display: inline-block;
+}
+
+#wrapper {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    background-color: var(--bs-secondary-bg);
+    border-radius: 8px;
+    padding: 4px;
+}
+
+button.button {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    border: 2px solid var(--bs-border-color);
+    border-radius: 6px;
+    font-weight: bold;
+    background-color: var(--bs-tertiary-bg);
+    color: var(--bs-body-color);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Courier New', monospace;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+button.button:hover:not(:disabled) {
+    background-color: var(--bs-secondary-bg);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+button.button:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+button.button.revealed {
+    background-color: var(--bs-card-bg);
+    color: var(--bs-body-color);
+    cursor: default;
+    border-color: var(--bs-border-color);
+}
+
+button.button.revealed:hover {
+    transform: none;
+}
+
+button.button.bomb {
+    background-color: #dc3545;
+    color: white;
+}
+
+button.button.bomb img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+/* Colori per i numeri */
+button.button[data-count="1"] { color: #0d6efd; }
+button.button[data-count="2"] { color: #198754; }
+button.button[data-count="3"] { color: #dc3545; }
+button.button[data-count="4"] { color: #0d6efd; }
+button.button[data-count="5"] { color: #dc3545; }
+button.button[data-count="6"] { color: #0dcaf0; }
+button.button[data-count="7"] { color: var(--bs-body-color); }
+button.button[data-count="8"] { color: var(--bs-body-color); opacity: 0.7; }
+
+button.button:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+#game-over {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+#game-over.hidden {
+    display: none;
+}
+
+.game-over-content {
+    text-align: center;
+    color: white;
+    padding: 30px;
+}
+
+.game-over-content h2 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.game-over-content p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    button.button {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    #wrapper {
+        gap: 3px;
+        padding: 3px;
+    }
+}

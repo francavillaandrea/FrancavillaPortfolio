@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<!-- Aggiorna l'attributo lang dinamicamente con JavaScript -->
+<html lang="it" data-bs-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio - Francavilla Andrea</title>
+    <!-- Css -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="./Css/styles.css" />
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      href="./Assets/img/Favicon/favicon.ico"
+      sizes="96x96"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./Assets/img/Favicon/apple-touch-icon.png"
+    />
+    <meta name="apple-mobile-web-app-title" content="Francavilla Andrea" />
+    <link rel="manifest" href="./Assets/img/Favicon/site.webmanifest" />
+
+    <!-- Scripts -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    ></script>
+    <script defer src="./Js/theme.js"></script>
+    <script defer src="./Js/hover.js"></script>
+    <script defer src="./Js/smoothScroll.js"></script>
+
+    <!-- Scripts di traduzione -->
+    <script src="https://cdn.jsdelivr.net/npm/i18next@21.6.10/dist/umd/i18next.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@1.3.0/dist/umd/i18nextHttpBackend.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next-browser-languagedetector@6.1.3/dist/umd/i18nextBrowserLanguageDetector.min.js"></script>
+    <script defer src="./Js/translations.js"></script>
+    <script defer src="./Js/language.js"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Comic+Relief:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <nav
+      class="navbar navbar-expand-lg bg-body-tertiary border border-1 rounded-bottom sticky-top"
+    >
+      <div class="container-fluid">
+        <a class="navbar-brand text-decoration-none" href="#"
+          >Francavilla Andrea</a
+        >
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div
+          class="collapse navbar-collapse justify-content-center"
+          id="navbarNav"
+        >
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                href="./index.html"
+                data-i18n="nav.home"
+                >Home</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="./Html/chisono.html"
+                data-i18n="nav.about"
+                >Chi Sono</a
+              >
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" data-i18n="nav.hobby"
+                >Hobby</a
+              >
+              <ul class="dropdown-menu">
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="./Html/moto.html"
+                    data-translate="hobby.moto"
+                    >Moto</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="./Html/musica.html"
+                    data-translate="hobby.music"
+                    >Musica
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="./Html/sport.html"
+                    data-translate="hobby.sport"
+                    >Sport</a
+                  >
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="./Html/contact.html"
+                data-translate="nav.contacts"
+                >Contatti</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <!-- Language & Theme Switcher -->
+        <div class="d-flex align-items-center">
+          <select class="form-select form-select-sm me-2" id="languageSelect">
+            <option value="it">🇮🇹</option>
+            <option value="en">🇬🇧</option>
+            <option value="fr">🇫🇷</option>
+            <option value="de">🇩🇪</option>
+          </select>
+          <div class="mode-switch d-flex gap-1">
+            <button class="btn btn-outline-secondary btn-sm" id="light">
+              <i class="bi bi-sun-fill"></i>
+            </button>
+            <button class="btn btn-outline-secondary btn-sm" id="dark">
+              <i class="bi bi-moon-fill"></i>
+            </button>
+            <button class="btn btn-outline-secondary btn-sm" id="system">
+              <i class="bi bi-circle-half"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div class="scroll-progress"></div>
+
+    <!-- Main Content -->
+    <main
+      class="flex-grow-1 d-flex align-items-center justify-content-center position-relative overflow-hidden"
+    >
+      <div class="text-center position-relative">
+        <a href="./Html/games.html"
+          ><img
+            src="./Assets/img/Beta.jpg"
+            alt="Sfondo Beta"
+            class="rounded-circle mb-4"
+            style="width: 300px; height: 300px; object-fit: cover"
+        /></a>
+        <h1 class="display-4 mb-3" data-translate="main.title">
+          Andrea Francavilla
+        </h1>
+        <p class="lead floating" data-translate="main.subtitle">
+          --- Portfolio ---
+        </p>
+
+        <!-- Icone spostate qui e nascoste su desktop -->
+        <div class="d-flex d-md-none justify-content-center gap-4 mt-4">
+          <div data-bs-toggle="modal" data-bs-target="#htmlCssModal">
+            <i class="bi bi-code-slash display-5 rotating text-danger"></i>
+          </div>
+          <div data-bs-toggle="modal" data-bs-target="#bashModal">
+            <i class="bi bi-terminal display-5 floating text-warning"></i>
+          </div>
+          <div data-bs-toggle="modal" data-bs-target="#cliModal">
+            <i class="bi bi-file-earmark-code display-5 text-success"></i>
+          </div>
+          <div data-bs-toggle="modal" data-bs-target="#pythonModal">
+            <i class="bi bi-filetype-py display-5 floating text-info"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Icone originali visibili solo su desktop -->
+      <div
+        class="shape top-0 start-0 p-5 d-none d-md-block"
+        data-bs-toggle="modal"
+        data-bs-target="#htmlCssModal"
+      >
+        <i class="bi bi-code-slash display-1 rotating text-danger"></i>
+      </div>
+      <div
+        class="shape top-0 end-0 p-5 d-none d-md-block"
+        data-bs-toggle="modal"
+        data-bs-target="#bashModal"
+      >
+        <i class="bi bi-terminal display-1 floating text-warning"></i>
+      </div>
+      <div
+        class="shape bottom-0 start-0 p-5 d-none d-md-block"
+        data-bs-toggle="modal"
+        data-bs-target="#cliModal"
+      >
+        <i class="bi bi-file-earmark-code display-1 scaling text-success"></i>
+      </div>
+      <div
+        class="shape bottom-0 end-0 p-5 d-none d-md-block"
+        data-bs-toggle="modal"
+        data-bs-target="#pythonModal"
+      >
+        <i class="bi bi-filetype-py display-1 floating text-info"></i>
+      </div>
+    </main>
+
+    <!-- Modals -->
+    <div class="modal fade" id="htmlCssModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5
+              class="modal-title text-danger"
+              data-translate="modals.webDev.title"
+            >
+              Web Developing
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <p class="fw-bold" data-translate="modals.webDev.skillsTitle">
+                  Competenze nel Web Developing:
+                </p>
+                <ul>
+                  <li data-translate="modals.webDev.skills.html">
+                    Conoscenze consolidate di HTML
+                  </li>
+                  <li data-translate="modals.webDev.skills.css">
+                    Conoscenze consolidate di CSS
+                  </li>
+                  <li data-translate="modals.webDev.skills.js">
+                    Una conoscenza minima e non consolidata di JavaScript
+                  </li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <p class="fw-bold" data-translate="modals.webDev.projectsTitle">
+                  Progetti Realizzati:
+                </p>
+                <div class="accordion" id="webExamples">
+                  <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#htmlExample"
+                        data-translate="modals.webDev.projects.portfolio.title"
+                      >
+                        Portfolio Personale
+                      </button>
+                    </h2>
+                    <div
+                      id="htmlExample"
+                      class="accordion-collapse collapse"
+                      data-bs-parent="#webExamples"
+                    >
+                      <div class="accordion-body">
+                        <div class="d-flex flex-column gap-2">
+                          <p
+                            data-translate="modals.webDev.projects.portfolio.description"
+                          >
+                            Sito portfolio personale realizzato con:
+                          </p>
+                          <ul>
+                            <li
+                              data-translate="modals.webDev.projects.portfolio.features.html"
+                            >
+                              HTML5 semantico
+                            </li>
+                            <li
+                              data-translate="modals.webDev.projects.portfolio.features.bootstrap"
+                            >
+                              Bootstrap 5 per il layout
+                            </li>
+                            <li
+                              data-translate="modals.webDev.projects.portfolio.features.animations"
+                            >
+                              Animazioni CSS personalizzate
+                            </li>
+                            <li
+                              data-translate="modals.webDev.projects.portfolio.features.theme"
+                            >
+                              Tema chiaro/scuro dinamico
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#futureWeb"
+                        data-translate="modals.webDev.projects.other.title"
+                      >
+                        Altri Progetti
+                      </button>
+                    </h2>
+                    <div
+                      id="futureWeb"
+                      class="accordion-collapse collapse"
+                      data-bs-parent="#webExamples"
+                    >
+                      <div class="accordion-body">
+                        <div class="d-flex flex-column gap-2">
+                          <p
+                            class="text-muted fst-italic"
+                            data-translate="modals.webDev.projects.other.description"
+                          >
+                            Altri progetti in arrivo prossimamente...
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="bashModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5
+              class="modal-title text-warning"
+              data-translate="modals.bash.title"
+            >
+              Command Line (Bash)
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <p class="fw-bold" data-translate="modals.bash.skillsTitle">
+                  Competenze Bash:
+                </p>
+                <ul>
+                  <li data-translate="modals.bash.skills.files">
+                    Gestione file e directory
+                  </li>
+                  <li data-translate="modals.bash.skills.permissions">
+                    Gestione permessi
+                  </li>
+                  <li data-translate="modals.bash.skills.pipeline">
+                    Pipeline e redirezione
+                  </li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <p class="fw-bold" data-translate="modals.bash.scriptsTitle">
+                  Esempi di Script:
+                </p>
+                <div class="accordion" id="bashExamples">
+                  <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#futureBash"
+                        data-translate="modals.bash.scripts.other.title"
+                      >
+                        Altri Script
+                      </button>
+                    </h2>
+                    <div
+                      id="futureBash"
+                      class="accordion-collapse collapse"
+                      data-bs-parent="#bashExamples"
+                    >
+                      <div class="accordion-body">
+                        <p
+                          class="text-muted fst-italic"
+                          data-translate="modals.bash.scripts.other.description"
+                        >
+                          Altri script in arrivo prossimamente...
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="cliModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5
+              class="modal-title text-success"
+              data-translate="modals.clike.title"
+            >
+              Linguaggi C-like
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <p class="fw-bold" data-translate="modals.clike.skillsTitle">
+                  Competenze:
+                </p>
+                <ul>
+                  <li data-translate="modals.clike.skills.c">
+                    C, nel quale ho una conoscenza abbastanza consolidata
+                  </li>
+                  <li data-translate="modals.clike.skills.cpp">
+                    C++, nel quale ho conoscenze minime dato che è un linguaggio
+                    a cui mi sono approcciato recentemente
+                  </li>
+                  <li data-translate="modals.clike.skills.csharp">
+                    C#, nel quale ho delle buone conoscenze ma poco approfondite
+                  </li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <p class="fw-bold" data-translate="modals.clike.projectsTitle">
+                  Progetti realizzati:
+                </p>
+                <div class="accordion" id="clikeExamples">
+                  <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#futureCliке"
+                        data-translate="modals.clike.projects.other.title"
+                      >
+                        Altri Progetti
+                      </button>
+                    </h2>
+                    <div
+                      id="futureCliке"
+                      class="accordion-collapse collapse"
+                      data-bs-parent="#clikeExamples"
+                    >
+                      <div class="accordion-body">
+                        <p
+                          class="text-muted fst-italic"
+                          data-translate="modals.clike.projects.other.description"
+                        >
+                          Altri progetti in arrivo prossimamente...
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="pythonModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-info">Python</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <p class="fw-bold">Competenze Python:</p>
+                <ul>
+                  <li>Programmazione base</li>
+                  <li>Gestione file</li>
+                  <li>Manipolazione stringhe</li>
+                  <li>Utilizzo della libreria Tkinter</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <p class="fw-bold">Progetti realizzati:</p>
+                <div class="accordion" id="pythonExamples">
+                  <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#todoApp"
+                      >
+                        To-Do List GUI
+                      </button>
+                    </h2>
+                    <div
+                      id="todoApp"
+                      class="accordion-collapse collapse"
+                      data-bs-parent="#pythonExamples"
+                    >
+                      <div class="accordion-body">
+                        <div class="d-flex flex-column gap-2">
+                          <p>
+                            Applicazione con GUI per gestire una lista di
+                            attività:
+                          </p>
+                          <ul>
+                            <li>Aggiunta/rimozione task</li>
+                            <li>Salvataggio su file</li>
+                            <li>Marcatura completamento</li>
+                            <li>Visualizzazione stato</li>
+                          </ul>
+                          <a
+                            href="./Assets/projects/todoList.zip"
+                            download
+                            class="btn btn-info text-white d-flex align-items-center gap-2 w-100 justify-content-center"
+                          >
+                            <i class="bi bi-download"></i>
+                            Scarica Progetto
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#futurePython"
+                      >
+                        Altri Progetti
+                      </button>
+                    </h2>
+                    <div
+                      id="futurePython"
+                      class="accordion-collapse collapse"
+                      data-bs-parent="#pythonExamples"
+                    >
+                      <div class="accordion-body">
+                        <p class="text-muted fst-italic">
+                          Altri progetti Python in arrivo prossimamente...
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-3 border border-1 rounded-top bg-body-tertiary">
+      <div class="container-fluid px-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <a
+              href="https://www.instagram.com/andrea.francavilla/"
+              class="link-body-emphasis text-decoration-none"
+              target="_blank"
+            >
+              <i class="bi bi-instagram fs-5"></i>
+            </a>
+          </div>
+          <div class="text-center flex-grow-1 mx-4">
+            <p class="mb-0">
+              © Author Francavilla Andrea 2024 All Rights Reserved.
+            </p>
+          </div>
+          <div>
+            <a
+              href="https://github.com/francavillaandrea"
+              class="link-body-emphasis text-decoration-none"
+              target="_blank"
+            >
+              <i class="bi bi-github fs-5"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+.game-container {
+    display: grid;
+    grid-template-columns: repeat(4, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.hole {
+    width: 100px;
+    height: 100px;
+    background-color: #6c757d;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+}
+
+.mole {
+    width: 80px;
+    height: 80px;
+    background-color: #ffc107;
+    border-radius: 50%;
+    position: absolute;
+    left: 10px;
+    bottom: -80px;
+    cursor: pointer;
+    transition: bottom 0.3s ease;
+}
