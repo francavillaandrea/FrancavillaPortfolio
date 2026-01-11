@@ -75,7 +75,6 @@
 | **Frontend**           | HTML5 semantico, CSS3, JavaScript (ES6+)             |
 | **Framework CSS**      | Bootstrap 5.3                                        |
 | **Framework JavaScript**| jQuery                                               |
-| **Localizzazione**     | i18next + i18next-http-backend                       |
 | **Email**              | EmailJS                                              |
 | **Design System**      | Bootstrap Icons, Google Fonts (Comic Relief, Inter)  |
 | **Versionamento**      | Git / GitHub                                         |
@@ -103,10 +102,7 @@ Portfolio/
 │   ├── theme.js               # Gestione tema
 │   ├── hover.js               # Effetti hover
 │   ├── smoothScroll.js        # Scroll fluido
-│   ├── i18n.js                # Config i18next
-│   ├── language.js            # Cambio lingua
 │   ├── contact.js             # Form contatti
-│   └── translations.js        # Traduzioni
 ├── assets/
 │   ├── img/                   # Immagini e favicon
 │   ├── games/                 # 25+ giochi web
