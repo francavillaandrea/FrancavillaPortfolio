@@ -1,30 +1,184 @@
-body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 30px;
-    }
-#gioco {
-    display: grid;
-    grid-template-columns: repeat(4, 100px);
-    gap: 15px;
-    justify-content: center;
-    margin: 30px auto;
+:root {
+    --grid-rows: 4;
+    --grid-cols: 4;
+    --card-size: 80px;
+    --gap-size: 15px;
 }
-.carta {
-    width: 100px;
-    height: 100px;
-    border: 2px solid black;
+
+body {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    font-family: "Comic Relief", system-ui;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px 0;
+}
+
+.container {
+    max-width: fit-content;
+    width: 100%;
+}
+
+h1 {
+    color: var(--bs-body-color);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    font-weight: 700;
+    text-align: center;
+}
+
+.controls-area {
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.info-box {
+    background-color: var(--bs-tertiary-bg);
+    border: 2px solid var(--bs-border-color);
+    border-radius: 10px;
+    padding: 10px 15px;
+    min-width: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.info-label {
+    font-size: 0.8rem;
+    color: var(--bs-body-color);
+    opacity: 0.7;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.info-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.input-group .form-select {
+    background-color: var(--bs-card-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+    max-width: 180px;
+}
+
+.input-group .input-group-text {
+    background-color: var(--bs-tertiary-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn-info.text-white {
+    color: #fff !important;
+}
+
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-cols), var(--card-size));
+    grid-template-rows: repeat(var(--grid-rows), var(--card-size));
+    gap: var(--gap-size);
+    background-color: var(--bs-secondary-bg);
+    border-radius: 15px;
+    padding: var(--gap-size);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+}
+
+.card-inner {
+    width: var(--card-size);
+    height: var(--card-size);
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+    cursor: pointer;
+    user-select: none;
+}
+
+.card-inner.flipped {
+    transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
-    cursor: pointer;
-    background-color: lightgray;
-    user-select: none;
-}
-#messaggio {
-    margin-top: 20px;
+    font-size: calc(var(--card-size) * 0.5); /* Responsive font size */
     font-weight: bold;
-    font-size: 18px;
+    border: 2px solid var(--bs-border-color);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.card-front {
+    background-color: var(--bs-primary);
+    color: white;
+}
+
+.card-back {
+    background-color: var(--bs-card-bg);
+    color: var(--bs-body-color);
+    transform: rotateY(180deg);
+}
+
+.card-inner.matched .card-front,
+.card-inner.matched .card-back {
+    border-color: var(--bs-success);
+    box-shadow: 0 0 10px var(--bs-success);
+}
+
+/* Modal Styling */
+.modal-content {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 1rem;
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--bs-border-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    :root {
+        --card-size: 60px;
+        --gap-size: 10px;
+    }
+    h1 {
+        font-size: 2rem;
+    }
+    .info-box {
+        min-width: 100px;
+    }
+    .info-label {
+        font-size: 0.7rem;
+    }
+    .info-value {
+        font-size: 1.2rem;
+    }
 }

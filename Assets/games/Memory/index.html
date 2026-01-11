@@ -1,23 +1,97 @@
 <!DOCTYPE html>
-<html lang="it">
-
+<html lang="it" data-bs-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <title>Memory della Frutta</title>
-  <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-    crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="./css/style.css" />
-  <script src="./js/script.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory della Frutta</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="./css/style.css" />
 </head>
-
 <body>
-  <h1>MEMORY</h1>>
-  <button id="btnStart">Nuova Partita</button>
-  <button id="btnMostraTutte">Mostra tutte</button>
-  <button id="btnNascondiTutte">Nascondi tutte</button>
+    <div class="container py-4">
+        <h1 class="display-4 text-center mb-4">Memory della Frutta</h1>
 
-  <div id="gioco"></div>
+        <div class="controls-area mb-4 d-flex justify-content-center align-items-center gap-3 flex-wrap">
+            <div class="info-box">
+                <div class="info-label">Mosse</div>
+                <div class="info-value" id="moves-count">0</div>
+            </div>
+            <div class="info-box">
+                <div class="info-label">Tempo</div>
+                <div class="info-value" id="timer-display">0:00</div>
+            </div>
+            <div class="input-group" style="width: auto;">
+                <label class="input-group-text" for="difficulty">Difficoltà:</label>
+                <select class="form-select" id="difficulty">
+                    <option value="4x4" selected>Facile (4x4)</option>
+                    <option value="4x5">Medio (4x5)</option>
+                    <option value="5x6">Difficile (5x6)</option>
+                </select>
+            </div>
+            <button id="btnNewGame" class="btn btn-primary btn-lg">
+                <i class="bi bi-play-fill"></i> Nuova Partita
+            </button>
+            <button id="how-to-play-btn" class="btn btn-info btn-lg text-white">
+                <i class="bi bi-question-lg"></i> Come si gioca?
+            </button>
+        </div>
 
-  <p id="messaggio">Premi "Nuova Partita" per iniziare!</p>
+        <div id="game-board" class="d-flex justify-content-center">
+            <!-- Game grid will be generated here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal fade" id="gameResultModal" tabindex="-1" aria-labelledby="gameResultModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="gameResultModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="fs-4" id="result-message"></p>
+                    <p>Hai completato in <span id="final-moves"></span> mosse e <span id="final-time"></span> secondi!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="modal-new-game-btn">Nuova Partita</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="howToPlayModal" tabindex="-1" aria-labelledby="howToPlayModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="howToPlayModalLabel">Come si gioca a Memory</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Obiettivo:</h6>
+                    <p>Trova tutte le coppie di carte uguali nel minor numero di mosse e nel minor tempo possibile.</p>
+                    <h6>Come giocare:</h6>
+                    <ol>
+                        <li>Clicca su due carte per scoprirle.</li>
+                        <li>Se le carte sono uguali, rimarranno scoperte.</li>
+                        <li>Se le carte sono diverse, si rigireranno dopo un breve periodo.</li>
+                        <li>Continua fino a quando tutte le coppie non saranno state trovate.</li>
+                    </ol>
+                    <h6>Difficoltà:</h6>
+                    <p>Scegli una difficoltà per cambiare la dimensione della griglia e il numero di coppie da trovare.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ho capito!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer src="../../js/theme.js"></script>
+    <script defer type="text/javascript" src="./js/script.js"></script>
 </body>
 </html>

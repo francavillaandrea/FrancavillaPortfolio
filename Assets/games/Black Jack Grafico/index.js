@@ -1,234 +1,326 @@
-"use strict";
+document.addEventListener('DOMContentLoaded', () => {
+    // Game state
+    let players = [];
+    let dealer = {
+        name: 'Banco',
+        hand: [],
+        score: 0,
+        element: document.getElementById('dealer-hand'),
+        scoreElement: document.getElementById('dealer-score')
+    };
+    let deck = [];
+    let currentPlayerIndex = -1;
+    let gameInProgress = false;
 
-window.onload = function () {
-    // Riferimenti agli elementi
-    let cards = document.getElementsByClassName("card");
-    let _btnG = cards[0];
-    let _cartaG = cards[1];
-    let _btnB = cards[2];
-    let _cartaB = cards[3];
+    // UI Elements
+    const playersArea = document.getElementById('players-area');
+    const addPlayerBtn = document.getElementById('add-player-btn');
+    const playerNameInput = document.getElementById('player-name-input');
+    const newGameBtn = document.getElementById('btn-new-game');
+    const hitBtn = document.getElementById('btn-hit');
+    const standBtn = document.getElementById('btn-stand');
+    const gameStatus = document.getElementById('game-status');
+    const playerControls = document.getElementById('player-controls');
+    const addPlayerForm = document.getElementById('add-player-form');
+    const howToPlayBtn = document.getElementById('how-to-play-btn');
+    const howToPlayModal = new bootstrap.Modal(document.getElementById('howToPlayModal'));
 
-    let _puntiG = document.getElementsByTagName("span")[0];
-    let _puntiB = document.getElementsByTagName("span")[1];
-    let _assoG = document.getElementsByClassName("msgAsso")[0];
-    let _assoB = document.getElementsByClassName("msgAsso")[1];
-    let _chkG = _assoG.children[0];
-    let _chkB = _assoB.children[0];
+    // --- Event Listeners ---
+    addPlayerBtn.addEventListener('click', addPlayer);
+    newGameBtn.addEventListener('click', startGame);
+    hitBtn.addEventListener('click', () => playerAction('hit'));
+    standBtn.addEventListener('click', () => playerAction('stand'));
+    howToPlayBtn.addEventListener('click', () => howToPlayModal.show());
 
-    let wrapper = document.getElementById("wrapper");
-    let addPlayerButton = document.getElementById("addPlayer");
-    let playerNameInput = document.getElementById("playerName");
 
-    let players = []; // Array per tenere traccia dei giocatori
-    let carteUscite = []; // Carte già pescate
+    function createDeck() {
+        const suits = ['c', 'd', 'h', 's']; // clubs, diamonds, hearts, spades
+        const values = Array.from({ length: 13 }, (_, i) => i + 1);
+        deck = [];
+        for (const suit of suits) {
+            for (const value of values) {
+                deck.push({ suit, value, img: `img/${suit}${value}.gif` });
+            }
+        }
+        // Shuffle deck
+        deck.sort(() => Math.random() - 0.5);
+    }
 
-    // Punteggi
-    let punteggioG = 0;
-    let punteggioB = 0;
+    function addPlayer() {
+        if (players.length >= 4 || gameInProgress) return;
+        const name = playerNameInput.value.trim();
+        if (name && players.every(p => p.name !== name)) {
+            const playerElement = document.createElement('div');
+            playerElement.className = 'player';
+            playerElement.innerHTML = `
+                <h3 class="player-name">${name}</h3>
+                <div class="hand"></div>
+                <p class="score-display">Punteggio: <span>0</span></p>
+                <p class="player-status"></p>
+            `;
+            playersArea.appendChild(playerElement);
 
-    // Inizializzazione
-    inizializzaGioco();
-
-    addPlayerButton.addEventListener("click", function () {
-        let playerName = playerNameInput.value.trim();
-        if (playerName === "") {
-            alert("Inserisci un nome valido!");
+            players.push({
+                name,
+                hand: [],
+                score: 0,
+                isBusted: false,
+                hasStood: false,
+                element: playerElement,
+                handElement: playerElement.querySelector('.hand'),
+                scoreElement: playerElement.querySelector('span'),
+                statusElement: playerElement.querySelector('.player-status')
+            });
+            playerNameInput.value = '';
+        }
+    }
+    
+    function startGame() {
+        if (players.length === 0) {
+            updateGameStatus('Aggiungi almeno un giocatore per iniziare!');
             return;
         }
 
-        // Crea un nuovo giocatore
-        let player = {
-            name: playerName,
-            score: 0,
-            element: createPlayerElement(playerName),
-        };
-        players.push(player);
-
-        // Aggiungi il giocatore al wrapper
-        wrapper.appendChild(player.element);
-
-        // Resetta il campo di input
-        playerNameInput.value = "";
-    });
-
-    function inizializzaGioco() {
-        // Nascondi checkbox assi
-        _assoG.style.visibility = "hidden";
-        _assoB.style.visibility = "hidden";
+        gameInProgress = true;
+        addPlayerForm.style.display = 'none';
+        newGameBtn.style.display = 'none';
         
-        // Imposta opacità iniziale e dorsi delle carte
-        _btnG.style.opacity = 0.5;
-        _btnB.style.opacity = 0.5;
-        _btnG.style.backgroundImage = "url('img/dorso.gif')";
-        _btnB.style.backgroundImage = "url('img/dorso.gif')";
-        _cartaG.style.backgroundImage = "none";
-        _cartaB.style.backgroundImage = "none";
-
-        // Eventi hover
-        _btnG.addEventListener("mouseover", () => _btnG.style.opacity = 1);
-        _btnG.addEventListener("mouseout", () => _btnG.style.opacity = 0.5);
-        _btnB.addEventListener("mouseover", () => _btnB.style.opacity = 1);
-        _btnB.addEventListener("mouseout", () => _btnB.style.opacity = 0.5);
-
-        // Eventi click
-        _btnG.addEventListener("click", giocatoreGioca);
-        _btnB.addEventListener("click", bancoGioca);
+        resetGame();
+        createDeck();
+        dealInitialCards();
     }
 
-    function createPlayerElement(name) {
-        // Crea il contenitore del giocatore
-        let playerDiv = document.createElement("div");
-        playerDiv.className = "col-md-5 text-center";
+    async function dealInitialCards() {
+        // Deal two cards to each player
+        for (let i = 0; i < 2; i++) {
+            for (const player of players) {
+                await dealCard(player);
+            }
+            // Deal one card to dealer
+            if (i === 0) await dealCard(dealer);
+            if (i === 1) await dealCard(dealer, true); // Hidden card
+        }
+        
+        startNextPlayerTurn();
+    }
 
-        // Nome e punteggio
-        playerDiv.innerHTML = `
-            <p class="fs-4">${name}: <span>0</span></p>
-            <div class="d-flex justify-content-center">
-                <div class="card"></div>
-                <div class="card"></div>
-            </div>
-            <div class="msgAsso mt-3">
-                <input type="checkbox" autocomplete="off"> Assegna 11 punti all'asso
-            </div>
-        `;
+    function dealCard(participant, isHidden = false) {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                const card = deck.pop();
+                card.isHidden = isHidden;
+                participant.hand.push(card);
+                renderHands();
+                calculateScores();
+                resolve();
+            }, 300); // Stagger card dealing animation
+        });
+    }
 
-        // Eventi per le carte
-        let cards = playerDiv.querySelectorAll(".card");
-        let scoreSpan = playerDiv.querySelector("span");
-        let assoCheckbox = playerDiv.querySelector("input[type='checkbox']");
+    function renderHands() {
+        // Render player hands
+        for (const player of players) {
+            player.handElement.innerHTML = '';
+            for (const card of player.hand) {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'card';
+                cardEl.style.backgroundImage = `url('${card.img}')`;
+                player.handElement.appendChild(cardEl);
+            }
+        }
 
-        cards.forEach((card, index) => {
-            card.addEventListener("click", function () {
-                let carta = generaCarta();
-                mostraCarta(card, carta);
+        // Render dealer hand
+        dealer.element.innerHTML = '';
+        for (const card of dealer.hand) {
+            const cardEl = document.createElement('div');
+            cardEl.className = `card ${card.isHidden ? 'hidden' : ''}`;
+            if (!card.isHidden) {
+                cardEl.style.backgroundImage = `url('${card.img}')`;
+            }
+            dealer.element.appendChild(cardEl);
+        }
+    }
 
-                let valore = parseInt(carta.substr(1));
-                if (valore > 10) valore = 10;
-
-                if (valore === 1) {
-                    assoCheckbox.style.visibility = "visible";
-                    assoCheckbox.onchange = function () {
-                        if (this.checked) {
-                            player.score += 10;
-                            scoreSpan.textContent = player.score;
-                            assoCheckbox.style.visibility = "hidden";
-                        }
-                    };
+    function calculateScores() {
+        // Calculate player scores
+        for (const player of players) {
+            let score = 0;
+            let aceCount = 0;
+            for (const card of player.hand) {
+                let value = card.value > 10 ? 10 : card.value;
+                if (value === 1) {
+                    aceCount++;
+                    score += 11;
+                } else {
+                    score += value;
                 }
+            }
+            while (score > 21 && aceCount > 0) {
+                score -= 10;
+                aceCount--;
+            }
+            player.score = score;
+            player.scoreElement.textContent = score;
 
-                player.score += valore;
-                scoreSpan.textContent = player.score;
+            if (player.score > 21) {
+                player.isBusted = true;
+                player.statusElement.textContent = 'Sballato!';
+                player.element.classList.add('busted');
+            }
+        }
 
-                if (player.score > 21) {
-                    alert(`${name} ha perso!`);
-                    disablePlayer(playerDiv);
+        // Calculate dealer score (only visible card)
+        let dealerScore = 0;
+        let dealerAceCount = 0;
+        for (const card of dealer.hand) {
+            if (card.isHidden) continue;
+            let value = card.value > 10 ? 10 : card.value;
+            if (value === 1) {
+                dealerAceCount++;
+                dealerScore += 11;
+            } else {
+                dealerScore += value;
+            }
+        }
+        while (dealerScore > 21 && dealerAceCount > 0) {
+            dealerScore -= 10;
+            dealerAceCount--;
+        }
+        dealer.score = dealerScore;
+        dealer.scoreElement.textContent = dealerScore;
+    }
+    
+    function startNextPlayerTurn() {
+        currentPlayerIndex++;
+        if (currentPlayerIndex >= players.length) {
+            dealerTurn();
+            return;
+        }
+
+        const currentPlayer = players[currentPlayerIndex];
+        if (currentPlayer.isBusted) {
+            startNextPlayerTurn();
+            return;
+        }
+        
+        updateGameStatus(`È il turno di ${currentPlayer.name}.`);
+        playerControls.style.display = 'block';
+        players.forEach(p => p.element.classList.remove('active'));
+        currentPlayer.element.classList.add('active');
+    }
+
+    function playerAction(action) {
+        const currentPlayer = players[currentPlayerIndex];
+        if (!currentPlayer || !gameInProgress) return;
+
+        if (action === 'hit') {
+            dealCard(currentPlayer).then(() => {
+                if (currentPlayer.isBusted) {
+                    playerAction('stand'); // Automatically stand if busted
                 }
             });
+        } else if (action === 'stand') {
+            currentPlayer.hasStood = true;
+            startNextPlayerTurn();
+        }
+    }
+
+    async function dealerTurn() {
+        playerControls.style.display = 'none';
+        players.forEach(p => p.element.classList.remove('active'));
+        updateGameStatus('Turno del Banco.');
+
+        // Reveal hidden card
+        const hiddenCard = dealer.hand.find(c => c.isHidden);
+        if (hiddenCard) {
+            hiddenCard.isHidden = false;
+            renderHands();
+        }
+        
+        // Recalculate full score for dealer
+        let fullScore = 0;
+        let aceCount = 0;
+        dealer.hand.forEach(card => {
+            let value = card.value > 10 ? 10 : card.value;
+            if (value === 1) {
+                aceCount++;
+                fullScore += 11;
+            } else {
+                fullScore += value;
+            }
         });
+        while (fullScore > 21 && aceCount > 0) {
+            fullScore -= 10;
+            aceCount--;
+        }
+        dealer.score = fullScore;
+        dealer.scoreElement.textContent = dealer.score;
 
-        return playerDiv;
+        // Dealer hits until 17 or more
+        while (dealer.score < 17) {
+            await dealCard(dealer);
+            // Recalculate score after each hit
+            fullScore = 0;
+            aceCount = 0;
+            dealer.hand.forEach(card => {
+                let value = card.value > 10 ? 10 : card.value;
+                if (value === 1) { aceCount++; fullScore += 11; } else { fullScore += value; }
+            });
+            while (fullScore > 21 && aceCount > 0) { fullScore -= 10; aceCount--; }
+            dealer.score = fullScore;
+            dealer.scoreElement.textContent = dealer.score;
+        }
+
+        endRound();
     }
-
-    function generaCarta() {
-        let carta;
-        do {
-            let numero = Math.floor(Math.random() * 13) + 1;
-            let seme = String.fromCharCode(Math.floor(Math.random() * 4) + 97); // a-d
-            carta = seme + numero;
-        } while (carteUscite.includes(carta));
-
-        carteUscite.push(carta);
-        return carta;
-    }
-
-    function mostraCarta(elemento, carta) {
-        elemento.style.transition = "transform 0.5s";
-        elemento.style.transform = "rotateY(90deg)";
-        setTimeout(() => {
-            elemento.style.backgroundImage = `url('img/${carta}.gif')`;
-            elemento.style.transform = "rotateY(0deg)";
-        }, 250);
-    }
-
-    function giocatoreGioca() {
-        // Nascondi checkbox asso se visibile
-        _assoG.style.visibility = "hidden";
-        _chkG.checked = false;
+    
+    function endRound() {
+        const dealerScore = dealer.score;
+        const dealerBusted = dealerScore > 21;
         
-        let carta = generaCarta();
-        mostraCarta(_cartaG, carta);
-        
-        let valore = parseInt(carta.substr(1));
-        if (valore > 10) valore = 10;
-        
-        if (valore === 1) {
-            _assoG.style.visibility = "visible";
-            _chkG.onchange = function() {
-                if (this.checked) {
-                    punteggioG += 10;
-                    _puntiG.textContent = punteggioG;
-                    _assoG.style.visibility = "hidden";
-                }
-            };
+        for (const player of players) {
+            if (player.isBusted) {
+                player.statusElement.textContent = 'Hai Perso!';
+            } else if (dealerBusted || player.score > dealerScore) {
+                player.statusElement.textContent = 'Hai Vinto!';
+            } else if (player.score < dealerScore) {
+                player.statusElement.textContent = 'Hai Perso!';
+            } else {
+                player.statusElement.textContent = 'Pareggio!';
+            }
         }
         
-        punteggioG += valore;
-        _puntiG.textContent = punteggioG;
-        
-        if (punteggioG > 21) {
-            alert("Il giocatore perde!");
-            rimuoviEventi();
-        }
+        updateGameStatus(`Fine del round! Premi "Inizia Partita" per giocare ancora.`);
+        newGameBtn.style.display = 'block';
+        gameInProgress = false;
+        addPlayerForm.style.display = 'block';
     }
-
-    function bancoGioca() {
-        // Rimuovi eventi del giocatore
-        _btnG.removeEventListener("click", giocatoreGioca);
-        
-        // Nascondi checkbox asso se visibile
-        _assoB.style.visibility = "hidden";
-        _chkB.checked = false;
-        
-        let carta = generaCarta();
-        mostraCarta(_cartaB, carta);
-        
-        let valore = parseInt(carta.substr(1));
-        if (valore > 10) valore = 10;
-        
-        if (valore === 1 && (punteggioB + 11) <= 21) {
-            punteggioB += 10;
-        }
-        
-        punteggioB += valore;
-        _puntiB.textContent = punteggioB;
-        
-        if (punteggioB > 21) {
-            alert("Il giocatore vince!");
-            rimuoviEventi();
-        } else if (punteggioB > punteggioG) {
-            alert("Vince il banco!");
-            rimuoviEventi();
-        } else if (punteggioB === punteggioG) {
-            alert("Parità!");
-            rimuoviEventi();
-        }
-    }
-
-    function disablePlayer(playerDiv) {
-        let cards = playerDiv.querySelectorAll(".card");
-        cards.forEach((card) => {
-            card.style.pointerEvents = "none";
+    
+    function resetGame() {
+        players.forEach(p => {
+            p.hand = [];
+            p.score = 0;
+            p.isBusted = false;
+            p.hasStood = false;
+            p.element.classList.remove('busted', 'active');
+            p.statusElement.textContent = '';
+            p.handElement.innerHTML = '';
+            p.scoreElement.textContent = '0';
         });
+        dealer.hand = [];
+        dealer.score = 0;
+        dealer.element.innerHTML = '';
+        dealer.scoreElement.textContent = '0';
+        
+        currentPlayerIndex = -1;
+        playerControls.style.display = 'none';
+        updateGameStatus('Aggiungi giocatori e premi Inizia Partita.');
     }
 
-    function rimuoviEventi() {
-        _btnG.removeEventListener("click", giocatoreGioca);
-        _btnB.removeEventListener("click", bancoGioca);
-        let rimuoviHover = (btn) => {
-            btn.removeEventListener("mouseover", () => btn.style.opacity = 1);
-            btn.removeEventListener("mouseout", () => btn.style.opacity = 0.5);
-        };
-        rimuoviHover(_btnG);
-        rimuoviHover(_btnB);
+    function updateGameStatus(message) {
+        gameStatus.textContent = message;
     }
-};
+
+    // Initial setup
+    resetGame();
+});

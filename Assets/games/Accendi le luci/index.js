@@ -14,7 +14,7 @@ let grid = [];
 let moves = 0;
 let gameWon = false;
 
-sizeSelect.addEventListener("change", function() {
+sizeSelect.addEventListener("change", function () {
     dim = parseInt(this.value);
     init();
 });
@@ -22,128 +22,101 @@ sizeSelect.addEventListener("change", function() {
 init();
 
 function init() {
-    grid = [];
-    moves = 0;
     gameWon = false;
+    moves = 0;
     movesElement.textContent = "0";
     gameOverElement.classList.add("hidden");
-    
     wrapper.style.gridTemplateColumns = `repeat(${dim}, 1fr)`;
     wrapper.innerHTML = "";
-    
-    // Inizializza la griglia con stato casuale
+
+    // Initialize grid data and DOM elements
+    grid = Array(dim).fill(null).map(() => Array(dim).fill(false));
     for (let i = 0; i < dim; i++) {
-        grid[i] = [];
         for (let j = 0; j < dim; j++) {
             const div = document.createElement("div");
             div.classList.add("pedina");
-            div.classList.add(Math.random() > 0.5 ? GIALLO : GRIGIO);
             div.id = `div-${i}-${j}`;
-            grid[i][j] = div.classList.contains(GIALLO);
-            div.addEventListener("click", () => cambiaColore(i, j));
+            div.addEventListener("click", () => handleCellClick(i, j));
             wrapper.appendChild(div);
         }
     }
-    
-    // Mescola il puzzle con mosse casuali
+
+    // Shuffle the puzzle to ensure it's solvable
     shufflePuzzle();
+    render();
 }
 
 function shufflePuzzle() {
-    // Esegue mosse casuali per mescolare
-    for (let i = 0; i < dim * dim * 2; i++) {
+    // Perform random moves to shuffle the board
+    for (let i = 0; i < dim * dim; i++) {
         const randomRow = Math.floor(Math.random() * dim);
         const randomCol = Math.floor(Math.random() * dim);
-        toggleCell(randomRow, randomCol, false);
+        toggleLights(randomRow, randomCol);
     }
-    
-    // Reset mosse dopo il mescolamento
-    moves = 0;
-    movesElement.textContent = "0";
+    // Ensure the puzzle is not already solved
+    if (grid.every(row => row.every(cell => cell))) {
+        toggleLights(0, 0); // Make at least one move if solved
+    }
 }
 
-function cambiaColore(row, col) {
+function handleCellClick(row, col) {
     if (gameWon) return;
-    
-    toggleCell(row, col, true);
-    moves++;
-    movesElement.textContent = moves;
-    
-    checkWin();
-}
 
-function toggleCell(row, col, animate) {
     const div = document.getElementById(`div-${row}-${col}`);
-    
-    if (animate) {
+    if (div) {
         div.classList.add("clicked");
         setTimeout(() => div.classList.remove("clicked"), 300);
     }
     
-    // Toggle la cella corrente
-    accendiSpegni(div, row, col);
-    
-    // Toggle celle adiacenti
-    if (row > 0) {
-        const divUp = document.getElementById(`div-${row-1}-${col}`);
-        accendiSpegni(divUp, row-1, col);
-    }
-    if (row < dim - 1) {
-        const divDown = document.getElementById(`div-${row+1}-${col}`);
-        accendiSpegni(divDown, row+1, col);
-    }
-    if (col > 0) {
-        const divLeft = document.getElementById(`div-${row}-${col-1}`);
-        accendiSpegni(divLeft, row, col-1);
-    }
-    if (col < dim - 1) {
-        const divRight = document.getElementById(`div-${row}-${col+1}`);
-        accendiSpegni(divRight, row, col+1);
-    }
+    toggleLights(row, col);
+    moves++;
+    movesElement.textContent = moves;
+
+    render();
+    checkWin();
 }
 
-function accendiSpegni(div, row, col) {
-    if (div.classList.contains(GRIGIO)) {
-        div.classList.remove(GRIGIO);
-        div.classList.add(GIALLO);
-        grid[row][col] = true;
-    } else {
-        div.classList.remove(GIALLO);
-        div.classList.add(GRIGIO);
-        grid[row][col] = false;
+function toggleLights(row, col) {
+    const cellsToToggle = [
+        { r: row, c: col },
+        { r: row - 1, c: col },
+        { r: row + 1, c: col },
+        { r: row, c: col - 1 },
+        { r: row, c: col + 1 },
+    ];
+
+    cellsToToggle.forEach(({ r, c }) => {
+        if (r >= 0 && r < dim && c >= 0 && c < dim) {
+            grid[r][c] = !grid[r][c];
+        }
+    });
+}
+
+function render() {
+    for (let i = 0; i < dim; i++) {
+        for (let j = 0; j < dim; j++) {
+            const div = document.getElementById(`div-${i}-${j}`);
+            if (div) {
+                div.classList.toggle(GIALLO, grid[i][j]);
+                div.classList.toggle(GRIGIO, !grid[i][j]);
+            }
+        }
     }
 }
 
 function checkWin() {
-    for (let i = 0; i < dim; i++) {
-        for (let j = 0; j < dim; j++) {
-            if (!grid[i][j]) {
-                return;
-            }
-        }
-    }
-    
-    // Vittoria!
-    gameWon = true;
-    winMessageElement.textContent = `Hai acceso tutte le luci in ${moves} mosse!`;
-    gameOverElement.classList.remove("hidden");
-    
-    // Disabilita i click
-    for (let i = 0; i < dim; i++) {
-        for (let j = 0; j < dim; j++) {
-            const div = document.getElementById(`div-${i}-${j}`);
-            div.style.pointerEvents = "none";
-        }
+    if (grid.every(row => row.every(cell => cell))) {
+        gameWon = true;
+        winMessageElement.textContent = `Hai acceso tutte le luci in ${moves} mosse!`;
+        gameOverElement.classList.remove("hidden");
     }
 }
 
 function resetGame() {
     init();
-    // Riabilita i click
-    for (let i = 0; i < dim; i++) {
-        for (let j = 0; j < dim; j++) {
-            const div = document.getElementById(`div-${i}-${j}`);
-            div.style.pointerEvents = "auto";
-        }
-    }
+}
+
+function showHowToPlay() {
+    const howToPlayModal = new bootstrap.Modal(document.getElementById('howToPlayModal'));
+    howToPlayModal.show();
 }

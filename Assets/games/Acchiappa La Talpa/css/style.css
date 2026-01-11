@@ -1,29 +1,150 @@
+body {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    font-family: "Comic Relief", system-ui;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container {
+    max-width: 700px;
+}
+
+h1 {
+    color: var(--bs-body-color);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    font-weight: 700;
+}
+
+p {
+    color: var(--bs-body-color);
+    opacity: 0.8;
+}
+
+.info-box {
+    background-color: var(--bs-tertiary-bg);
+    border: 2px solid var(--bs-border-color);
+    border-radius: 10px;
+    padding: 10px 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+}
+
+.info-label {
+    font-size: 0.9rem;
+    color: var(--bs-body-color);
+    opacity: 0.7;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.info-value {
+    font-size: 1.5rem;
+    color: var(--bs-body-color);
+}
+
+.input-group .form-select {
+    background-color: var(--bs-card-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+}
+
+.input-group .input-group-text {
+    background-color: var(--bs-tertiary-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+}
+
 .game-container {
     display: grid;
-    grid-template-columns: repeat(4, 100px);
-    grid-template-rows: repeat(3, 100px);
-    gap: 15px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 20px;
     justify-content: center;
-    margin-top: 30px;
+    margin: 30px auto;
+    max-width: 600px; /* Limit grid width */
+    background-color: var(--bs-secondary-bg);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
 .hole {
-    width: 100px;
-    height: 100px;
+    width: 100%;
+    aspect-ratio: 1; /* Make holes square */
     background-color: #6c757d;
     border-radius: 50%;
     position: relative;
     overflow: hidden;
+    box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.3), 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .mole {
-    width: 80px;
-    height: 80px;
-    background-color: #ffc107;
+    width: 80%;
+    height: 80%;
+    background-color: #ffc107; /* Default mole color */
     border-radius: 50%;
     position: absolute;
-    left: 10px;
-    bottom: -80px;
+    left: 10%;
+    bottom: -80%; /* Start hidden */
     cursor: pointer;
-    transition: bottom 0.3s ease;
+    transition: bottom 0.3s ease-out, transform 0.1s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem; /* For emoji mole */
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+
+.mole.active {
+    bottom: 10%; /* Visible position */
+}
+
+.mole:active {
+    transform: scale(0.9);
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn-info.text-white {
+    color: #fff !important; /* Ensure white text for the info button */
+}
+
+/* Modal Styling */
+.modal-content {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 1rem;
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--bs-border-color);
+}
+
+.modal-body kbd {
+    display: inline-block;
+    padding: 0.2em 0.4em;
+    font-size: 0.875em;
+    font-weight: 700;
+    line-height: 1;
+    color: #212529;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
 }

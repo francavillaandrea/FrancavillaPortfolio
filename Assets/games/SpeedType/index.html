@@ -30,9 +30,9 @@
                                 <div class="stat-unit">s</div>
                             </div>
                             <div class="stat-box">
-                                <div class="stat-label">Parole</div>
-                                <div class="stat-value" id="score">0</div>
-                                <div class="stat-unit">WPM</div>
+                                <div class="stat-label">WPM</div>
+                                <div class="stat-value" id="wpm">0</div>
+                                <div class="stat-unit">parole/min</div>
                             </div>
                             <div class="stat-box">
                                 <div class="stat-label">Precisione</div>
@@ -41,8 +41,8 @@
                             </div>
                             <div class="stat-box">
                                 <div class="stat-label">Record</div>
-                                <div class="stat-value" id="best-score">0</div>
-                                <div class="stat-unit">WPM</div>
+                                <div class="stat-value" id="best-wpm">0</div>
+                                <div class="stat-unit">parole/min</div>
                             </div>
                         </div>
 
@@ -64,7 +64,6 @@
                         <!-- Display parola -->
                         <div class="word-display-container mb-4">
                             <div id="wordDisplay" class="word-display">Clicca "Inizia" per iniziare!</div>
-                            <div id="nextWord" class="next-word"></div>
                         </div>
 
                         <!-- Input -->
@@ -79,8 +78,11 @@
                             <button id="startBtn" class="btn btn-success btn-lg w-100 mb-3">
                                 <i class="bi bi-play-fill"></i> Inizia il Gioco
                             </button>
-                            <button id="resetBtn" class="btn btn-secondary btn-lg w-100" style="display:none;">
+                            <button id="resetBtn" class="btn btn-secondary btn-lg w-100 mb-3" style="display:none;">
                                 <i class="bi bi-arrow-clockwise"></i> Nuova Partita
+                            </button>
+                            <button id="how-to-play-btn" class="btn btn-info btn-lg w-100 text-white">
+                                <i class="bi bi-question-lg"></i> Come si gioca?
                             </button>
                         </div>
 
@@ -111,5 +113,42 @@
             </div>
         </div>
     </div>
+
+    <!-- How to Play Modal -->
+    <div class="modal fade" id="howToPlayModal" tabindex="-1" aria-labelledby="howToPlayModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="howToPlayModalLabel">Come si gioca a SpeedType</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Obiettivo:</h6>
+                    <p>Digita le parole mostrate il più velocemente e correttamente possibile per ottenere un punteggio alto in Parole al Minuto (WPM).</p>
+                    <h6>Come giocare:</h6>
+                    <ol>
+                        <li>Seleziona il livello di difficoltà (Facile, Medio, Difficile).</li>
+                        <li>Clicca "Inizia il Gioco" per iniziare il timer.</li>
+                        <li>Digita la parola che appare nel display.</li>
+                        <li>Quando hai finito di digitare una parola, premi <b>Spazio</b> o <b>Invio</b> per confermare e passare alla parola successiva.</li>
+                        <li>Il gioco dura 60 secondi.</li>
+                    </ol>
+                    <h6>Punteggio e Precisione:</h6>
+                    <ul>
+                        <li><b>WPM:</b> Il numero di parole corrette digitate al minuto.</li>
+                        <li><b>Precisione:</b> La percentuale di caratteri digitati correttamente.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ho capito!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer src="../../js/theme.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script defer type="text/javascript" src="./js/script.js"></script>
 </body>
 </html>

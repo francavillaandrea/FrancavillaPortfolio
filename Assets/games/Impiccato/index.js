@@ -1,341 +1,379 @@
-"use strict";
+$(document).ready(function() {
+    const Game = {
+        words: {
+            all: [
+                "Italia", "Lavagna", "Pizza", "Lasagne", "Spiedino", "Ananas", "Gnocchi", 
+                "Gorgonzola", "Broccoli", "Mango", "Biscotti", "Giornale", "Carabina", 
+                "Affettati", "Lungimirante", "Affaticato", "Effervescente", "Ambulante", 
+                "Ambulanza", "Ostetricia", "Computer", "Tastiera", "Monitor", "Mouse"
+            ],
+            cibo: ["Pizza", "Lasagne", "Spiedino", "Ananas", "Gnocchi", "Gorgonzola", "Broccoli", "Mango", "Biscotti", "Pasta", "Risotto", "Gelato", "Cioccolato", "Panettone", "Tiramisu", "Cappuccino", "Espresso"],
+            nazioni: ["Italia", "Francia", "Spagna", "Germania", "Inghilterra", "Portogallo", "Grecia", "Olanda", "Belgio", "Svizzera", "Austria", "Polonia"],
+            animali: ["Cane", "Gatto", "Leone", "Tigre", "Elefante", "Giraffa", "Scimmia", "Orso", "Lupo", "Volpe", "Cavallo", "Mucca", "Maiale", "Pecora"],
+            sport: ["Calcio", "Basket", "Tennis", "Nuoto", "Ciclismo", "Atletica", "Pallavolo", "Rugby", "Boxe", "Judo", "Karate", "Sci"],
+            tecnologia: ["Computer", "Tastiera", "Monitor", "Mouse", "Smartphone", "Tablet", "Laptop", "Software", "Hardware", "Internet", "Browser", "Email"]
+        },
+        MAX_TENTATIVI: 6,
+        tentativiRimasti: 6,
+        parolaSegreta: "",
+        parolaMostrata: "",
+        lettereUsate: new Set(),
+        currentCategory: "all",
+        gamesPlayed: 0,
+        gamesWon: 0,
+        gamesLost: 0,
+        
+        // UI Elements
+        _txtParola: null,
+        _txtLettera: null,
+        _btnInvia: null,
+        _imgImpiccato: null,
+        _message: null,
+        _tentativi: null,
+        _lettereUsate: null,
+        _btnReset: null,
+        _categorySelect: null,
+        _hint: null,
+        _progressFill: null,
+        _gamesPlayed: null,
+        _gamesWon: null,
+        _gamesLost: null,
+        _gameOverOverlay: null,
+        _gameOverTitle: null,
+        _gameOverMessage: null,
+        _keyboardButtons: null,
+        _howToPlayModal: null, // Reference for the modal
 
-const parole = {
-    all: [
-        "Italia", "Lavagna", "Pizza", "Lasagne", "Spiedino", "Ananas", "Gnocchi", 
-        "Gorgonzola", "Broccoli", "Mango", "Biscotti", "Giornale", "Carabina", 
-        "Affettati", "Lungimirante", "Affaticato", "Effervescente", "Ambulante", 
-        "Ambulanza", "Ostetricia", "Computer", "Tastiera", "Monitor", "Mouse"
-    ],
-    cibo: [
-        "Pizza", "Lasagne", "Spiedino", "Ananas", "Gnocchi", "Gorgonzola", 
-        "Broccoli", "Mango", "Biscotti", "Pasta", "Risotto", "Gelato", 
-        "Cioccolato", "Panettone", "Tiramisu", "Cappuccino", "Espresso"
-    ],
-    nazioni: [
-        "Italia", "Francia", "Spagna", "Germania", "Inghilterra", "Portogallo",
-        "Grecia", "Olanda", "Belgio", "Svizzera", "Austria", "Polonia"
-    ],
-    animali: [
-        "Cane", "Gatto", "Leone", "Tigre", "Elefante", "Giraffa", "Scimmia",
-        "Orso", "Lupo", "Volpe", "Cavallo", "Mucca", "Maiale", "Pecora"
-    ],
-    sport: [
-        "Calcio", "Basket", "Tennis", "Nuoto", "Ciclismo", "Atletica",
-        "Pallavolo", "Rugby", "Boxe", "Judo", "Karate", "Sci"
-    ],
-    tecnologia: [
-        "Computer", "Tastiera", "Monitor", "Mouse", "Smartphone", "Tablet",
-        "Laptop", "Software", "Hardware", "Internet", "Browser", "Email"
-    ]
-};
+        init: function() {
+            this.loadStats();
+            this.cacheElements();
+            this.setupEventListeners();
+            this.resetGame(); // Initialize game state and UI
+        },
 
-const MAX_TENTATIVI = 6;
-let tentativiRimasti = MAX_TENTATIVI;
-let parolaSegreta = "";
-let parolaMostrata = "";
-let lettereUsate = new Set();
-let currentCategory = "all";
-let gamesPlayed = 0;
-let gamesWon = 0;
-let gamesLost = 0;
+        cacheElements: function() {
+            this._txtParola = document.getElementById("txtParola");
+            this._txtLettera = document.getElementById("txtLettera");
+            this._btnInvia = document.getElementById("btnInvia");
+            this._imgImpiccato = document.getElementById("imgImpiccato");
+            this._message = document.getElementById("message");
+            this._tentativi = document.getElementById("tentativi");
+            this._lettereUsate = document.getElementById("lettereUsate");
+            this._btnReset = document.getElementById("btnReset");
+            this._categorySelect = document.getElementById("category-select");
+            this._hint = document.getElementById("hint");
+            this._progressFill = document.getElementById("progress-fill");
+            this._gamesPlayed = document.getElementById("games-played");
+            this._gamesWon = document.getElementById("games-won");
+            this._gamesLost = document.getElementById("games-lost");
+            this._gameOverOverlay = document.getElementById("game-over-overlay");
+            this._gameOverTitle = document.getElementById("game-over-title");
+            this._gameOverMessage = document.getElementById("game-over-message");
+            this._keyboardButtons = document.querySelectorAll(".key-btn");
+            this._howToPlayModal = new bootstrap.Modal(document.getElementById('howToPlayModal')); // Cache modal instance
+        },
 
-const _txtParola = document.getElementById("txtParola");
-const _txtLettera = document.getElementById("txtLettera");
-const _btnInvia = document.getElementById("btnInvia");
-const _imgImpiccato = document.getElementById("imgImpiccato");
-const _message = document.getElementById("message");
-const _tentativi = document.getElementById("tentativi");
-const _lettereUsate = document.getElementById("lettereUsate");
-const _btnReset = document.getElementById("btnReset");
-const _categorySelect = document.getElementById("category-select");
-const _hint = document.getElementById("hint");
-const _progressFill = document.getElementById("progress-fill");
-const _gamesPlayed = document.getElementById("games-played");
-const _gamesWon = document.getElementById("games-won");
-const _gamesLost = document.getElementById("games-lost");
-const _gameOverOverlay = document.getElementById("game-over-overlay");
-const _gameOverTitle = document.getElementById("game-over-title");
-const _gameOverMessage = document.getElementById("game-over-message");
+        setupEventListeners: function() {
+            this._categorySelect.addEventListener("change", () => {
+                this.currentCategory = this._categorySelect.value;
+                this.resetGame();
+            });
 
-// Carica statistiche
-loadStats();
+            this._txtLettera.addEventListener("keypress", (event) => {
+                if (event.key === "Enter") {
+                    this.elabora();
+                }
+            });
 
-// Inizializza il gioco
-init();
+            this._txtLettera.addEventListener("input", this.converti);
 
-// Event listeners
-_categorySelect.addEventListener("change", function() {
-    currentCategory = this.value;
-    resetGame();
-});
+            this._btnInvia.addEventListener("click", () => this.elabora());
+            this._btnReset.addEventListener("click", () => this.resetGame());
+            document.getElementById('how-to-play-btn').addEventListener('click', () => this.showHowToPlay());
 
-_txtLettera.addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        elabora();
-    }
-});
+            this._keyboardButtons.forEach(btn => {
+                btn.addEventListener("click", () => {
+                    if (!btn.disabled) {
+                        this._txtLettera.value = btn.dataset.letter;
+                        this._txtLettera.focus();
+                        this.elabora();
+                    }
+                });
+            });
+        },
 
-_txtLettera.addEventListener("input", converti);
+        initGame: function() { // Renamed from init to avoid conflict with global init
+            this.tentativiRimasti = this.MAX_TENTATIVI;
+            this.parolaSegreta = "";
+            this.parolaMostrata = "";
+            this.lettereUsate.clear();
+            this.currentCategory = this._categorySelect.value || "all";
+            
+            this.aggiornaParola();
+            this.aggiornaTentativi();
+            this.aggiornaImmagine();
+            this.aggiornaLettereUsate();
+            this.aggiornaTastiera();
+            this.aggiornaProgressBar();
+            this._message.textContent = "";
+            this._gameOverOverlay.classList.add("hidden");
+            this._txtLettera.disabled = false;
+            this._btnInvia.disabled = false;
+            this._txtLettera.value = "";
+            this._txtLettera.focus();
+            this._hint.classList.remove("show");
+            this._hint.textContent = "";
+            document.getElementById("txtParola").classList.remove("revealed");
+            
+            this.selectWord();
+            this.updateCategoryHint();
 
-// Tastiera virtuale
-document.querySelectorAll(".key-btn").forEach(btn => {
-    btn.addEventListener("click", function() {
-        if (!this.disabled) {
-            _txtLettera.value = this.dataset.letter;
-            _txtLettera.focus();
-            elabora();
+            // Show hint after a delay if word is selected and game is ready
+            setTimeout(() => {
+                if (this.tentativiRimasti <= 3 && this.tentativiRimasti > 0 && this.parolaSegreta) {
+                    this.mostraSuggerimento();
+                }
+            }, 2000);
+        },
+
+        selectWord: function() {
+            const categoriaParole = this.words[this.currentCategory];
+            const pos = this.random(0, categoriaParole.length);
+            this.parolaSegreta = categoriaParole[pos].toUpperCase();
+            this.parolaMostrata = "*".repeat(this.parolaSegreta.length);
+        },
+
+        mostraSuggerimento: function() {
+            const suggerimenti = {
+                cibo: "💡 Suggerimento: È qualcosa che si mangia!",
+                nazioni: "💡 Suggerimento: È un paese!",
+                animali: "💡 Suggerimento: È un animale!",
+                sport: "💡 Suggerimento: È uno sport!",
+                tecnologia: "💡 Suggerimento: È qualcosa di tecnologico!",
+                all: "💡 Suggerimento: Pensa bene alle lettere più comuni!"
+            };
+            
+            this._hint.textContent = suggerimenti[this.currentCategory] || suggerimenti.all;
+            this._hint.classList.add("show");
+        },
+
+        aggiornaParola: function() {
+            this._txtParola.textContent = this.parolaMostrata;
+        },
+
+        aggiornaTentativi: function() {
+            this._tentativi.textContent = this.tentativiRimasti;
+        },
+
+        aggiornaProgressBar: function() {
+            const percentuale = (this.tentativiRimasti / this.MAX_TENTATIVI) * 100;
+            this._progressFill.style.width = percentuale + "%";
+        },
+
+        aggiornaImmagine: function() {
+            const immagini = [
+                "img/Vuoto.png",
+                "img/Fig1.png",
+                "img/Fig2.png",
+                "img/Fig3.png",
+                "img/Fig4.png",
+                "img/Fig5.png"
+            ];
+            const indice = this.MAX_TENTATIVI - this.tentativiRimasti;
+            this._imgImpiccato.src = immagini[Math.min(indice, immagini.length - 1)];
+            
+            // Shake animation
+            if (indice > 0) {
+                document.getElementById("hangman-image").classList.add("shake");
+                setTimeout(() => document.getElementById("hangman-image").classList.remove("shake"), 500);
+            }
+        },
+
+        aggiornaLettereUsate: function() {
+            const lettereArray = Array.from(this.lettereUsate).sort();
+            this._lettereUsate.textContent = lettereArray.length > 0 ? lettereArray.join(", ") : "nessuna";
+        },
+
+        aggiornaTastiera: function() {
+            this._keyboardButtons.forEach(btn => {
+                const lettera = btn.dataset.letter;
+                btn.disabled = false;
+                btn.classList.remove("used", "correct", "wrong");
+                
+                if (this.lettereUsate.has(lettera)) {
+                    btn.disabled = true;
+                    if (this.parolaSegreta.includes(lettera)) {
+                        btn.classList.add("used", "correct");
+                    } else {
+                        btn.classList.add("used", "wrong");
+                    }
+                }
+            });
+        },
+
+        elabora: function() {
+            const lettera = this._txtLettera.value.toUpperCase().trim();
+            
+            // Validazione
+            if (!lettera) {
+                this.mostraMessaggio("Inserisci una lettera!", "error");
+                return;
+            }
+            
+            if (lettera.length !== 1 || !/[A-Z]/.test(lettera)) {
+                this.mostraMessaggio("Inserisci una sola lettera valida!", "error");
+                this._txtLettera.value = "";
+                return;
+            }
+            
+            // Controlla se la lettera è già stata usata
+            if (this.lettereUsate.has(lettera)) {
+                this.mostraMessaggio("Hai già provato questa lettera!", "error");
+                this._txtLettera.value = "";
+                return;
+            }
+            
+            // Aggiungi la lettera alle lettere usate
+            this.lettereUsate.add(lettera);
+            this.aggiornaLettereUsate();
+            this.aggiornaTastiera();
+            
+            // Controlla se la lettera è nella parola segreta
+            if (this.parolaSegreta.includes(lettera)) {
+                // La lettera è corretta: aggiorna la parola mostrata
+                let nuovaParolaMostrata = "";
+                let trovata = false;
+                for (let i = 0; i < this.parolaSegreta.length; i++) {
+                    if (this.parolaSegreta[i] === lettera) {
+                        nuovaParolaMostrata += lettera;
+                        trovata = true;
+                    } else {
+                        nuovaParolaMostrata += this.parolaMostrata[i];
+                    }
+                }
+                this.parolaMostrata = nuovaParolaMostrata;
+                thisThis.aggiornaParola();
+                
+                if (trovata) {
+                    this._txtParola.classList.add("revealed");
+                    setTimeout(() => this._txtParola.classList.remove("revealed"), 500);
+                }
+                
+                this.mostraMessaggio(`✓ Ottimo! La lettera "${lettera}" è presente!`, "success");
+                
+                // Controlla se hai vinto
+                if (!this.parolaMostrata.includes("*")) {
+                    this.fineGioco(true);
+                    return;
+                }
+            } else {
+                // La lettera è sbagliata: diminuisci i tentativi
+                this.tentativiRimasti--;
+                this.aggiornaTentativi();
+                this.aggiornaImmagine();
+                this.aggiornaProgressBar();
+                
+                this.mostraMessaggio(`✗ La lettera "${lettera}" non è presente!`, "error");
+                
+                // Controlla se hai perso
+                if (this.tentativiRimasti === 0) {
+                    this.fineGioco(false);
+                    return;
+                }
+            }
+            
+            // Pulisci l'input e rimetti il focus
+            this._txtLettera.value = "";
+            this._txtLettera.focus();
+        },
+
+        mostraMessaggio: function(testo, tipo) {
+            this._message.textContent = testo;
+            this._message.className = tipo;
+            
+            // Rimuovi il messaggio dopo 3 secondi
+            setTimeout(() => {
+                this._message.textContent = "";
+                this._message.className = "";
+            }, 3000);
+        },
+
+        fineGioco: function(vittoria) {
+            this.gamesPlayed++;
+            this._txtLettera.disabled = true;
+            this._btnInvia.disabled = true;
+            
+            // Disabilita tutte le lettere della tastiera
+            this._keyboardButtons.forEach(btn => {
+                btn.disabled = true;
+            });
+            
+            if (vittoria) {
+                this.gamesWon++;
+                this._gameOverTitle.textContent = "🎉 Complimenti!";
+                this._gameOverMessage.textContent = `Hai indovinato la parola: "${this.parolaSegreta}"`;
+                this._txtParola.textContent = this.parolaSegreta;
+                this._txtParola.classList.The.add("revealed");
+            } else {
+                this.gamesLost++;
+                this._gameOverTitle.textContent = "💀 Hai Perso!";
+                this._gameOverMessage.textContent = `La parola era: "${this.parolaSegreta}"`;
+                this._txtParola.textContent = this.parolaSegreta;
+                this._txtParola.classList.add("revealed");
+                this.aggiornaImmagine();
+            }
+            
+            this.updateStats();
+            this.saveStats();
+            this._gameOverOverlay.classList.remove("hidden");
+        },
+
+        resetGame: function() {
+            if (this.isGameStarted) {
+                this.isGameStarted = false;
+                this.canClick = false;
+                $('.color-btn').addClass("disabled");
+            }
+            
+            this.sequenza = [];
+            this.sequenzaUtente = [];
+            this.livello = 0;
+            this.score = 0;
+            
+            $('#level').text(this.livello);
+            $('#score').text(this.score);
+            $('#txtStatus').text("Premi 'Start' per iniziare").removeClass("observing playing error");
+            $('#btnStart').prop("disabled", false).show();
+            $('#btnReset').hide();
+            $('#game-over').addClass("hidden");
+            
+            $('.color-btn').removeClass("active correct wrong disabled");
+            this.initGame(); // Re-initialize specific game logic after reset
+        },
+
+        updateStats: function() {
+            this._gamesPlayed.textContent = this.gamesPlayed;
+            this._gamesWon.textContent = this.gamesWon;
+            this._gamesLost.textContent = this.gamesLost;
+        },
+
+        saveStats: function() {
+            localStorage.setItem("hangman-games-played", this.gamesPlayed.toString());
+            localStorage.setItem("hangman-games-won", this.gamesWon.toString());
+            localStorage.setItem("hangman-games-lost", this.gamesLost.toString());
+        },
+
+        loadStats: function() {
+            this.gamesPlayed = parseInt(localStorage.getItem("hangman-games-played")) || 0;
+            this.gamesWon = parseInt(localStorage.getItem("hangman-games-won")) || 0;
+            this.gamesLost = parseInt(localStorage.getItem("hangman-games-lost")) || 0;
+            this.updateStats();
+        },
+
+        random: function(min, max) {
+            return Math.floor((max - min) * Math.random()) + min;
         }
-    });
-});
-
-function init() {
-    // Seleziona una parola casuale dalla categoria corrente
-    const categoriaParole = parole[currentCategory];
-    const pos = random(0, categoriaParole.length);
-    parolaSegreta = categoriaParole[pos].toUpperCase();
-    
-    // Inizializza la parola mostrata con asterischi
-    parolaMostrata = "*".repeat(parolaSegreta.length);
-    
-    // Reset variabili
-    tentativiRimasti = MAX_TENTATIVI;
-    lettereUsate.clear();
-    
-    // Aggiorna l'interfaccia
-    aggiornaParola();
-    aggiornaTentativi();
-    aggiornaImmagine();
-    aggiornaLettereUsate();
-    aggiornaTastiera();
-    aggiornaProgressBar();
-    _message.textContent = "";
-    _gameOverOverlay.classList.add("hidden");
-    _txtLettera.disabled = false;
-    _btnInvia.disabled = false;
-    _txtLettera.value = "";
-    _txtLettera.focus();
-    _hint.classList.remove("show");
-    _hint.textContent = "";
-    _txtParola.classList.remove("revealed");
-    
-    // Mostra suggerimento dopo alcuni tentativi sbagliati
-    setTimeout(() => {
-        if (tentativiRimasti <= 3 && tentativiRimasti > 0) {
-            mostraSuggerimento();
-        }
-    }, 2000);
-}
-
-function mostraSuggerimento() {
-    const suggerimenti = {
-        cibo: "💡 Suggerimento: È qualcosa che si mangia!",
-        nazioni: "💡 Suggerimento: È un paese!",
-        animali: "💡 Suggerimento: È un animale!",
-        sport: "💡 Suggerimento: È uno sport!",
-        tecnologia: "💡 Suggerimento: È qualcosa di tecnologico!",
-        all: "💡 Suggerimento: Pensa bene alle lettere più comuni!"
     };
-    
-    _hint.textContent = suggerimenti[currentCategory] || suggerimenti.all;
-    _hint.classList.add("show");
-}
 
-function aggiornaParola() {
-    _txtParola.textContent = parolaMostrata;
-}
-
-function aggiornaTentativi() {
-    _tentativi.textContent = tentativiRimasti;
-}
-
-function aggiornaProgressBar() {
-    const percentuale = (tentativiRimasti / MAX_TENTATIVI) * 100;
-    _progressFill.style.width = percentuale + "%";
-}
-
-function aggiornaImmagine() {
-    const immagini = [
-        "img/Vuoto.png",
-        "img/Fig1.png",
-        "img/Fig2.png",
-        "img/Fig3.png",
-        "img/Fig4.png",
-        "img/Fig5.png"
-    ];
-    const indice = MAX_TENTATIVI - tentativiRimasti;
-    _imgImpiccato.src = immagini[Math.min(indice, immagini.length - 1)];
-    
-    if (indice > 0) {
-        document.getElementById("hangman-image").classList.add("shake");
-        setTimeout(() => {
-            document.getElementById("hangman-image").classList.remove("shake");
-        }, 500);
-    }
-}
-
-function aggiornaLettereUsate() {
-    const lettereArray = Array.from(lettereUsate).sort();
-    _lettereUsate.textContent = lettereArray.length > 0 ? lettereArray.join(", ") : "nessuna";
-}
-
-function aggiornaTastiera() {
-    document.querySelectorAll(".key-btn").forEach(btn => {
-        const lettera = btn.dataset.letter;
-        btn.disabled = false;
-        btn.classList.remove("used", "correct", "wrong");
-        
-        if (lettereUsate.has(lettera)) {
-            btn.disabled = true;
-            if (parolaSegreta.includes(lettera)) {
-                btn.classList.add("used", "correct");
-            } else {
-                btn.classList.add("used", "wrong");
-            }
-        }
-    });
-}
-
-function elabora() {
-    const lettera = _txtLettera.value.toUpperCase().trim();
-    
-    // Validazione
-    if (!lettera) {
-        mostraMessaggio("Inserisci una lettera!", "error");
-        return;
-    }
-    
-    if (lettera.length !== 1 || !/[A-Z]/.test(lettera)) {
-        mostraMessaggio("Inserisci una sola lettera valida!", "error");
-        _txtLettera.value = "";
-        return;
-    }
-    
-    // Controlla se la lettera è già stata usata
-    if (lettereUsate.has(lettera)) {
-        mostraMessaggio("Hai già provato questa lettera!", "error");
-        _txtLettera.value = "";
-        return;
-    }
-    
-    // Aggiungi la lettera alle lettere usate
-    lettereUsate.add(lettera);
-    aggiornaLettereUsate();
-    aggiornaTastiera();
-    
-    // Controlla se la lettera è nella parola segreta
-    if (parolaSegreta.includes(lettera)) {
-        // La lettera è corretta: aggiorna la parola mostrata
-        let nuovaParolaMostrata = "";
-        let trovata = false;
-        for (let i = 0; i < parolaSegreta.length; i++) {
-            if (parolaSegreta[i] === lettera) {
-                nuovaParolaMostrata += lettera;
-                trovata = true;
-            } else {
-                nuovaParolaMostrata += parolaMostrata[i];
-            }
-        }
-        parolaMostrata = nuovaParolaMostrata;
-        aggiornaParola();
-        
-        if (trovata) {
-            _txtParola.classList.add("revealed");
-            setTimeout(() => _txtParola.classList.remove("revealed"), 500);
-        }
-        
-        mostraMessaggio(`✓ Ottimo! La lettera "${lettera}" è presente!`, "success");
-        
-        // Controlla se hai vinto
-        if (!parolaMostrata.includes("*")) {
-            fineGioco(true);
-            return;
-        }
-    } else {
-        // La lettera è sbagliata: diminuisci i tentativi
-        tentativiRimasti--;
-        aggiornaTentativi();
-        aggiornaImmagine();
-        aggiornaProgressBar();
-        
-        mostraMessaggio(`✗ La lettera "${lettera}" non è presente!`, "error");
-        
-        // Controlla se hai perso
-        if (tentativiRimasti === 0) {
-            fineGioco(false);
-            return;
-        }
-    }
-    
-    // Pulisci l'input e rimetti il focus
-    _txtLettera.value = "";
-    _txtLettera.focus();
-}
-
-function mostraMessaggio(testo, tipo) {
-    _message.textContent = testo;
-    _message.className = tipo;
-    
-    // Rimuovi il messaggio dopo 3 secondi
-    setTimeout(() => {
-        _message.textContent = "";
-        _message.className = "";
-    }, 3000);
-}
-
-function fineGioco(vittoria) {
-    gamesPlayed++;
-    _txtLettera.disabled = true;
-    _btnInvia.disabled = true;
-    
-    // Disabilita tutte le lettere della tastiera
-    document.querySelectorAll(".key-btn").forEach(btn => {
-        btn.disabled = true;
-    });
-    
-    if (vittoria) {
-        gamesWon++;
-        _gameOverTitle.textContent = "🎉 Complimenti!";
-        _gameOverMessage.textContent = `Hai indovinato la parola: "${parolaSegreta}"`;
-        _txtParola.textContent = parolaSegreta;
-        _txtParola.classList.add("revealed");
-    } else {
-        gamesLost++;
-        _gameOverTitle.textContent = "💀 Hai Perso!";
-        _gameOverMessage.textContent = `La parola era: "${parolaSegreta}"`;
-        _txtParola.textContent = parolaSegreta;
-        _txtParola.classList.add("revealed");
-        aggiornaImmagine();
-    }
-    
-    updateStats();
-    saveStats();
-    _gameOverOverlay.classList.remove("hidden");
-}
-
-function resetGame() {
-    init();
-}
-
-function updateStats() {
-    _gamesPlayed.textContent = gamesPlayed;
-    _gamesWon.textContent = gamesWon;
-    _gamesLost.textContent = gamesLost;
-}
-
-function saveStats() {
-    localStorage.setItem("hangman-games-played", gamesPlayed.toString());
-    localStorage.setItem("hangman-games-won", gamesWon.toString());
-    localStorage.setItem("hangman-games-lost", gamesLost.toString());
-}
-
-function loadStats() {
-    gamesPlayed = parseInt(localStorage.getItem("hangman-games-played")) || 0;
-    gamesWon = parseInt(localStorage.getItem("hangman-games-won")) || 0;
-    gamesLost = parseInt(localStorage.getItem("hangman-games-lost")) || 0;
-    updateStats();
-}
-
-function random(min, max) {
-    return Math.floor((max - min) * Math.random()) + min;
-}
+    Game.init();
+});

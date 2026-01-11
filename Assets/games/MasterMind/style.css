@@ -1,53 +1,283 @@
-*{
-	padding: 0;
-	margin: 0;
+:root {
+    --grid-cols: 4;
+    --grid-rows: 10;
+    --peg-size: 30px;
+    --feedback-peg-size: 15px;
+    --colors: ["red", "yellow", "green", "blue", "cyan", "purple"];
+    --correct-color: #0d6efd; /* Blue */
+    --present-color: #ffc107; /* Yellow */
+    --wrong-color: #6c757d;   /* Gray */
 }
 
-h1{
-	font-size: 55px;
-	font-weight: bold;
-	letter-spacing:-3px;
-	margin: 20px auto;
-	text-align:center;
+body {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    font-family: "Comic Relief", system-ui;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px 0;
 }
 
-table{
-	width:470px; 
-	margin:0 auto;
-	user-select:none;
+.container {
+    max-width: 900px;
+    width: 100%;
 }
 
-table tr{
-	margin: 5px;
-}
- 
-table tr td{
-	text-align:left;
-	font-size:14pt;
-	font-weight:bold;
-	height:32px;
-	line-height:32px;
-	border: 1px solid #CCC;
+h1 {
+    color: var(--bs-body-color);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    font-weight: 700;
+    text-align: center;
 }
 
-td:nth-of-type(1){ width:40px;	text-align:center}
-td:nth-of-type(2){ width:220px;	}    
-td:nth-of-type(3){ width:180px;	}   
-	
-	
-.pedina{
-	width:26px;
-	height:26px;
-	display:inline-block;
-	vertical-align:middle;
-	border-Radius:50%;
-	margin:2px 5px;
+.controls-area {
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
-button{
-	margin-left:10px;
-	padding:0 8px;
-	padding-bottom:2px;
-	border-radius:3px;
+.input-group .form-select {
+    background-color: var(--bs-card-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
 }
 
+.input-group .input-group-text {
+    background-color: var(--bs-tertiary-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Game Area */
+.game-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+#game-board {
+    display: grid;
+    grid-template-rows: auto 1fr; /* Attempt number row + game grid */
+    gap: 10px;
+    background-color: var(--bs-secondary-bg);
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    width: fit-content; /* Fit content instead of fixed width */
+    margin: 20px auto;
+}
+
+.game-row {
+    display: grid;
+    grid-template-columns: 30px repeat(var(--grid-cols), auto); /* Attempt number + pegs */
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.attempt-number {
+    font-weight: bold;
+    color: var(--bs-body-color);
+    opacity: 0.7;
+    text-align: center;
+}
+
+.guess-pegs {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.peg {
+    width: var(--peg-size);
+    height: var(--peg-size);
+    border-radius: 50%;
+    border: 2px solid var(--bs-border-color);
+    background-color: var(--bs-card-bg);
+    transition: background-color 0.2s, transform 0.1s ease-in-out;
+}
+
+.peg:hover:not(.locked) {
+    transform: scale(1.1);
+}
+
+.peg.locked {
+    cursor: default;
+}
+
+.feedback-pegs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 4px;
+    width: calc(var(--feedback-peg-size) * 1.8); /* Adjust size relative to peg */
+    height: calc(var(--feedback-peg-size) * 1.8);
+    margin-left: auto; /* Push to the right */
+}
+
+.feedback-peg {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: var(--bs-secondary-bg);
+    border: 1px solid var(--bs-border-color);
+    transition: background-color 0.2s;
+}
+
+.feedback-peg.correct {
+    background-color: var(--correct-color);
+}
+
+.feedback-peg.present {
+    background-color: var(--present-color);
+}
+
+.feedback-peg.wrong {
+    background-color: var(--wrong-color);
+}
+
+/* Color Palette for user selection */
+.color-palette {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.color-option {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 3px solid var(--bs-border-color);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: inline-block;
+}
+
+.color-option.selected {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 15px var(--bs-primary);
+}
+
+/* Submit Button */
+.submit-btn {
+    padding: 10px 25px;
+    font-size: 1.1rem;
+    background-color: var(--bs-primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.submit-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    opacity: 0.9;
+}
+
+.submit-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Game State Messages */
+#game-feedback {
+    margin-top: 25px;
+}
+
+#game-message {
+    font-size: 1.3rem;
+    font-weight: 600;
+    min-height: 30px;
+    transition: all 0.3s;
+}
+
+#game-message.success {
+    color: var(--bs-success);
+    animation: messagePop 0.5s ease;
+}
+
+#game-message.error {
+    color: var(--bs-danger);
+    animation: messageShake 0.5s ease;
+}
+
+@keyframes messagePop {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes messageShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+/* Modal Styling */
+.modal-content {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 1rem;
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--bs-border-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .game-area {
+        grid-template-columns: 1fr;
+    }
+    .controls-area {
+        flex-direction: column;
+        align-items: center;
+    }
+    .input-group {
+        width: 100% !important;
+    }
+    .game-board {
+        margin: 20px auto;
+    }
+}

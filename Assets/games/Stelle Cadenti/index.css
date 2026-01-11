@@ -1,7 +1,7 @@
 :root {
-    --grid-size: 20; /* Default grid size */
-    --cell-pixel-size: 20px; /* Size of each cell in pixels */
-    --game-board-dimension: calc(var(--grid-size) * var(--cell-pixel-size) + (var(--grid-size) - 1) * 1px); /* + gaps */
+    --game-area-width: 400px;
+    --game-area-height: 450px;
+    --object-size: 35px;
 }
 
 body {
@@ -90,63 +90,62 @@ h1 {
 }
 
 #game-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 20px;
+    background: linear-gradient(to bottom, #001a33, #000a1a);
+    border-radius: 15px;
+    box-shadow: 0 0 30px 5px #00ffff;
+    overflow: hidden;
+    position: relative;
+    width: var(--game-area-width);
+    height: var(--game-area-height);
+    margin: 20px auto;
 }
 
-#wrapper {
-    width: var(--game-board-dimension);
-    height: var(--game-board-dimension);
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(var(--grid-size), 1fr);
-    grid-template-rows: repeat(var(--grid-size), 1fr);
-    gap: 1px;
-    background-color: var(--bs-border-color); /* Grid lines color */
-    border: 2px solid var(--bs-border-color);
-    border-radius: 5px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+#game-area {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
 }
 
-.cell {
-    width: var(--cell-pixel-size);
-    height: var(--cell-pixel-size);
-    background-color: var(--bs-secondary-bg);
-    transition: background-color 0.05s ease-in-out;
-}
-
-.cell.snake {
-    background-color: var(--bs-success);
-    border-radius: 2px;
-}
-
-.cell.snake-head {
-    background-color: var(--bs-success);
-    border-radius: 50%;
-}
-
-.cell.food {
-    background-color: var(--bs-danger);
-    border-radius: 50%;
-    transform: scale(0.8);
-    transition: transform 0.2s ease-out;
-}
-
-/* Mobile Controls */
-#mobile-controls {
-    margin-top: 20px;
-}
-
-.btn-control {
-    width: 60px;
-    height: 60px;
+.falling-object {
+    position: absolute;
+    top: -50px; /* Start above visible area */
+    width: var(--object-size);
+    height: var(--object-size);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: calc(var(--object-size) * 0.8);
+    cursor: pointer;
+    transition: transform 0.1s ease-out;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    user-select: none;
+}
+
+.falling-object.star {
+    background: radial-gradient(circle at center, #ffff66 0%, #ffcc00 70%, #ffaa00 100%);
+    box-shadow: 0 0 12px 4px #fffebb, 0 0 20px 10px #ffea00, 0 0 30px 15px #ffb300;
+    filter: drop-shadow(0 0 3px #ffdd44);
+}
+
+.falling-object.bomb {
+    background-color: var(--bs-danger);
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.5);
+    background-image: url('bomba.png'); /* Assuming bomba.png exists */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.falling-object:hover {
+    transform: scale(1.1);
+}
+
+.falling-object.clicked {
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 0.2s, transform 0.2s;
 }
 
 /* Modal Styling */
@@ -168,18 +167,23 @@ h1 {
 /* Responsive adjustments */
 @media (max-width: 768px) {
     :root {
-        --grid-size: 15; /* Smaller grid for smaller screens */
-        --cell-pixel-size: 18px;
+        --game-area-width: 320px;
+        --game-area-height: 400px;
+        --object-size: 30px;
     }
     h1 {
         font-size: 2rem;
+    }
+    .lead {
+        font-size: 1rem;
     }
 }
 
 @media (max-width: 576px) {
     :root {
-        --grid-size: 15;
-        --cell-pixel-size: 16px;
+        --game-area-width: 280px;
+        --game-area-height: 350px;
+        --object-size: 28px;
     }
     .info-box {
         min-width: 90px;
@@ -195,10 +199,5 @@ h1 {
         padding: 8px 15px;
         font-size: 0.9rem;
         gap: 6px;
-    }
-    .btn-control {
-        width: 50px;
-        height: 50px;
-        font-size: 1.2rem;
     }
 }

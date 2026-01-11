@@ -30,9 +30,14 @@
                     </select>
                 </div>
             </div>
-            <button class="btn btn-primary btn-lg" onclick="resetGame()">
-                <i class="bi bi-arrow-clockwise"></i> Nuova Partita
-            </button>
+            <div class="d-flex justify-content-center gap-2">
+                <button class="btn btn-primary btn-lg" onclick="resetGame()">
+                    <i class="bi bi-arrow-clockwise"></i> Nuova Partita
+                </button>
+                <button class="btn btn-info btn-lg text-white" onclick="showHowToPlay()">
+                    <i class="bi bi-question-lg"></i> Come si gioca?
+                </button>
+            </div>
         </div>
         
         <div id="game-container">
@@ -42,6 +47,34 @@
                     <h2>🎉 Complimenti!</h2>
                     <p id="win-message"></p>
                     <button class="btn btn-success btn-lg" onclick="resetGame()">Gioca Ancora</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How to Play Modal -->
+    <div class="modal fade" id="howToPlayModal" tabindex="-1" aria-labelledby="howToPlayModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="howToPlayModalLabel">Come si gioca a Accendi le Luci</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Tocca le caselle per accendere/spegnere:</h6>
+                    <p>Clicca su qualsiasi casella della griglia. Quando lo fai, la casella cliccata e tutte le caselle direttamente adiacenti (sopra, sotto, a sinistra, a destra) cambieranno stato: se erano spente si accenderanno, se erano accese si spegneranno.</p>
+                    
+                    <h6>L'obiettivo del gioco:</h6>
+                    <p>Il tuo obiettivo è accendere tutte le luci sulla griglia (farle diventare gialle) con il minor numero di mosse possibile.</p>
+                    
+                    <h6>Scegli la dimensione della griglia:</h6>
+                    <p>Puoi selezionare diverse dimensioni della griglia (ad esempio, 3x3, 4x4, 5x5, 6x6) per aumentare o diminuire la difficoltà. Una nuova partita verrà avviata automaticamente con la dimensione scelta.</p>
+                    
+                    <h6>Consiglio:</h6>
+                    <p>Ogni partita è generata in modo casuale ma è sempre risolvibile! Non aver paura di sperimentare le tue mosse.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ho capito!</button>
                 </div>
             </div>
         </div>

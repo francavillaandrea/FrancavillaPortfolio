@@ -1,206 +1,228 @@
-"use strict";
-
-const DIM = 4;
-const wrapper = document.getElementById("wrapper");
-let grid = [];
-let emptyPos = { row: DIM - 1, col: DIM - 1 };
-let moves = 0;
-let startTime = null;
-let timerInterval = null;
-let gameWon = false;
-
-const movesElement = document.getElementById("moves");
-const timeElement = document.getElementById("time");
-const gameOverElement = document.getElementById("game-over");
-const winMessageElement = document.getElementById("win-message");
-
-init();
-
-function init() {
-    grid = [];
-    moves = 0;
-    gameWon = false;
-    emptyPos = { row: DIM - 1, col: DIM - 1 };
-    startTime = null;
-    
-    if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-    }
-    
-    wrapper.innerHTML = "";
-    movesElement.textContent = "0";
-    timeElement.textContent = "0:00";
-    gameOverElement.classList.add("hidden");
-    
-    // Crea array con numeri 1-15
-    let numbers = [];
-    for (let i = 1; i <= 15; i++) {
-        numbers.push(i);
-    }
-    
-    // Mescola i numeri
-    shuffleArray(numbers);
-    
-    // Crea la griglia
-    let index = 0;
-    for (let i = 0; i < DIM; i++) {
-        grid[i] = [];
-        for (let j = 0; j < DIM; j++) {
-            const div = document.createElement("div");
-            div.classList.add("pedina");
-            div.id = `div-${i}-${j}`;
-            
-            if (i === DIM - 1 && j === DIM - 1) {
-                div.classList.add("empty");
-                grid[i][j] = 0;
-            } else {
-                grid[i][j] = numbers[index];
-                div.textContent = numbers[index];
-                index++;
-            }
-            
-            div.addEventListener("click", () => sposta(i, j));
-            wrapper.appendChild(div);
-        }
-    }
-    
-    // Mescola il puzzle con mosse valide
-    shufflePuzzle();
-}
-
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-}
-
-function shufflePuzzle() {
-    // Esegue 200 mosse casuali per mescolare
-    for (let i = 0; i < 200; i++) {
-        const directions = [
-            { row: -1, col: 0 },  // sopra
-            { row: 1, col: 0 },   // sotto
-            { row: 0, col: -1 },  // sinistra
-            { row: 0, col: 1 }    // destra
-        ];
+document.addEventListener('DOMContentLoaded', () => {
+    const Game = {
+        grid: [],
+        emptyPos: { row: 0, col: 0 },
+        moves: 0,
+        startTime: null,
+        timerInterval: null,
+        gameWon: false,
+        gridDim: 4, // Default dimension
         
-        const validMoves = directions.filter(dir => {
-            const newRow = emptyPos.row + dir.row;
-            const newCol = emptyPos.col + dir.col;
-            return newRow >= 0 && newRow < DIM && newCol >= 0 && newCol < DIM;
-        });
-        
-        if (validMoves.length > 0) {
-            const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
-            const newRow = emptyPos.row + randomMove.row;
-            const newCol = emptyPos.col + randomMove.col;
-            swapTiles(newRow, newCol, emptyPos.row, emptyPos.col, false);
-        }
-    }
-}
+        // UI Elements
+        wrapper: document.getElementById('wrapper'),
+        movesElement: document.getElementById('moves'),
+        timeElement: document.getElementById('time'),
+        difficultySelect: document.getElementById('difficulty'),
+        btnNewGame: document.getElementById('btnNewGame'),
+        howToPlayBtn: document.getElementById('how-to-play-btn'),
+        gameResultModal: new bootstrap.Modal(document.getElementById('gameResultModal')),
+        howToPlayModal: new bootstrap.Modal(document.getElementById('howToPlayModal')),
+        gameResultModalLabel: document.getElementById('gameResultModalLabel'),
+        resultMessage: document.getElementById('result-message'),
+        finalMoves: document.getElementById('final-moves'),
+        finalTime: document.getElementById('final-time'),
+        modalNewGameBtn: document.getElementById('modal-new-game-btn'),
 
-function sposta(row, col) {
-    if (gameWon) return;
-    
-    // Controlla se la cella è adiacente allo spazio vuoto
-    const rowDiff = Math.abs(row - emptyPos.row);
-    const colDiff = Math.abs(col - emptyPos.col);
-    
-    if ((rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1)) {
-        if (startTime === null) {
-            startTime = Date.now();
-            startTimer();
-        }
-        
-        swapTiles(row, col, emptyPos.row, emptyPos.col, true);
-        moves++;
-        movesElement.textContent = moves;
-        
-        checkWin();
-    }
-}
+        init: function() {
+            this.setupEventListeners();
+            this.startNewGame();
+        },
 
-function swapTiles(row1, col1, row2, col2, animate) {
-    const div1 = document.getElementById(`div-${row1}-${col1}`);
-    const div2 = document.getElementById(`div-${row2}-${col2}`);
-    
-    // Scambia i valori nella griglia
-    [grid[row1][col1], grid[row2][col2]] = [grid[row2][col2], grid[row1][col1]];
-    
-    // Scambia il contenuto visivo
-    const tempText = div1.textContent;
-    const tempClass = div1.classList.contains("empty");
-    
-    div1.textContent = div2.textContent;
-    div2.textContent = tempText;
-    
-    if (tempClass) {
-        div1.classList.add("empty");
-        div2.classList.remove("empty");
-    } else {
-        div1.classList.remove("empty");
-        if (div2.textContent === "") {
-            div2.classList.add("empty");
-        }
-    }
-    
-    if (animate) {
-        div1.classList.add("moving");
-        setTimeout(() => div1.classList.remove("moving"), 200);
-    }
-    
-    // Aggiorna la posizione vuota
-    if (grid[row1][col1] === 0) {
-        emptyPos = { row: row1, col: col1 };
-    } else {
-        emptyPos = { row: row2, col: col2 };
-    }
-}
-
-function checkWin() {
-    let expected = 1;
-    for (let i = 0; i < DIM; i++) {
-        for (let j = 0; j < DIM; j++) {
-            if (i === DIM - 1 && j === DIM - 1) {
-                if (grid[i][j] !== 0) {
-                    return;
+        setupEventListeners: function() {
+            this.btnNewGame.addEventListener('click', () => this.startNewGame());
+            this.difficultySelect.addEventListener('change', () => this.startNewGame());
+            this.howToPlayBtn.addEventListener('click', () => this.howToPlayModal.show());
+            this.modalNewGameBtn.addEventListener('click', () => {
+                this.gameResultModal.hide();
+                this.startNewGame();
+            });
+            this.wrapper.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tile') && !e.target.classList.contains('empty')) {
+                    const row = parseInt(e.target.dataset.row);
+                    const col = parseInt(e.target.dataset.col);
+                    this.moveTile(row, col);
                 }
-            } else {
-                if (grid[i][j] !== expected) {
-                    return;
-                }
-                expected++;
+            });
+        },
+
+        startNewGame: function() {
+            this.gameWon = false;
+            this.moves = 0;
+            this.startTime = null;
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+            
+            this.gridDim = parseInt(this.difficultySelect.value);
+            
+            this.movesElement.textContent = '0';
+            this.timeElement.textContent = '0:00';
+            this.gameResultModal.hide();
+
+            this.generateSolvablePuzzle();
+            this.renderBoard();
+        },
+
+        generateSolvablePuzzle: function() {
+            let numbers = [];
+            for (let i = 1; i <= (this.gridDim * this.gridDim) - 1; i++) {
+                numbers.push(i);
             }
-        }
-    }
-    
-    // Vittoria!
-    gameWon = true;
-    if (timerInterval) {
-        clearInterval(timerInterval);
-    }
-    
-    const timeSpent = Math.floor((Date.now() - startTime) / 1000);
-    const minutes = Math.floor(timeSpent / 60);
-    const seconds = timeSpent % 60;
-    
-    winMessageElement.textContent = `Hai completato il puzzle in ${moves} mosse e ${minutes}:${seconds.toString().padStart(2, '0')}!`;
-    gameOverElement.classList.remove("hidden");
-}
+            numbers.push(0); // Represent empty space
 
-function startTimer() {
-    timerInterval = setInterval(() => {
-        if (startTime) {
-            const elapsed = Math.floor((Date.now() - startTime) / 1000);
-            const minutes = Math.floor(elapsed / 60);
-            const seconds = elapsed % 60;
-            timeElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        }
-    }, 1000);
-}
+            // Shuffle until solvable
+            do {
+                this.shuffleArray(numbers);
+            } while (!this.isSolvable(numbers));
 
-function resetGame() {
-    init();
-}
+            // Populate grid
+            this.grid = Array(this.gridDim).fill(null).map(() => Array(this.gridDim).fill(0));
+            let numIndex = 0;
+            for (let r = 0; r < this.gridDim; r++) {
+                for (let c = 0; c < this.gridDim; c++) {
+                    this.grid[r][c] = numbers[numIndex++];
+                    if (this.grid[r][c] === 0) {
+                        this.emptyPos = { row: r, col: c };
+                    }
+                }
+            }
+        },
+
+        shuffleArray: function(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        },
+
+        isSolvable: function(numbers) {
+            let inversions = 0;
+            const flatGrid = numbers.filter(num => num !== 0); // Exclude empty tile
+
+            for (let i = 0; i < flatGrid.length - 1; i++) {
+                for (let j = i + 1; j < flatGrid.length; j++) {
+                    if (flatGrid[i] > flatGrid[j]) {
+                        inversions++;
+                    }
+                }
+            }
+
+            const isEvenGrid = (this.gridDim % 2 === 0);
+            const emptyRowFromBottom = this.gridDim - this.emptyPos.row;
+
+            if (isEvenGrid) {
+                // For even grids, solvability depends on (inversions + empty_row_from_bottom) being even
+                return (inversions + emptyRowFromBottom) % 2 === 0;
+            } else {
+                // For odd grids, solvability depends on inversions being even
+                return inversions % 2 === 0;
+            }
+        },
+
+        renderBoard: function() {
+            this.wrapper.innerHTML = '';
+            this.wrapper.style.setProperty('--grid-dim', this.gridDim);
+            // Dynamically adjust tile size based on gridDim for responsiveness (CSS handles this best)
+            // Example: if gridDim is 5, adjust --tile-size in CSS.
+            // Or here:
+            const newTileSize = (this.gridDim === 3) ? '120px' : (this.gridDim === 4) ? '80px' : '60px';
+            this.wrapper.style.setProperty('--tile-size', newTileSize);
+            
+            for (let r = 0; r < this.gridDim; r++) {
+                for (let c = 0; c < this.gridDim; c++) {
+                    const tile = document.createElement('div');
+                    tile.classList.add('tile');
+                    tile.dataset.row = r;
+                    tile.dataset.col = c;
+                    tile.textContent = this.grid[r][c] === 0 ? '' : this.grid[r][c];
+                    if (this.grid[r][c] === 0) {
+                        tile.classList.add('empty');
+                    }
+                    this.wrapper.appendChild(tile);
+                }
+            }
+        },
+
+        moveTile: function(row, col) {
+            if (this.gameWon) return;
+
+            // Check if clicked tile is adjacent to empty space
+            const rowDiff = Math.abs(row - this.emptyPos.row);
+            const colDiff = Math.abs(col - this.emptyPos.col);
+
+            if ((rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1)) {
+                if (this.startTime === null) {
+                    this.startTime = Date.now();
+                    this.startTimer();
+                }
+                
+                this.swapTiles(row, col, this.emptyPos.row, this.emptyPos.col);
+                this.moves++;
+                this.movesElement.textContent = this.moves;
+                
+                this.checkWin();
+            }
+        },
+
+        swapTiles: function(r1, c1, r2, c2) {
+            // Update grid data
+            [this.grid[r1][c1], this.grid[r2][c2]] = [this.grid[r2][c2], this.grid[r1][c1]];
+            
+            // Update UI
+            const tile1El = this.wrapper.querySelector(`[data-row="${r1}"][data-col="${c1}"]`);
+            const tile2El = this.wrapper.querySelector(`[data-row="${r2}"][data-col="${c2}"]`);
+
+            // Apply animation class temporarily
+            tile1El.classList.add('moving');
+            setTimeout(() => {
+                tile1El.classList.remove('moving');
+                this.renderBoard(); // Rerender to reflect new positions and empty tile
+            }, 200);
+
+            // Update empty position
+            this.emptyPos = { row: r1, col: c1 }; // The empty tile moved to (r1, c1)
+        },
+
+        checkWin: function() {
+            let expected = 1;
+            for (let r = 0; r < this.gridDim; r++) {
+                for (let c = 0; c < this.gridDim; c++) {
+                    if (r === this.gridDim - 1 && c === this.gridDim - 1) {
+                        if (this.grid[r][c] !== 0) return; // Empty tile must be last
+                    } else {
+                        if (this.grid[r][c] !== expected) return;
+                        expected++;
+                    }
+                }
+            }
+            this.gameWon = true;
+            this.endGame();
+        },
+
+        startTimer: function() {
+            this.timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                this.timeElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            }, 1000);
+        },
+
+        endGame: function() {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+            
+            const timeSpent = Math.floor((Date.now() - this.startTime) / 1000);
+            const minutes = Math.floor(timeSpent / 60);
+            const seconds = timeSpent % 60;
+            const formattedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            this.gameResultModalLabel.textContent = '🎉 Complimenti!';
+            this.resultMessage.textContent = 'Hai completato il puzzle!';
+            this.finalMoves.textContent = this.moves;
+            this.finalTime.textContent = formattedTime;
+            this.gameResultModal.show();
+        },
+    };
+
+    Game.init();
+});

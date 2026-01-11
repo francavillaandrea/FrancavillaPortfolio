@@ -1,139 +1,155 @@
-"use strict";
+$(document).ready(function () {
+    const GAME_TIME = 30;
+    const ROWS = 3;
+    const COLS = 3;
 
-const COLS = 4;
-const ROWS = 3;
-const GAME_TIME = 30;
+    let score = 0;
+    let timeLeft = GAME_TIME;
+    let gameInterval = null;
+    let timerInterval = null;
+    let gameRunning = false;
+    let activeMoles = new Set();
 
-let points = 0;
-let timeLeft = GAME_TIME;
-let moleInterval = null;
-let timerInterval = null;
-let gameRunning = false;
+    const difficultySettings = {
+        easy: { interval: 1200, duration: 1500 },
+        medium: { interval: 800, duration: 1000 },
+        hard: { interval: 500, duration: 700 }
+    };
 
-let currentMole = null; 
-let hideTimeout = null;
-let moleVisible = false;
+    const container = $("#gameContainer");
+    const scoreBox = $("#score");
+    const timerBox = $("#timer");
+    const restartBtn = $("#restartBtn");
+    const howToPlayBtn = $("#howToPlayBtn");
+    const difficultySelect = $("#difficulty");
 
-const container = $("#gameContainer");
-const scoreBox = $("#score");
-const timerBox = $("#timer");
-const restartBtn = $("#restartBtn");
+    const gameOverModal = new bootstrap.Modal(document.getElementById('gameOverModal'));
+    const howToPlayModal = new bootstrap.Modal(document.getElementById('howToPlayModal'));
+    const finalScoreEl = $("#finalScore");
+    const restartFromModalBtn = $("#restartFromModalBtn");
 
-init();
-
-function init() {
-    generateGrid();
-    updateUI();
-    startGame();
-
-    restartBtn.on("click", restartGame);
-}
-
-function generateGrid() {
-    container.empty();
-
-    let id = 0;
-    for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-            $("<div> <div/>")
-                .addClass("hole")
-                .attr("id", `hole${id++}`)
-                .appendTo(container);
-        }
-    }
-}
-
-function startGame() {
-    gameRunning = true;
-    moleVisible = false;
-
-    moleInterval = setInterval(showRandomMole, 800);
-    timerInterval = setInterval(updateTimer, 1000);
-}
-
-function showRandomMole() {
-    if (!gameRunning || moleVisible) return;
-
-    moleVisible = true;
-
-    if (currentMole) {
-        currentMole.remove();
-        currentMole = null;
-    }
-    clearTimeout(hideTimeout);
-
-    const holes = $(".hole").toArray();
-    const randomIndex = Math.floor(Math.random() * holes.length);
-    const randomHole = $(holes[randomIndex]);
-
-    currentMole = $("<div><div/>").addClass("mole");
-    randomHole.append(currentMole);
-
-    currentMole.animate({ bottom: "10px" }, 300);
-
-    currentMole.on("click", function () {
-        if (!gameRunning) return;
-
-        points++;
+    function init() {
+        generateGrid();
         updateUI();
 
-        clearTimeout(hideTimeout);
-
-        $(this).stop().animate({ bottom: "-80px" }, 300, () => {
-            $(this).remove();
-            currentMole = null;
-            moleVisible = false;
+        restartBtn.on("click", toggleGame);
+        howToPlayBtn.on("click", () => howToPlayModal.show());
+        restartFromModalBtn.on("click", () => {
+            gameOverModal.hide();
+            resetGame();
+            startGame();
         });
-    });
+        difficultySelect.on("change", resetGame);
+    }
 
-    hideTimeout = setTimeout(() => {
-        if (!currentMole) return;
+    function generateGrid() {
+        container.empty();
+        for (let i = 0; i < ROWS * COLS; i++) {
+            const hole = $("<div>").addClass("hole").attr("data-id", i);
+            container.append(hole);
+        }
+    }
 
-        currentMole.animate({ bottom: "-80px" }, 300, () => {
-            currentMole.remove();
-            currentMole = null;
-            moleVisible = false;
+    function toggleGame() {
+        if (gameRunning) {
+            endGame();
+        } else {
+            startGame();
+        }
+    }
+    
+    function startGame() {
+        if (gameRunning) return;
+        
+        gameRunning = true;
+        resetGame();
+        
+        const difficulty = difficultySelect.val();
+        const settings = difficultySettings[difficulty];
+        
+        gameInterval = setInterval(showRandomMole, settings.interval);
+        timerInterval = setInterval(updateTimer, 1000);
+        
+        restartBtn.text("Ferma Partita").removeClass("btn-primary").addClass("btn-danger");
+        difficultySelect.prop("disabled", true);
+    }
+
+    function showRandomMole() {
+        if (!gameRunning) return;
+
+        const holes = $(".hole").toArray();
+        const availableHoles = holes.filter(hole => !activeMoles.has($(hole).data('id')));
+
+        if (availableHoles.length === 0) return;
+
+        const randomIndex = Math.floor(Math.random() * availableHoles.length);
+        const randomHole = $(availableHoles[randomIndex]);
+        const moleId = randomHole.data('id');
+        
+        activeMoles.add(moleId);
+
+        const mole = $("<div>").addClass("mole").html('&#128045;'); // Emoji for mole
+        randomHole.append(mole);
+
+        mole.addClass("active");
+
+        mole.on("click", function () {
+            if (!gameRunning) return;
+
+            score++;
+            updateUI();
+
+            $(this).stop().removeClass("active").remove();
+            activeMoles.delete(moleId);
         });
-    }, Math.random() * 1000 + 1000);
-}
 
-function updateTimer() {
-    timeLeft--;
-    updateUI();
+        const difficulty = difficultySelect.val();
+        const settings = difficultySettings[difficulty];
+        
+        setTimeout(() => {
+            if (mole.parent().length > 0) { // Check if mole still exists
+                mole.removeClass("active").remove();
+                activeMoles.delete(moleId);
+            }
+        }, settings.duration);
+    }
 
-    if (timeLeft <= 0) endGame();
-}
+    function updateTimer() {
+        timeLeft--;
+        updateUI();
 
-function endGame() {
-    gameRunning = false;
+        if (timeLeft <= 0) {
+            endGame();
+        }
+    }
 
-    clearInterval(moleInterval);
-    clearInterval(timerInterval);
-    clearTimeout(hideTimeout);
+    function endGame() {
+        if (!gameRunning) return;
 
-    if (currentMole) currentMole.remove();
-    currentMole = null;
-    moleVisible = false;
+        gameRunning = false;
+        clearInterval(gameInterval);
+        clearInterval(timerInterval);
 
-    alert(`Tempo scaduto!\nPunteggio finale: ${points}`);
-}
+        $(".mole").remove();
+        activeMoles.clear();
 
-function restartGame() {
-    clearInterval(moleInterval);
-    clearInterval(timerInterval);
-    clearTimeout(hideTimeout);
+        finalScoreEl.text(score);
+        gameOverModal.show();
+        
+        restartBtn.text("Inizia").removeClass("btn-danger").addClass("btn-primary");
+        difficultySelect.prop("disabled", false);
+    }
+    
+    function resetGame() {
+        score = 0;
+        timeLeft = GAME_TIME;
+        updateUI();
+    }
+    
+    function updateUI() {
+        scoreBox.text(score);
+        timerBox.text(`${timeLeft}s`);
+    }
 
-    points = 0;
-    timeLeft = GAME_TIME;
-    moleVisible = false;
-    currentMole = null;
-
-    generateGrid();
-    updateUI();
-    startGame();
-}
-
-function updateUI() {
-    scoreBox.text(`Punteggio: ${points}`);
-    timerBox.text(`Tempo rimasto: ${timeLeft}s`);
-}
+    init();
+});

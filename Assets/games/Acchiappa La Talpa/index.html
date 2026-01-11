@@ -22,11 +22,92 @@
     <div class="container">
         <h1 class="mt-5">Acchiappa la Talpa!</h1>
         <p>Clicca sulla talpa prima che scompaia!</p>
-        <div id="score" class="mb-3">Punteggio: 0</div>
-        <div id="timer" class="mb-3">Tempo rimasto: 30s</div>
+        <div class="row justify-content-center align-items-center g-3 mb-3">
+            <div class="col-auto">
+                <div class="info-box">
+                    <span class="info-label">Punteggio:</span>
+                    <span id="score" class="info-value">0</span>
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="info-box">
+                    <span class="info-label">Tempo:</span>
+                    <span id="timer" class="info-value">30s</span>
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="input-group">
+                    <label class="input-group-text" for="difficulty">Difficoltà:</label>
+                    <select class="form-select" id="difficulty">
+                        <option value="easy" selected>Facile</option>
+                        <option value="medium">Medio</option>
+                        <option value="hard">Difficile</option>
+                    </select>
+                </div>
+            </div>
+        </div>
         <div class="game-container" id="gameContainer"></div>
-        <button class="btn btn-primary mt-3" id="restartBtn">Ricomincia</button>
+        <div class="mt-3">
+            <button class="btn btn-primary" id="restartBtn">
+                <i class="bi bi-play-fill"></i> Inizia
+            </button>
+            <button class="btn btn-info text-white" id="howToPlayBtn">
+                <i class="bi bi-question-lg"></i> Come si gioca?
+            </button>
+        </div>
     </div>
+
+    <!-- How to Play Modal -->
+    <div class="modal fade" id="howToPlayModal" tabindex="-1" aria-labelledby="howToPlayModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="howToPlayModalLabel">Come si gioca ad Acchiappa la Talpa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Obiettivo:</h6>
+                    <p>Colpisci più talpe che puoi prima che scada il tempo!</p>
+                    <h6>Come giocare:</h6>
+                    <ul>
+                        <li>Seleziona un livello di difficoltà e premi "Inizia" per avviare il gioco.</li>
+                        <li>Le talpe appariranno casualmente dai buchi.</li>
+                        <li>Clicca su una talpa per colpirla e guadagnare un punto.</li>
+                    </ul>
+                    <h6>Livelli di difficoltà:</h6>
+                    <ul>
+                        <li><b>Facile:</b> Le talpe sono più lente e compaiono meno frequentemente.</li>
+                        <li><b>Medio:</b> Le talpe sono più veloci.</li>
+                        <li><b>Difficile:</b> Le talpe sono molto veloci e compaiono più spesso.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ho capito!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div class="modal fade" id="gameOverModal" tabindex="-1" aria-labelledby="gameOverModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="gameOverModalLabel">Tempo Scaduto!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <h4>Punteggio Finale:</h4>
+                    <p class="display-4" id="finalScore"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="restartFromModalBtn">Gioca Ancora</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>

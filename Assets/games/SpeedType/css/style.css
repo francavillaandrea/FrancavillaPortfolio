@@ -57,6 +57,7 @@ h1 {
     padding: 15px;
     text-align: center;
     transition: all 0.3s;
+    position: relative; /* For progress bar */
 }
 
 .stat-box:hover {
@@ -167,14 +168,6 @@ h1 {
     }
 }
 
-.next-word {
-    font-size: 1.2rem;
-    color: var(--bs-body-color);
-    opacity: 0.4;
-    font-style: italic;
-    margin-top: 10px;
-}
-
 .input-container {
     position: relative;
 }
@@ -231,6 +224,9 @@ h1 {
 
 .controls-container {
     margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .btn {
@@ -300,20 +296,22 @@ h1 {
     color: var(--bs-primary);
 }
 
-/* Progress bar per il tempo */
-.stat-box#time-box {
-    position: relative;
-    overflow: hidden;
+/* Modal Styling */
+.modal-content {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 1rem;
 }
 
-.time-progress {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--bs-success), var(--bs-warning), var(--bs-danger));
-    transition: width 1s linear;
+.modal-header {
+    border-bottom: 1px solid var(--bs-border-color);
 }
+
+.modal-footer {
+    border-top: 1px solid var(--bs-border-color);
+}
+
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -345,5 +343,12 @@ h1 {
     
     .stat-value {
         font-size: 1.5rem;
+    }
+    
+    .controls-container {
+        flex-direction: column;
+    }
+    .btn {
+        width: 100%;
     }
 }

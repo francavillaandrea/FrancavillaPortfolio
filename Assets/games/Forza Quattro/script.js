@@ -1,204 +1,221 @@
-"use strict";
+document.addEventListener('DOMContentLoaded', () => {
+    const ROWS = 6;
+    const COLS = 7;
+    const PLAYER1 = 'player1';
+    const PLAYER2 = 'player2';
 
-const RIGHE = 6;
-const COLONNE = 7;
+    let grid;
+    let currentPlayer;
+    let gameMode;
+    let gameOver;
 
-const YELLOW = "yellow";
-const RED = "red";
+    // UI Elements
+    const wrapper = document.getElementById('wrapper');
+    const turnIndicator = document.getElementById('turn-indicator');
+    const gameModeSelect = document.getElementById('game-mode');
+    const resetBtn = document.getElementById('reset-btn');
+    const howToPlayBtn = document.getElementById('how-to-play-btn');
+    const gameModal = new bootstrap.Modal(document.getElementById('gameModal'));
+    const howToPlayModal = new bootstrap.Modal(document.getElementById('howToPlayModal'));
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const modalNewGameBtn = document.getElementById('modal-new-game-btn');
 
-const wrapper = document.getElementById("wrapper");
-const _nextPlayer = document.getElementById("nextPlayer");
-const gameOverElement = document.getElementById("game-over");
-const gameOverTitle = document.getElementById("game-over-title");
-const gameOverMessage = document.getElementById("game-over-message");
+    function init() {
+        gameOver = false;
+        currentPlayer = PLAYER1;
+        gameMode = gameModeSelect.value;
+        
+        grid = Array(ROWS).fill(null).map(() => Array(COLS).fill(null));
 
-let grid = [];
-let currentPlayer = YELLOW;
-let gameOver = false;
-
-init();
-
-function init() {
-    grid = Array(RIGHE).fill().map(() => Array(COLONNE).fill(null));
-    currentPlayer = YELLOW;
-    gameOver = false;
-    
-    wrapper.innerHTML = "";
-    gameOverElement.classList.add("hidden");
-    
-    // Crea la griglia
-    for (let i = 0; i < RIGHE; i++) {
-        for (let j = 0; j < COLONNE; j++) {
-            const div = document.createElement("div");
-            div.classList.add("pedina");
-            div.id = `div-${i}-${j}`;
-            div.dataset.row = i;
-            div.dataset.col = j;
-            
-            if (i === RIGHE - 1) {
-                div.addEventListener("click", handleClick);
+        wrapper.innerHTML = '';
+        wrapper.style.setProperty('--rows', ROWS);
+        wrapper.style.setProperty('--cols', COLS);
+        
+        for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.col = c;
+                wrapper.appendChild(cell);
             }
-            
-            wrapper.appendChild(div);
+        }
+        
+        // Use a single event listener on the wrapper
+        wrapper.addEventListener('click', handleGridClick);
+
+        updateTurnIndicator();
+    }
+
+    function handleGridClick(e) {
+        if (gameOver || !e.target.classList.contains('cell')) return;
+        
+        const col = parseInt(e.target.dataset.col);
+        
+        if (gameMode === 'pvc' && currentPlayer === PLAYER2) return; // Prevent player clicks during AI turn
+
+        makeMove(col);
+    }
+    
+    function makeMove(col) {
+        if(gameOver) return;
+
+        const row = getLowestEmptyRow(col);
+        if (row === -1) return; // Column is full
+
+        grid[row][col] = currentPlayer;
+        const cell = wrapper.children[row * COLS + col];
+        cell.classList.add(currentPlayer);
+
+        const winner = checkWin();
+        if (winner) {
+            endGame(winner);
+        } else if (isBoardFull()) {
+            endGame(null, true); // It's a draw
+        } else {
+            switchPlayer();
+            if (gameMode === 'pvc' && currentPlayer === PLAYER2) {
+                // AI's turn
+                setTimeout(aiMove, 500);
+            }
         }
     }
-    
-    updatePlayerDisplay();
-}
 
-function handleClick() {
-    if (gameOver) return;
-    
-    const col = parseInt(this.dataset.col);
-    const row = findLowestEmptyRow(col);
-    
-    if (row === -1) return; // Colonna piena
-    
-    placePiece(row, col);
-    
-    if (checkWin(row, col)) {
-        endGame(`${currentPlayer === YELLOW ? "Giallo" : "Rosso"} ha vinto!`);
-    } else if (isBoardFull()) {
-        endGame("Pareggio! La griglia è piena.");
-    } else {
-        switchPlayer();
-    }
-}
-
-function findLowestEmptyRow(col) {
-    for (let i = RIGHE - 1; i >= 0; i--) {
-        if (grid[i][col] === null) {
-            return i;
+    function getLowestEmptyRow(col) {
+        for (let r = ROWS - 1; r >= 0; r--) {
+            if (!grid[r][col]) {
+                return r;
+            }
         }
+        return -1; // Column is full
     }
-    return -1;
-}
 
-function placePiece(row, col) {
-    grid[row][col] = currentPlayer;
-    const div = document.getElementById(`div-${row}-${col}`);
-    div.classList.add("filled", currentPlayer);
-    div.removeEventListener("click", handleClick);
-    
-    // Abilita la cella sopra se esiste
-    if (row > 0) {
-        const divAbove = document.getElementById(`div-${row - 1}-${col}`);
-        divAbove.addEventListener("click", handleClick);
-    }
-}
-
-function checkWin(row, col) {
-    return checkHorizontal(row, col) || 
-           checkVertical(row, col) || 
-           checkDiagonal1(row, col) || 
-           checkDiagonal2(row, col);
-}
-
-function checkHorizontal(row, col) {
-    let count = 1;
-    const color = grid[row][col];
-    
-    // Controlla a sinistra
-    for (let j = col - 1; j >= 0 && grid[row][j] === color; j--) {
-        count++;
+    function switchPlayer() {
+        currentPlayer = (currentPlayer === PLAYER1) ? PLAYER2 : PLAYER1;
+        updateTurnIndicator();
     }
     
-    // Controlla a destra
-    for (let j = col + 1; j < COLONNE && grid[row][j] === color; j++) {
-        count++;
+    function updateTurnIndicator() {
+        turnIndicator.innerHTML = `
+            <div class="cell ${currentPlayer}" style="width: 30px; height: 30px;"></div>
+            <span>${(gameMode === 'pvc' && currentPlayer === PLAYER2) ? 'Computer' : (currentPlayer === PLAYER1 ? 'Giocatore 1' : 'Giocatore 2')}</span>
+        `;
     }
     
-    return count >= 4;
-}
+    function aiMove() {
+        if(gameOver) return;
+        
+        // 1. Check for winning move
+        for(let c = 0; c < COLS; c++){
+            const r = getLowestEmptyRow(c);
+            if(r > -1){
+                grid[r][c] = PLAYER2;
+                if(checkWin()){
+                    grid[r][c] = null; // backtrack
+                    makeMove(c);
+                    return;
+                }
+                grid[r][c] = null; // backtrack
+            }
+        }
 
-function checkVertical(row, col) {
-    let count = 1;
-    const color = grid[row][col];
-    
-    // Controlla sopra
-    for (let i = row - 1; i >= 0 && grid[i][col] === color; i--) {
-        count++;
+        // 2. Check to block opponent's winning move
+        for(let c = 0; c < COLS; c++){
+            const r = getLowestEmptyRow(c);
+            if(r > -1){
+                grid[r][c] = PLAYER1;
+                 if(checkWin()){
+                    grid[r][c] = null; // backtrack
+                    makeMove(c);
+                    return;
+                }
+                grid[r][c] = null; // backtrack
+            }
+        }
+
+        // 3. Make a random valid move
+        let validMoves = [];
+        for(let c = 0; c < COLS; c++){
+             if(getLowestEmptyRow(c) > -1) validMoves.push(c);
+        }
+        
+        const randomCol = validMoves[Math.floor(Math.random() * validMoves.length)];
+        makeMove(randomCol);
     }
     
-    // Controlla sotto
-    for (let i = row + 1; i < RIGHE && grid[i][col] === color; i++) {
-        count++;
+    function checkWin() {
+         // Check horizontal, vertical, and diagonal lines
+        for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+                if (grid[r][c]) {
+                    // Horizontal
+                    if (c + 3 < COLS && grid[r][c] === grid[r][c+1] && grid[r][c] === grid[r][c+2] && grid[r][c] === grid[r][c+3]) return { player: grid[r][c], line: [{r,c}, {r,c+1}, {r,c+2}, {r,c+3}] };
+                    // Vertical
+                    if (r + 3 < ROWS && grid[r][c] === grid[r+1][c] && grid[r][c] === grid[r+2][c] && grid[r][c] === grid[r+3][c]) return { player: grid[r][c], line: [{r,c}, {r+1,c}, {r+2,c}, {r+3,c}] };
+                    // Diagonal (down-right)
+                    if (r + 3 < ROWS && c + 3 < COLS && grid[r][c] === grid[r+1][c+1] && grid[r][c] === grid[r+2][c+2] && grid[r][c] === grid[r+3][c+3]) return { player: grid[r][c], line: [{r,c}, {r+1,c+1}, {r+2,c+2}, {r+3,c+3}] };
+                    // Diagonal (up-right)
+                    if (r - 3 >= 0 && c + 3 < COLS && grid[r][c] === grid[r-1][c+1] && grid[r][c] === grid[r-2][c+2] && grid[r][c] === grid[r-3][c+3]) return { player: grid[r][c], line: [{r,c}, {r-1,c+1}, {r-2,c+2}, {r-3,c+3}] };
+                }
+            }
+        }
+        return null;
     }
     
-    return count >= 4;
-}
+    function isBoardFull() {
+        return grid[0].every(cell => cell !== null);
+    }
 
-function checkDiagonal1(row, col) {
-    let count = 1;
-    const color = grid[row][col];
-    
-    // Diagonale principale (alto-sinistra a basso-destra)
-    let i = row - 1, j = col - 1;
-    while (i >= 0 && j >= 0 && grid[i][j] === color) {
-        count++;
-        i--;
-        j--;
+    function endGame(winner, isDraw = false) {
+        gameOver = true;
+        wrapper.removeEventListener('click', handleGridClick);
+
+        if (isDraw) {
+            modalTitle.textContent = 'Pareggio!';
+            modalBody.textContent = 'La griglia è piena. Nessun vincitore.';
+        } else {
+            const winnerName = (gameMode === 'pvc' && winner.player === PLAYER2) ? 'Il Computer' : (winner.player === PLAYER1 ? 'Giocatore 1' : 'Giocatore 2');
+            modalTitle.textContent = `🎉 Vince ${winnerName}!`;
+            modalBody.textContent = 'Complimenti!';
+            drawWinningLine(winner.line);
+        }
+        setTimeout(() => gameModal.show(), 500);
     }
     
-    i = row + 1;
-    j = col + 1;
-    while (i < RIGHE && j < COLONNE && grid[i][j] === color) {
-        count++;
-        i++;
-        j++;
+    function drawWinningLine(line) {
+        const firstCell = wrapper.children[line[0].r * COLS + line[0].c];
+        const lastCell = wrapper.children[line[3].r * COLS + line[3].c];
+
+        const lineEl = document.createElement('div');
+        lineEl.classList.add('winning-line');
+        
+        const firstRect = firstCell.getBoundingClientRect();
+        const wrapperRect = wrapper.getBoundingClientRect();
+        
+        const x1 = firstRect.left + firstRect.width / 2 - wrapperRect.left;
+        const y1 = firstRect.top + firstRect.height / 2 - wrapperRect.top;
+        const x2 = lastCell.getBoundingClientRect().left + lastCell.getBoundingClientRect().width / 2 - wrapperRect.left;
+        const y2 = lastCell.getBoundingClientRect().top + lastCell.getBoundingClientRect().height / 2 - wrapperRect.top;
+        
+        const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+        const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+        
+        lineEl.style.width = `${length}px`;
+        lineEl.style.left = `${x1}px`;
+        lineEl.style.top = `${y1}px`;
+        lineEl.style.transform = `rotate(${angle}deg)`;
+        
+        wrapper.appendChild(lineEl);
     }
-    
-    return count >= 4;
-}
 
-function checkDiagonal2(row, col) {
-    let count = 1;
-    const color = grid[row][col];
-    
-    // Diagonale secondaria (alto-destra a basso-sinistra)
-    let i = row - 1, j = col + 1;
-    while (i >= 0 && j < COLONNE && grid[i][j] === color) {
-        count++;
-        i--;
-        j++;
-    }
-    
-    i = row + 1;
-    j = col - 1;
-    while (i < RIGHE && j >= 0 && grid[i][j] === color) {
-        count++;
-        i++;
-        j--;
-    }
-    
-    return count >= 4;
-}
+    // Event listeners
+    gameModeSelect.addEventListener('change', init);
+    resetBtn.addEventListener('click', init);
+    howToPlayBtn.addEventListener('click', () => howToPlayModal.show());
+    modalNewGameBtn.addEventListener('click', () => {
+        gameModal.hide();
+        init();
+    });
 
-function isBoardFull() {
-    return grid[0].every(cell => cell !== null);
-}
-
-function switchPlayer() {
-    currentPlayer = currentPlayer === YELLOW ? RED : YELLOW;
-    updatePlayerDisplay();
-}
-
-function updatePlayerDisplay() {
-    _nextPlayer.textContent = currentPlayer === YELLOW ? "🟡 Giallo" : "🔴 Rosso";
-    _nextPlayer.className = `pedina ${currentPlayer}`;
-}
-
-function endGame(message) {
-    gameOver = true;
-    gameOverTitle.textContent = "🎉 Game Over!";
-    gameOverMessage.textContent = message;
-    gameOverElement.classList.remove("hidden");
-    
-    // Disabilita tutti i click
-    const divs = wrapper.querySelectorAll(".pedina");
-    divs.forEach(div => div.removeEventListener("click", handleClick));
-}
-
-function resetGame() {
     init();
-}
+});

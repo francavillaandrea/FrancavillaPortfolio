@@ -25,9 +25,14 @@
                     <div class="score-value" id="best">0</div>
                 </div>
             </div>
-            <button class="btn btn-primary btn-lg" onclick="resetGame()">
-                <i class="bi bi-arrow-clockwise"></i> Nuova Partita
-            </button>
+            <div class="d-flex justify-content-center gap-2">
+                <button class="btn btn-primary btn-lg" onclick="resetGame()">
+                    <i class="bi bi-arrow-clockwise"></i> Nuova Partita
+                </button>
+                <button class="btn btn-info btn-lg text-white" onclick="showHowToPlay()">
+                    <i class="bi bi-question-lg"></i> Come si gioca?
+                </button>
+            </div>
         </div>
         
         <div id="game-container">
@@ -60,6 +65,37 @@
                 <button class="btn btn-outline-secondary" onclick="move('down')">
                     <i class="bi bi-arrow-down"></i>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- How to Play Modal -->
+    <div class="modal fade" id="howToPlayModal" tabindex="-1" aria-labelledby="howToPlayModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="howToPlayModalLabel">Come si gioca a 2048</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Muovi le tessere:</h6>
+                    <p>Usa le frecce della tastiera (<kbd>↑</kbd>, <kbd>↓</kbd>, <kbd>←</kbd>, <kbd>→</kbd>) o i pulsanti direzionali sullo schermo per far scorrere tutte le tessere nella direzione scelta.</p>
+                    
+                    <h6>Combina i numeri:</h6>
+                    <p>Quando due tessere con lo stesso numero si toccano durante il movimento, si fondono in una singola tessera che contiene la somma dei due numeri (es. due '2' diventano un '4').</p>
+                    
+                    <h6>Generazione di nuove tessere:</h6>
+                    <p>Dopo ogni mossa valida, una nuova tessera (un '2' o un '4') appare casualmente in una cella vuota.</p>
+                    
+                    <h6>L'obiettivo:</h6>
+                    <p>Raggiungi la tessera '2048'! Puoi continuare a giocare anche dopo averla creata, cercando di ottenere punteggi più alti.</p>
+                    
+                    <h6>Fine del gioco:</h6>
+                    <p>Il gioco termina quando non ci sono più celle vuote e non è possibile fare altre mosse (cioè, nessuna tessera può essere fusa con un'altra).</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ho capito!</button>
+                </div>
             </div>
         </div>
     </div>

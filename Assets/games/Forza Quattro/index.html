@@ -7,35 +7,91 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="style.css"/>
-    <script defer src="../../js/theme.js"></script>
-    <script defer type="text/javascript" src="script.js"></script>
 </head>
 <body>
     <div class="container py-4">
         <div class="text-center mb-4">
             <h1 class="display-4 mb-3">Forza Quattro</h1>
             <p class="lead">Connetti quattro pedine in fila per vincere!</p>
-            <div class="d-flex justify-content-center gap-3 mb-3">
+
+            <div class="controls-wrapper d-flex justify-content-center align-items-center gap-3 mb-3">
                 <div class="info-box">
                     <div class="info-label">Turno</div>
-                    <div class="info-value" id="nextPlayer"></div>
+                    <div id="turn-indicator" class="info-value"></div>
+                </div>
+                <div class="input-group" style="width: auto;">
+                    <label class="input-group-text" for="game-mode">Modalità:</label>
+                    <select class="form-select" id="game-mode">
+                        <option value="pvp" selected>Giocatore vs Giocatore</option>
+                        <option value="pvc">Giocatore vs Computer</option>
+                    </select>
                 </div>
             </div>
-            <button class="btn btn-primary btn-lg" onclick="resetGame()">
-                <i class="bi bi-arrow-clockwise"></i> Nuova Partita
-            </button>
+
+            <div class="d-flex justify-content-center gap-2">
+                <button id="reset-btn" class="btn btn-primary btn-lg">
+                    <i class="bi bi-arrow-clockwise"></i> Nuova Partita
+                </button>
+                <button id="how-to-play-btn" class="btn btn-info btn-lg text-white">
+                    <i class="bi bi-question-lg"></i> Come si gioca?
+                </button>
+            </div>
         </div>
         
         <div id="game-container">
             <div id="wrapper"></div>
-            <div id="game-over" class="game-over hidden">
-                <div class="game-over-content">
-                    <h2 id="game-over-title"></h2>
-                    <p id="game-over-message"></p>
-                    <button class="btn btn-success btn-lg" onclick="resetGame()">Gioca Ancora</button>
+        </div>
+    </div>
+    
+    <!-- Modal Template -->
+    <div class="modal fade" id="gameModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="modal-new-game-btn">Nuova Partita</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- How to Play Modal -->
+    <div class="modal fade" id="howToPlayModal" tabindex="-1" aria-labelledby="howToPlayModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="howToPlayModalLabel">Come si gioca a Forza Quattro</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Obiettivo:</h6>
+                    <p>Sii il primo giocatore a formare una linea di quattro delle tue pedine in orizzontale, verticale o diagonale.</p>
+                    <h6>Come giocare:</h6>
+                    <ol>
+                        <li>I giocatori, a turno, inseriscono una pedina in una delle sette colonne.</li>
+                        <li>La pedina cade nella posizione più bassa disponibile all'interno della colonna.</li>
+                        <li>Il gioco continua finché un giocatore non vince o la griglia è piena (pareggio).</li>
+                    </ol>
+                    <h6>Modalità di Gioco:</h6>
+                    <ul>
+                        <li><b>Giocatore vs Giocatore:</b> Sfida un amico.</li>
+                        <li><b>Giocatore vs Computer:</b> Metti alla prova le tue abilità contro l'intelligenza artificiale.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ho capito!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer src="../../js/theme.js"></script>
+    <script defer type="text/javascript" src="script.js"></script>
 </body>
 </html>

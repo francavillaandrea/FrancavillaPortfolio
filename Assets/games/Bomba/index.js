@@ -1,165 +1,163 @@
-"use strict";
+document.addEventListener('DOMContentLoaded', () => {
+    const GRID_SIZE = 10;
+    const INITIAL_BLOCKS = 15;
 
-const DIM = 10;
-const wrapper = document.getElementById("wrapper");
-const blocksElement = document.getElementById("blocks");
-const scoreElement = document.getElementById("score");
-const gameOverElement = document.getElementById("game-over");
-const gameOverTitle = document.getElementById("game-over-title");
-const gameOverMessage = document.getElementById("game-over-message");
+    let grid = [];
+    let bomb = { r: 0, c: 0 };
+    let blocksLeft = INITIAL_BLOCKS;
+    let wins = 0;
+    let gameInProgress = true;
 
-let bombRow = 0;
-let bombCol = 0;
-let blocks = 0;
-let score = 0;
-let gameOver = false;
-let timerId = null;
-let speed = 200;
+    // UI Elements
+    const wrapper = document.getElementById('wrapper');
+    const blocksLeftEl = document.getElementById('blocks-left');
+    const winsEl = document.getElementById('wins');
+    const resetBtn = document.getElementById('reset-btn');
+    const howToPlayBtn = document.getElementById('how-to-play-btn');
+    const gameModal = new bootstrap.Modal(document.getElementById('gameModal'));
+    const howToPlayModal = new bootstrap.Modal(document.getElementById('howToPlayModal'));
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const modalNewGameBtn = document.getElementById('modal-new-game-btn');
 
-init();
+    function init() {
+        gameInProgress = true;
+        blocksLeft = INITIAL_BLOCKS;
+        
+        // Create grid data
+        grid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(0)); // 0: empty, 1: blocked
+        
+        // Create grid UI
+        wrapper.innerHTML = '';
+        wrapper.style.setProperty('--grid-size', GRID_SIZE);
+        for (let r = 0; r < GRID_SIZE; r++) {
+            for (let c = 0; c < GRID_SIZE; c++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.r = r;
+                cell.dataset.c = c;
+                cell.addEventListener('click', () => placeBlock(r, c));
+                wrapper.appendChild(cell);
+            }
+        }
+        
+        // Place initial random blocks
+        for (let i = 0; i < 5; i++) {
+            const r = Math.floor(Math.random() * GRID_SIZE);
+            const c = Math.floor(Math.random() * GRID_SIZE);
+            if (grid[r][c] === 0) {
+                grid[r][c] = 1;
+            } else {
+                i--; // Try again
+            }
+        }
+        
+        // Place bomb
+        bomb.r = Math.floor(GRID_SIZE / 2);
+        bomb.c = Math.floor(GRID_SIZE / 2);
+        grid[bomb.r][bomb.c] = 0; // Ensure bomb position is not blocked
 
-function init() {
-    blocks = 0;
-    score = 0;
-    gameOver = false;
-    speed = 200;
+        updateUI();
+    }
+
+    function placeBlock(r, c) {
+        if (!gameInProgress || grid[r][c] !== 0 || (r === bomb.r && c === bomb.c) || blocksLeft <= 0) {
+            return;
+        }
+
+        grid[r][c] = 1;
+        blocksLeft--;
+        updateUI();
+        
+        moveBomb();
+    }
     
-    wrapper.innerHTML = "";
-    blocksElement.textContent = "0";
-    scoreElement.textContent = "0";
-    gameOverElement.classList.add("hidden");
-    
-    // Crea la griglia
-    for (let i = 0; i < DIM; i++) {
-        for (let j = 0; j < DIM; j++) {
-            const div = document.createElement("div");
-            div.classList.add("cella");
-            div.id = `div-${i}-${j}`;
-            div.dataset.row = i;
-            div.dataset.col = j;
-            div.addEventListener("click", gestisciClick);
-            wrapper.appendChild(div);
+    function moveBomb() {
+        const path = findShortestPath(bomb, grid);
+
+        if (path && path.length > 1) {
+            // Move bomb along the path
+            const nextMove = path[1];
+            bomb.r = nextMove.r;
+            bomb.c = nextMove.c;
+            updateUI();
+
+            // Check if bomb reached the edge
+            if (bomb.r === 0 || bomb.r === GRID_SIZE - 1 || bomb.c === 0 || bomb.c === GRID_SIZE - 1) {
+                endGame(false); // Player loses
+            }
+        } else {
+            // Bomb is trapped
+            endGame(true); // Player wins
         }
     }
-    
-    // Posiziona la bomba iniziale
-    generaBomba();
-}
 
-function gestisciClick() {
-    if (gameOver) return;
-    
-    const row = parseInt(this.dataset.row);
-    const col = parseInt(this.dataset.col);
-    
-    // Se clicco sulla bomba
-    if (row === bombRow && col === bombCol && this.classList.contains("bomb")) {
-        score++;
-        scoreElement.textContent = score;
-        
-        // Rimuovi la bomba
-        this.classList.remove("bomb");
-        this.style.backgroundImage = "none";
-        
-        // Aumenta la velocità
-        speed = Math.max(100, speed - 10);
-        
-        // Genera nuova bomba
-        clearInterval(timerId);
-        generaBomba();
-        return;
+    function findShortestPath(start, gridState) {
+        const queue = [{ ...start, path: [start] }];
+        const visited = new Set([`${start.r},${start.c}`]);
+        const directions = [{ r: -1, c: 0 }, { r: 1, c: 0 }, { r: 0, c: -1 }, { r: 0, c: 1 }];
+
+        while (queue.length > 0) {
+            const current = queue.shift();
+
+            // If at edge, path is found
+            if (current.r === 0 || current.r === GRID_SIZE - 1 || current.c === 0 || current.c === GRID_SIZE - 1) {
+                return current.path;
+            }
+
+            for (const dir of directions) {
+                const nextR = current.r + dir.r;
+                const nextC = current.c + dir.c;
+                const key = `${nextR},${nextC}`;
+
+                if (nextR >= 0 && nextR < GRID_SIZE && nextC >= 0 && nextC < GRID_SIZE &&
+                    !visited.has(key) && gridState[nextR][nextC] === 0) {
+                    
+                    visited.add(key);
+                    const newPath = [...current.path, { r: nextR, c: nextC }];
+                    queue.push({ r: nextR, c: nextC, path: newPath });
+                }
+            }
+        }
+        return null; // No path to edge
     }
-    
-    // Toggle del blocco blu
-    if (this.classList.contains("blocked")) {
-        this.classList.remove("blocked");
-        this.style.backgroundColor = "";
-        blocks--;
-    } else {
-        this.classList.add("blocked");
-        this.style.backgroundColor = "#0d6efd";
-        blocks++;
+
+    function updateUI() {
+        for (let r = 0; r < GRID_SIZE; r++) {
+            for (let c = 0; c < GRID_SIZE; c++) {
+                const cell = wrapper.children[r * GRID_SIZE + c];
+                cell.classList.remove('bomb', 'blocked');
+                if (r === bomb.r && c === bomb.c) {
+                    cell.classList.add('bomb');
+                } else if (grid[r][c] === 1) {
+                    cell.classList.add('blocked');
+                }
+            }
+        }
+        blocksLeftEl.textContent = blocksLeft;
+        winsEl.textContent = wins;
     }
-    
-    blocksElement.textContent = blocks;
-}
 
-function generaBomba() {
-    // Trova una posizione casuale non bloccata
-    let attempts = 0;
-    do {
-        bombRow = generaNumero(0, DIM);
-        bombCol = generaNumero(0, DIM);
-        attempts++;
-    } while (attempts < 100 && document.getElementById(`div-${bombRow}-${bombCol}`).classList.contains("blocked"));
-    
-    const div = document.getElementById(`div-${bombRow}-${bombCol}`);
-    div.classList.add("bomb");
-    div.style.backgroundImage = "url('bomba.png')";
-    
-    timerId = setInterval(spostaBomba, speed);
-}
+    function endGame(isWin) {
+        gameInProgress = false;
+        if (isWin) {
+            wins++;
+            modalTitle.textContent = '🎉 Hai Vinto!';
+            modalBody.textContent = 'Hai intrappolato la bomba! Complimenti!';
+        } else {
+            modalTitle.textContent = '💣 Hai Perso!';
+            modalBody.textContent = 'La bomba è scappata! Riprova.';
+        }
+        gameModal.show();
+        updateUI();
+    }
 
-function spostaBomba() {
-    if (gameOver) return;
-    
-    const div = document.getElementById(`div-${bombRow}-${bombCol}`);
-    div.classList.remove("bomb");
-    div.style.backgroundImage = "none";
-    
-    // Trova una nuova posizione valida
-    const directions = [
-        { row: -1, col: 0 },  // sopra
-        { row: 1, col: 0 },   // sotto
-        { row: 0, col: -1 },  // sinistra
-        { row: 0, col: 1 }    // destra
-    ];
-    
-    const validMoves = directions.filter(dir => {
-        const newRow = bombRow + dir.row;
-        const newCol = bombCol + dir.col;
-        return newRow >= 0 && newRow < DIM && 
-               newCol >= 0 && newCol < DIM &&
-               !document.getElementById(`div-${newRow}-${newCol}`).classList.contains("blocked");
+    resetBtn.addEventListener('click', init);
+    howToPlayBtn.addEventListener('click', () => howToPlayModal.show());
+    modalNewGameBtn.addEventListener('click', () => {
+        gameModal.hide();
+        init();
     });
-    
-    if (validMoves.length === 0) {
-        // Bomba bloccata - game over
-        endGame("La bomba è stata bloccata! Hai perso!");
-        return;
-    }
-    
-    const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
-    bombRow += randomMove.row;
-    bombCol += randomMove.col;
-    
-    const newDiv = document.getElementById(`div-${bombRow}-${bombCol}`);
-    newDiv.classList.add("bomb");
-    newDiv.style.backgroundImage = "url('bomba.png')";
-}
 
-function endGame(message) {
-    gameOver = true;
-    if (timerId) {
-        clearInterval(timerId);
-    }
-    
-    gameOverTitle.textContent = "💣 Game Over!";
-    gameOverMessage.textContent = `${message} Punteggio finale: ${score}`;
-    gameOverElement.classList.remove("hidden");
-    
-    // Disabilita tutti i click
-    const cells = wrapper.querySelectorAll(".cella");
-    cells.forEach(cell => cell.removeEventListener("click", gestisciClick));
-}
-
-function resetGame() {
-    if (timerId) {
-        clearInterval(timerId);
-    }
     init();
-}
-
-function generaNumero(min, max) {
-    return Math.floor((max - min) * Math.random()) + min;
-}
+});

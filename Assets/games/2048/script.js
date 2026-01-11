@@ -13,6 +13,7 @@ const bestElement = document.getElementById("best");
 const gameOverElement = document.getElementById("game-over");
 const gameOverTitle = document.getElementById("game-over-title");
 const gameOverMessage = document.getElementById("game-over-message");
+const howToPlayModal = new bootstrap.Modal(document.getElementById('howToPlayModal'));
 
 // Carica il miglior punteggio dal localStorage
 bestScore = parseInt(localStorage.getItem("2048-best")) || 0;
@@ -25,7 +26,6 @@ function init() {
     grid = Array(DIM).fill().map(() => Array(DIM).fill(0));
     score = 0;
     gameOver = false;
-    moved = false;
     updateScore();
     createGrid();
     addRandomTile();
@@ -39,8 +39,7 @@ function createGrid() {
     for (let i = 0; i < DIM; i++) {
         for (let j = 0; j < DIM; j++) {
             const cell = document.createElement("div");
-            cell.classList.add("cella");
-            cell.classList.add("empty");
+            cell.classList.add("cella", "empty");
             cell.id = `${i}-${j}`;
             wrapper.appendChild(cell);
         }
@@ -52,14 +51,13 @@ function addRandomTile() {
     for (let i = 0; i < DIM; i++) {
         for (let j = 0; j < DIM; j++) {
             if (grid[i][j] === 0) {
-                emptyCells.push({i, j});
+                emptyCells.push({ i, j });
             }
         }
     }
-    
     if (emptyCells.length > 0) {
-        const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-        grid[randomCell.i][randomCell.j] = Math.random() < 0.9 ? 2 : 4;
+        const { i, j } = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        grid[i][j] = Math.random() < 0.9 ? 2 : 4;
     }
 }
 
@@ -68,226 +66,101 @@ function render() {
         for (let j = 0; j < DIM; j++) {
             const cell = document.getElementById(`${i}-${j}`);
             const value = grid[i][j];
-            
-            if (value === 0) {
-                cell.classList.add("empty");
-                cell.textContent = "";
-                cell.removeAttribute("data-value");
-            } else {
-                cell.classList.remove("empty");
-                cell.textContent = value;
-                cell.setAttribute("data-value", value);
-            }
+            cell.textContent = value === 0 ? "" : value;
+            cell.setAttribute("data-value", value);
+            cell.classList.toggle("empty", value === 0);
         }
     }
+}
+
+// --- Refactored Move Logic ---
+
+function operate(row) {
+    const newRow = row.filter(val => val);
+    for (let i = 0; i < newRow.length - 1; i++) {
+        if (newRow[i] === newRow[i + 1]) {
+            newRow[i] *= 2;
+            score += newRow[i];
+            newRow.splice(i + 1, 1);
+        }
+    }
+    while (newRow.length < DIM) {
+        newRow.push(0);
+    }
+    return newRow;
+}
+
+function rotateGrid(grid) {
+    const newGrid = Array(DIM).fill().map(() => Array(DIM).fill(0));
+    for (let i = 0; i < DIM; i++) {
+        for (let j = 0; j < DIM; j++) {
+            newGrid[j][DIM - 1 - i] = grid[i][j];
+        }
+    }
+    return newGrid;
 }
 
 function move(direction) {
     if (gameOver) return;
-    
-    moved = false;
-    const oldGrid = grid.map(row => [...row]);
-    
-    switch(direction) {
-        case 'up':
-            moveUp();
-            break;
-        case 'down':
-            moveDown();
-            break;
-        case 'left':
-            moveLeft();
-            break;
-        case 'right':
-            moveRight();
-            break;
+
+    let originalGrid = JSON.stringify(grid);
+    let tempGrid = grid.map(row => [...row]);
+    let rotations = 0;
+
+    switch (direction) {
+        case 'up': rotations = 1; break;
+        case 'right': rotations = 2; break;
+        case 'down': rotations = 3; break;
+    }
+
+    for (let i = 0; i < rotations; i++) {
+        tempGrid = rotateGrid(tempGrid);
+    }
+
+    for (let i = 0; i < DIM; i++) {
+        tempGrid[i] = operate(tempGrid[i]);
     }
     
+    // Rotate back
+    for (let i = 0; i < (4 - rotations) % 4; i++) {
+        tempGrid = rotateGrid(tempGrid);
+    }
+
+    grid = tempGrid;
+    moved = JSON.stringify(grid) !== originalGrid;
+
     if (moved) {
         addRandomTile();
         render();
         updateScore();
-        
-        if (isGameOver()) {
-            endGame(false);
-        } else if (hasWon()) {
-            endGame(true);
-        }
+        checkEndGame();
     }
 }
 
-function moveLeft() {
-    for (let i = 0; i < DIM; i++) {
-        const row = grid[i].filter(val => val !== 0);
-        const merged = [];
-        let j = 0;
-        
-        while (j < row.length) {
-            if (j < row.length - 1 && row[j] === row[j + 1]) {
-                merged.push(row[j] * 2);
-                score += row[j] * 2;
-                j += 2;
-            } else {
-                merged.push(row[j]);
-                j++;
-            }
-        }
-        
-        while (merged.length < DIM) {
-            merged.push(0);
-        }
-        
-        if (JSON.stringify(grid[i]) !== JSON.stringify(merged)) {
-            moved = true;
-        }
-        grid[i] = merged;
-    }
-}
+// --- End of Refactored Move Logic ---
 
-function moveRight() {
-    for (let i = 0; i < DIM; i++) {
-        const row = grid[i].filter(val => val !== 0);
-        const merged = [];
-        let j = row.length - 1;
-        
-        while (j >= 0) {
-            if (j > 0 && row[j] === row[j - 1]) {
-                merged.unshift(row[j] * 2);
-                score += row[j] * 2;
-                j -= 2;
-            } else {
-                merged.unshift(row[j]);
-                j--;
-            }
-        }
-        
-        while (merged.length < DIM) {
-            merged.unshift(0);
-        }
-        
-        if (JSON.stringify(grid[i]) !== JSON.stringify(merged)) {
-            moved = true;
-        }
-        grid[i] = merged;
-    }
-}
-
-function moveUp() {
-    for (let j = 0; j < DIM; j++) {
-        const column = [];
-        for (let i = 0; i < DIM; i++) {
-            if (grid[i][j] !== 0) {
-                column.push(grid[i][j]);
-            }
-        }
-        
-        const merged = [];
-        let i = 0;
-        
-        while (i < column.length) {
-            if (i < column.length - 1 && column[i] === column[i + 1]) {
-                merged.push(column[i] * 2);
-                score += column[i] * 2;
-                i += 2;
-            } else {
-                merged.push(column[i]);
-                i++;
-            }
-        }
-        
-        while (merged.length < DIM) {
-            merged.push(0);
-        }
-        
-        const oldColumn = [];
-        for (let i = 0; i < DIM; i++) {
-            oldColumn.push(grid[i][j]);
-        }
-        
-        if (JSON.stringify(oldColumn) !== JSON.stringify(merged)) {
-            moved = true;
-        }
-        
-        for (let i = 0; i < DIM; i++) {
-            grid[i][j] = merged[i];
-        }
-    }
-}
-
-function moveDown() {
-    for (let j = 0; j < DIM; j++) {
-        const column = [];
-        for (let i = 0; i < DIM; i++) {
-            if (grid[i][j] !== 0) {
-                column.push(grid[i][j]);
-            }
-        }
-        
-        const merged = [];
-        let i = column.length - 1;
-        
-        while (i >= 0) {
-            if (i > 0 && column[i] === column[i - 1]) {
-                merged.unshift(column[i] * 2);
-                score += column[i] * 2;
-                i -= 2;
-            } else {
-                merged.unshift(column[i]);
-                i--;
-            }
-        }
-        
-        while (merged.length < DIM) {
-            merged.unshift(0);
-        }
-        
-        const oldColumn = [];
-        for (let i = 0; i < DIM; i++) {
-            oldColumn.push(grid[i][j]);
-        }
-        
-        if (JSON.stringify(oldColumn) !== JSON.stringify(merged)) {
-            moved = true;
-        }
-        
-        for (let i = 0; i < DIM; i++) {
-            grid[i][j] = merged[i];
-        }
+function checkEndGame() {
+    if (hasWon()) {
+        endGame(true);
+    } else if (isGameOver()) {
+        endGame(false);
     }
 }
 
 function hasWon() {
-    for (let i = 0; i < DIM; i++) {
-        for (let j = 0; j < DIM; j++) {
-            if (grid[i][j] === 2048) {
-                return true;
-            }
-        }
-    }
-    return false;
+    return grid.some(row => row.includes(2048));
 }
 
 function isGameOver() {
-    // Controlla se ci sono celle vuote
+    if (grid.some(row => row.includes(0))) {
+        return false;
+    }
     for (let i = 0; i < DIM; i++) {
         for (let j = 0; j < DIM; j++) {
-            if (grid[i][j] === 0) {
-                return false;
-            }
+            if (j < DIM - 1 && grid[i][j] === grid[i][j + 1]) return false;
+            if (i < DIM - 1 && grid[i][j] === grid[i + 1][j]) return false;
         }
     }
-    
-    // Controlla se ci sono mosse possibili
-    for (let i = 0; i < DIM; i++) {
-        for (let j = 0; j < DIM; j++) {
-            const current = grid[i][j];
-            if ((i < DIM - 1 && grid[i + 1][j] === current) ||
-                (j < DIM - 1 && grid[i][j + 1] === current)) {
-                return false;
-            }
-        }
-    }
-    
     return true;
 }
 
@@ -296,32 +169,32 @@ function updateScore() {
     if (score > bestScore) {
         bestScore = score;
         bestElement.textContent = bestScore;
-        localStorage.setItem("2048-best", bestScore.toString());
+        localStorage.setItem("2048-best", bestScore);
     }
 }
 
 function endGame(won) {
     gameOver = true;
     gameOverElement.classList.remove("hidden");
-    
-    if (won) {
-        gameOverTitle.textContent = "🎉 Hai Vinto!";
-        gameOverMessage.textContent = `Complimenti! Hai raggiunto 2048 con un punteggio di ${score}!`;
-    } else {
-        gameOverTitle.textContent = "Game Over!";
-        gameOverMessage.textContent = `Il tuo punteggio finale è ${score}. Riprova!`;
-    }
+    gameOverTitle.textContent = won ? "🎉 Hai Vinto!" : "Game Over!";
+    gameOverMessage.textContent = won
+        ? `Complimenti! Hai raggiunto 2048 con un punteggio di ${score}!`
+        : `Il tuo punteggio finale è ${score}. Riprova!`;
 }
 
 function resetGame() {
+    gameOver = false;
     init();
+}
+
+function showHowToPlay() {
+    howToPlayModal.show();
 }
 
 // Gestione eventi tastiera
 document.addEventListener("keydown", (event) => {
     if (gameOver) return;
-    
-    switch(event.key) {
+    switch (event.key) {
         case "ArrowUp":
             event.preventDefault();
             move('up');
@@ -340,10 +213,3 @@ document.addEventListener("keydown", (event) => {
             break;
     }
 });
-
-// Prevenire lo scroll con le frecce
-window.addEventListener("keydown", (e) => {
-    if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) {
-        e.preventDefault();
-    }
-}, false);

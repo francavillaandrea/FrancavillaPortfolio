@@ -7,15 +7,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="index.css"/>
-    <script defer src="../../js/theme.js"></script>
-    <script defer type="text/javascript" src="index.js"></script>
 </head>
 <body>
     <div class="container py-4">
         <div class="text-center mb-4">
             <h1 class="display-4 mb-3">Quindici Numeri</h1>
-            <p class="lead">Ordina i numeri da 1 a 15. Clicca su una tessera adiacente allo spazio vuoto per spostarla.</p>
-            <div class="d-flex justify-content-center gap-3 mb-3">
+            <p class="lead">Ordina i numeri. Clicca su una tessera adiacente allo spazio vuoto per spostarla.</p>
+            <div class="d-flex justify-content-center gap-3 mb-3 flex-wrap">
                 <div class="info-box">
                     <div class="info-label">Mosse</div>
                     <div class="info-value" id="moves">0</div>
@@ -24,22 +22,78 @@
                     <div class="info-label">Tempo</div>
                     <div class="info-value" id="time">0:00</div>
                 </div>
+                <div class="input-group" style="width: auto;">
+                    <label class="input-group-text" for="difficulty">Difficoltà:</label>
+                    <select class="form-select" id="difficulty">
+                        <option value="3" selected>3x3</option>
+                        <option value="4">4x4</option>
+                        <option value="5">5x5</option>
+                    </select>
+                </div>
             </div>
-            <button class="btn btn-primary btn-lg" onclick="resetGame()">
-                <i class="bi bi-arrow-clockwise"></i> Nuova Partita
-            </button>
+            <div class="d-flex justify-content-center gap-2">
+                <button class="btn btn-primary btn-lg" id="btnNewGame">
+                    <i class="bi bi-arrow-clockwise"></i> Nuova Partita
+                </button>
+                <button class="btn btn-info btn-lg text-white" id="how-to-play-btn">
+                    <i class="bi bi-question-lg"></i> Come si gioca?
+                </button>
+            </div>
         </div>
         
         <div id="game-container">
             <div id="wrapper"></div>
-            <div id="game-over" class="game-over hidden">
-                <div class="game-over-content">
-                    <h2>🎉 Complimenti!</h2>
-                    <p id="win-message"></p>
-                    <button class="btn btn-success btn-lg" onclick="resetGame()">Gioca Ancora</button>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal fade" id="gameResultModal" tabindex="-1" aria-labelledby="gameResultModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="gameResultModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="fs-4" id="result-message"></p>
+                    <p>Hai completato il puzzle in <span id="final-moves"></span> mosse e <span id="final-time"></span>!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="modal-new-game-btn">Nuova Partita</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="howToPlayModal" tabindex="-1" aria-labelledby="howToPlayModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="howToPlayModalLabel">Come si gioca a Quindici Numeri</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Obiettivo:</h6>
+                    <p>Ordina le tessere numerate da 1 al massimo numero per la griglia scelta, con lo spazio vuoto nell'angolo in basso a destra.</p>
+                    <h6>Come giocare:</h6>
+                    <ol>
+                        <li>Clicca su una tessera numerata che è adiacente (sopra, sotto, sinistra, destra) allo spazio vuoto.</li>
+                        <li>La tessera cliccata si sposterà nello spazio vuoto.</li>
+                        <li>L'obiettivo è riorganizzare le tessere in ordine numerico crescente, lasciando l'ultima posizione (in basso a destra) vuota.</li>
+                    </ol>
+                    <h6>Difficoltà:</h6>
+                    <p>Scegli una dimensione della griglia (3x3, 4x4, 5x5) per una sfida diversa. Il puzzle viene generato in modo casuale ma è sempre risolvibile.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ho capito!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer src="../../js/theme.js"></script>
+    <script defer type="text/javascript" src="index.js"></script>
 </body>
 </html>

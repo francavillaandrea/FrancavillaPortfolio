@@ -1,176 +1,183 @@
-"use strict";
+document.addEventListener('DOMContentLoaded', () => {
+    const Game = {
+        choices: ["sasso", "carta", "forbice"],
+        scoreUtente: 0,
+        scoreComputer: 0,
+        scorePareggi: 0,
+        userChoice: "",
+        computerChoice: "",
 
-const choices = ["sasso", "mano", "forbice"];
-let userChoice = "";
-let scoreUtente = 0;
-let scoreComputer = 0;
-let scorePareggi = 0;
+        // UI Elements
+        imgUtente: document.getElementById('imgUtente'),
+        imgComputer: document.getElementById('imgComputer'),
+        selectionContainer: document.querySelector('.selection-container'),
+        btnGioca: document.getElementById('btnGioca'),
+        txtRisultato: document.getElementById('txtRisultato'),
+        scoreUtenteEl: document.getElementById('score-utente'),
+        scoreComputerEl: document.getElementById('score-computer'),
+        scorePareggiEl: document.getElementById('score-pareggi'),
+        btnReset: document.getElementById('btnReset'),
+        howToPlayBtn: document.getElementById('how-to-play-btn'),
+        howToPlayModal: new bootstrap.Modal(document.getElementById('howToPlayModal')),
 
-const _imgUtente = document.getElementById("imgUtente");
-const _imgComputer = document.getElementById("imgComputer");
-const _small = document.getElementsByClassName("small");
-const _btnGioca = document.getElementById("btnGioca");
-const _txtRisultato = document.getElementById("txtRisultato");
-const _scoreUtente = document.getElementById("score-utente");
-const _scoreComputer = document.getElementById("score-computer");
-const _scorePareggi = document.getElementById("score-pareggi");
+        init: function() {
+            this.loadScores();
+            this.setupUI();
+            this.setupEventListeners();
+            this.resetChoicesDisplay();
+        },
 
-// Carica i punteggi dal localStorage
-loadScores();
+        setupUI: function() {
+            // Set up initial images for player and computer
+            this.impostaImmagine(this.imgUtente, 'vuoto.png');
+            this.impostaImmagine(this.imgComputer, 'vuoto.png');
 
-window.onload = function () {
-    // Imposta stili per la visualizzazione delle immagini
-    impostaStileImmagine(_imgUtente);
-    impostaStileImmagine(_imgComputer);
-    for (let small of _small) {
-        impostaStileImmagine(small);
-    }
+            // Populate selection container with small images
+            this.selectionContainer.innerHTML = ''; // Clear existing
+            this.choices.forEach(choice => {
+                const div = document.createElement('div');
+                div.classList.add('small');
+                div.dataset.choice = choice;
+                this.impostaImmagine(div, `${choice}.png`);
+                div.addEventListener('click', () => this.selectUserChoice(choice, div));
+                this.selectionContainer.appendChild(div);
+            });
+            this.updateScoresDisplay();
+        },
 
-    // Inizializzazione immagini
-    _imgComputer.style.backgroundImage = "url('img/vuoto.png')";
-    _imgUtente.style.backgroundImage = "url('img/vuoto.png')";
+        setupEventListeners: function() {
+            this.btnGioca.addEventListener('click', () => this.playRound());
+            this.btnReset.addEventListener('click', () => this.resetScore());
+            this.howToPlayBtn.addEventListener('click', () => this.howToPlayModal.show());
+        },
 
-    // Caricamento miniature
-    for (let i = 0; i < _small.length; i++) {
-        const choice = choices[i];
-        _small[i].style.backgroundImage = `url('img/${choice}.png')`;
-        _small[i].setAttribute("data-choice", choice);
-        _small[i].addEventListener("click", function () {
-            selectChoice(choice);
-        });
-    }
+        selectUserChoice: function(choice, el) {
+            this.userChoice = choice;
+            // Remove 'selected' from all small choices
+            this.selectionContainer.querySelectorAll('.small').forEach(item => {
+                item.classList.remove('selected');
+            });
+            // Add 'selected' to the current one
+            el.classList.add('selected');
+            
+            this.impostaImmagine(this.imgUtente, `${choice}.png`);
+            this.impostaImmagine(this.imgComputer, 'vuoto.png');
+            this.displayMessage(""); // Clear previous result message
+        },
 
-    // Gestione click pulsante Gioca
-    _btnGioca.addEventListener("click", function () {
-        if (userChoice === "") {
-            showMessage("Seleziona prima una scelta!", "error");
-            return;
+        playRound: function() {
+            if (this.userChoice === "") {
+                this.displayMessage("Seleziona prima la tua mossa!", "error");
+                return;
+            }
+
+            this.btnGioca.disabled = true; // Prevent multiple clicks
+            
+            // Computer's turn
+            this.computerChoice = this.choices[this.random(0, this.choices.length)];
+
+            // Animation for computer's choice
+            this.imgComputer.classList.add('shake');
+            this.impostaImmagine(this.imgComputer, 'vuoto.png'); // Show back of card
+
+            setTimeout(() => {
+                this.imgComputer.classList.remove('shake');
+                this.impostaImmagine(this.imgComputer, `${this.computerChoice}.png`);
+                const result = this.determinaVincitore(this.userChoice, this.computerChoice);
+                this.displayResult(result);
+                this.btnGioca.disabled = false;
+            }, 1000); // Animation duration
+        },
+
+        determinaVincitore: function(user, computer) {
+            if (user === computer) {
+                this.scorePareggi++;
+                return { message: "Pareggio!", type: "draw" };
+            }
+            
+            const winConditions = {
+                "forbice": "carta",
+                "carta": "sasso",
+                "sasso": "forbice"
+            };
+
+            if (winConditions[user] === computer) {
+                this.scoreUtente++;
+                return { message: "🎉 Hai Vinto!", type: "win" };
+            } else {
+                this.scoreComputer++;
+                return { message: "💻 Ha Vinto il Computer!", type: "lose" };
+            }
+        },
+
+        displayResult: function(result) {
+            this.displayMessage(result.message, result.type);
+            this.updateScoresDisplay();
+            this.saveScores();
+            this.resetChoicesDisplay(); // Clear user choice for next round
+        },
+
+        resetChoicesDisplay: function() {
+            this.userChoice = "";
+            this.selectionContainer.querySelectorAll('.small').forEach(item => {
+                item.classList.remove('selected');
+            });
+            this.impostaImmagine(this.imgUtente, 'vuoto.png');
+            this.impostaImmagine(this.imgComputer, 'vuoto.png');
+        },
+
+        updateScoresDisplay: function() {
+            this.scoreUtenteEl.textContent = this.scoreUtente;
+            this.scoreComputerEl.textContent = this.scoreComputer;
+            this.scorePareggiEl.textContent = this.scorePareggi;
+        },
+
+        saveScores: function() {
+            localStorage.setItem("morra-score-utente", this.scoreUtente.toString());
+            localStorage.setItem("morra-score-computer", this.scoreComputer.toString());
+            localStorage.setItem("morra-score-pareggi", this.scorePareggi.toString());
+        },
+
+        loadScores: function() {
+            this.scoreUtente = parseInt(localStorage.getItem("morra-score-utente")) || 0;
+            this.scoreComputer = parseInt(localStorage.getItem("morra-score-computer")) || 0;
+            this.scorePareggi = parseInt(localStorage.getItem("morra-score-pareggi")) || 0;
+        },
+
+        resetScore: function() {
+            if (confirm("Vuoi resettare tutti i punteggi?")) {
+                this.scoreUtente = 0;
+                this.scoreComputer = 0;
+                this.scorePareggi = 0;
+                this.updateScoresDisplay();
+                this.saveScores();
+                this.displayMessage("Punteggi resettati!", "info");
+            }
+        },
+
+        displayMessage: function(message, type = '') {
+            this.txtRisultato.textContent = message;
+            this.txtRisultato.className = ''; // Clear previous classes
+            if (type) {
+                this.txtRisultato.classList.add(type);
+            }
+            // Clear message after a short delay for non-persistent messages
+            if (type === 'error' || type === 'info') {
+                 setTimeout(() => {
+                    this.txtRisultato.textContent = "";
+                    this.txtRisultato.className = "";
+                }, 2000);
+            }
+        },
+
+        impostaImmagine: function(element, imageName) {
+            element.style.backgroundImage = `url('img/${imageName}')`;
+        },
+
+        random: function(min, max) {
+            return Math.floor(Math.random() * (max - min)) + min;
         }
-
-        playRound();
-    });
-}
-
-function selectChoice(choice) {
-    userChoice = choice;
-    _imgUtente.style.backgroundImage = `url('img/${choice}.png')`;
-    _imgComputer.style.backgroundImage = "url('img/vuoto.png')";
-    _txtRisultato.innerHTML = "";
-    _txtRisultato.className = "";
-    
-    // Rimuovi selezione precedente
-    for (let small of _small) {
-        small.classList.remove("selected");
-    }
-    
-    // Aggiungi selezione alla scelta corrente
-    const selectedSmall = Array.from(_small).find(s => s.getAttribute("data-choice") === choice);
-    if (selectedSmall) {
-        selectedSmall.classList.add("selected");
-    }
-    
-    _imgUtente.classList.add("selected");
-    _imgComputer.classList.remove("selected");
-}
-
-function playRound() {
-    // Genera mossa computer
-    const computerChoice = choices[random(0, 3)];
-    
-    // Animazione computer
-    _imgComputer.classList.add("shake");
-    setTimeout(() => {
-        _imgComputer.style.backgroundImage = `url('img/${computerChoice}.png')`;
-        _imgComputer.classList.remove("shake");
-        
-        // Determina il vincitore
-        const result = determinaVincitore(userChoice, computerChoice);
-        displayResult(result);
-    }, 500);
-}
-
-function determinaVincitore(sceltaUtente, sceltaComputer) {
-    if (sceltaUtente === sceltaComputer) {
-        scorePareggi++;
-        return { message: "Pareggio!", type: "draw", winner: "none" };
-    }
-    
-    const winConditions = {
-        "forbice": "mano",
-        "mano": "sasso",
-        "sasso": "forbice"
     };
-    
-    if (winConditions[sceltaUtente] === sceltaComputer) {
-        scoreUtente++;
-        return { message: "🎉 Hai Vinto!", type: "win", winner: "user" };
-    } else {
-        scoreComputer++;
-        return { message: "💻 Ha Vinto il Computer!", type: "lose", winner: "computer" };
-    }
-}
 
-function displayResult(result) {
-    _txtRisultato.innerHTML = result.message;
-    _txtRisultato.className = result.type;
-    updateScores();
-    saveScores();
-    
-    // Reset selezione per il prossimo round
-    setTimeout(() => {
-        userChoice = "";
-        for (let small of _small) {
-            small.classList.remove("selected");
-        }
-        _imgUtente.classList.remove("selected");
-    }, 2000);
-}
-
-function updateScores() {
-    _scoreUtente.textContent = scoreUtente;
-    _scoreComputer.textContent = scoreComputer;
-    _scorePareggi.textContent = scorePareggi;
-}
-
-function saveScores() {
-    localStorage.setItem("morra-score-utente", scoreUtente.toString());
-    localStorage.setItem("morra-score-computer", scoreComputer.toString());
-    localStorage.setItem("morra-score-pareggi", scorePareggi.toString());
-}
-
-function loadScores() {
-    scoreUtente = parseInt(localStorage.getItem("morra-score-utente")) || 0;
-    scoreComputer = parseInt(localStorage.getItem("morra-score-computer")) || 0;
-    scorePareggi = parseInt(localStorage.getItem("morra-score-pareggi")) || 0;
-    updateScores();
-}
-
-function resetScore() {
-    if (confirm("Vuoi resettare tutti i punteggi?")) {
-        scoreUtente = 0;
-        scoreComputer = 0;
-        scorePareggi = 0;
-        updateScores();
-        saveScores();
-        showMessage("Punteggi resettati!", "success");
-    }
-}
-
-function showMessage(message, type) {
-    _txtRisultato.innerHTML = message;
-    _txtRisultato.className = type;
-    setTimeout(() => {
-        _txtRisultato.innerHTML = "";
-        _txtRisultato.className = "";
-    }, 2000);
-}
-
-function random(min, max) {
-    return Math.floor((max - min) * Math.random()) + min;
-}
-
-function impostaStileImmagine(elemento) {
-    elemento.style.backgroundRepeat = "no-repeat";
-    elemento.style.backgroundPosition = "center";
-    elemento.style.backgroundSize = "contain";
-}
+    Game.init();
+});
