@@ -16,7 +16,7 @@ const container = $("#gameContainer");
 
 startGame();
 
-$("#gameContainer");.css({
+container.css({
     position: "relative",
     width: COLS * 70 + "px",
     height: ROWS * 100 + "px",
@@ -88,7 +88,7 @@ $(document).on("click", ".star", function () {
         $(this).remove();
     });
 
-    if (points % 5 ==  0 && fallSpeed > 1000) {
+    if (points % 5 ==  0 && fallSpeed > 800) {
         fallSpeed -= 500;
     }
 });

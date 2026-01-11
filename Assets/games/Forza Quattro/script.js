@@ -177,35 +177,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const winnerName = (gameMode === 'pvc' && winner.player === PLAYER2) ? 'Il Computer' : (winner.player === PLAYER1 ? 'Giocatore 1' : 'Giocatore 2');
             modalTitle.textContent = `🎉 Vince ${winnerName}!`;
             modalBody.textContent = 'Complimenti!';
-            drawWinningLine(winner.line);
+            highlightWinningLine(winner.line);
         }
         setTimeout(() => gameModal.show(), 500);
     }
     
-    function drawWinningLine(line) {
-        const firstCell = wrapper.children[line[0].r * COLS + line[0].c];
-        const lastCell = wrapper.children[line[3].r * COLS + line[3].c];
-
-        const lineEl = document.createElement('div');
-        lineEl.classList.add('winning-line');
-        
-        const firstRect = firstCell.getBoundingClientRect();
-        const wrapperRect = wrapper.getBoundingClientRect();
-        
-        const x1 = firstRect.left + firstRect.width / 2 - wrapperRect.left;
-        const y1 = firstRect.top + firstRect.height / 2 - wrapperRect.top;
-        const x2 = lastCell.getBoundingClientRect().left + lastCell.getBoundingClientRect().width / 2 - wrapperRect.left;
-        const y2 = lastCell.getBoundingClientRect().top + lastCell.getBoundingClientRect().height / 2 - wrapperRect.top;
-        
-        const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-        const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
-        
-        lineEl.style.width = `${length}px`;
-        lineEl.style.left = `${x1}px`;
-        lineEl.style.top = `${y1}px`;
-        lineEl.style.transform = `rotate(${angle}deg)`;
-        
-        wrapper.appendChild(lineEl);
+    function highlightWinningLine(line) {
+        line.forEach(({r, c}) => {
+            const cell = wrapper.children[r * COLS + c];
+            cell.classList.add('winning-cell');
+        });
     }
 
     // Event listeners

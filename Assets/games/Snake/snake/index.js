@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const difficulty = this.difficultySelect.value;
             switch (difficulty) {
                 case 'easy':
-                    this.gridSize = 20;
+                    this.gridSize = 30;
                     this.gameSpeed = 200;
                     break;
                 case 'medium':
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     this.gameSpeed = 150;
                     break;
                 case 'hard':
-                    this.gridSize = 30;
+                    this.gridSize = 20;
                     this.gameSpeed = 100;
                     break;
             }

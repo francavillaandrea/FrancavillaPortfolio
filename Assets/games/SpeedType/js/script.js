@@ -1,24 +1,45 @@
-const words = {
+// Array fallback di parole nel caso l'API non sia disponibile
+const fallbackWords = {
     easy: [
         "casa", "gatto", "cane", "sole", "mare", "luna", "stella", "fiore",
         "albero", "libro", "scuola", "amico", "gioco", "palla", "tavolo",
         "sedia", "porta", "finestra", "mamma", "papà", "bambino", "bambina",
-        "acqua", "pane", "latte", "mela", "banana", "arancia", "uva", "pesca"
+        "acqua", "pane", "latte", "mela", "banana", "arancia", "uva", "pesca",
+        "naso", "occhio", "bocca", "orecchio", "mano", "piede", "cuore", "testa",
+        "notte", "giorno", "ora", "minuto", "secondo", "settimana", "mese", "anno",
+        "rosso", "blu", "verde", "giallo", "nero", "bianco", "rosa", "marrone",
+        "alto", "basso", "grande", "piccolo", "caldo", "freddo", "nuovo", "vecchio",
+        "pizza", "pasta", "formaggio", "burro", "sale", "pepe", "zucchero", "farina"
     ],
     medium: [
         "computer", "javascript", "programmare", "coding", "veloce", "studio",
         "html", "bootstrap", "jquery", "sviluppo", "tecnologia", "digitare",
         "mouse", "tastiera", "logica", "funzione", "schermo", "processore",
         "database", "internet", "algoritmo", "matrice", "variabile", "condizione",
-        "ciclo", "evento", "risorsa", "memoria", "connessione", "password"
+        "ciclo", "evento", "risorsa", "memoria", "connessione", "password",
+        "applicazione", "software", "hardware", "sistema", "operativo", "browser",
+        "server", "client", "rete", "indirizzo", "dominio", "sito", "pagina",
+        "immagine", "video", "audio", "documento", "cartella", "file", "download",
+        "caricamento", "sincronizzazione", "aggiornamento", "versione", "backup",
+        "sicurezza", "crittografia", "autenticazione", "permesso", "accesso",
+        "progetto", "squadra", "collaborazione", "comunicazione", "riunione"
     ],
     hard: [
         "programmazione", "algoritmico", "architettura", "implementazione",
         "ottimizzazione", "debugging", "refactoring", "documentazione",
         "sperimentazione", "collaborazione", "innovazione", "trasformazione",
-        "comunicazione", "organizzazione", "sperimentazione", "visualizzazione",
-        "configurazione", "autenticazione", "crittografia", "decompressione",
-        "parallelizzazione", "sincronizzazione", "sperimentazione", "ottimizzazione"
+        "comunicazione", "organizzazione", "visualizzazione", "configurazione",
+        "autenticazione", "crittografia", "decompressione", "parallelizzazione",
+        "sincronizzazione", "ottimizzazione", "frameworks", "libreria", "modulo",
+        "componente", "interfaccia", "protocollo", "architettura", "microservizi",
+        "contenitore", "orchestrazione", "containerizzazione", "virtualizzazione",
+        "scalabilità", "disponibilità", "affidabilità", "prestazioni", "latenza",
+        "throughput", "bandwidth", "compressione", "serializzazione", "parsing",
+        "renderizzazione", "interpolazione", "interpolazione", "estrapolazione",
+        "approssimazione", "discretizzazione", "quantizzazione", "normalizzazione",
+        "standardizzazione", "uniformazione", "formalizzazione", "flessibilità",
+        "modularità", "manutenibilità", "leggibilità", "testabilità", "portabilità",
+        "compatibilità", "interoperabilità", "estensibilità", "scalabilità"
     ]
 };
 
@@ -37,6 +58,9 @@ $(document).ready(function() {
         timeInterval: null,
         gameStarted: false,
         bestWPM: 0,
+        usedWords: new Set(), // Traccia le parole già usate in questa sessione
+        apiWords: [], // Cache delle parole scaricate dall'API
+        useAPI: true, // Flag per attivare/disattivare l'uso dell'API
         
         // UI Elements
         timeDisplay: $('#time'),
@@ -59,6 +83,7 @@ $(document).ready(function() {
 
         init: function() {
             this.loadBestWPM();
+            this.fetchWordsFromAPI(); // Carica le parole dall'API all'inizializzazione
             this.setupEventListeners();
             this.resetGame();
         },
@@ -99,7 +124,7 @@ $(document).ready(function() {
             clearInterval(this.timeInterval);
             this.gameStarted = false;
             this.timeLeft = this.totalTime;
-            this.score = 0; // WPM for display
+            this.score = 0; // Parole al minuto (WPM) per il display
             this.wordsTyped = 0;
             this.correctWords = 0;
             this.incorrectWords = 0;
@@ -107,6 +132,7 @@ $(document).ready(function() {
             this.totalChars = 0;
             this.typedChars = 0;
             this.currentWord = "";
+            this.usedWords.clear(); // Resetta le parole usate per una nuova partita
 
             this.typingInput.val("").prop('disabled', true).removeClass('correct wrong');
             this.wordDisplay.text("Clicca 'Inizia' per iniziare!").removeClass('correct wrong');
@@ -162,12 +188,68 @@ $(document).ready(function() {
 
         generateNewWord: function() {
             const currentDifficulty = $('input[name="difficulty"]:checked').val();
-            const wordList = words[currentDifficulty];
-            this.currentWord = wordList[Math.floor(Math.random() * wordList.length)];
+            let word;
+            
+            if (this.useAPI && this.apiWords.length > 0) {
+                // Prova a ottenere una parola dalla cache dell'API che non è stata usata
+                let attempts = 0;
+                do {
+                    word = this.apiWords[Math.floor(Math.random() * this.apiWords.length)];
+                    attempts++;
+                } while (this.usedWords.has(word.toLowerCase()) && attempts < 10);
+                
+                // Se abbiamo provato molte volte, ricadi sulla lista locale
+                if (attempts >= 10) {
+                    word = this.getWordFromFallback(currentDifficulty);
+                }
+            } else {
+                word = this.getWordFromFallback(currentDifficulty);
+            }
+            
+            this.currentWord = word.toLowerCase();
+            this.usedWords.add(this.currentWord);
             this.wordDisplay.text(this.currentWord);
             this.typingInput.val('');
             this.typingInput.removeClass('correct wrong');
             this.inputFeedback.text('');
+        },
+        
+        getWordFromFallback: function(difficulty) {
+            const wordList = fallbackWords[difficulty];
+            let word;
+            let attempts = 0;
+            
+            do {
+                word = wordList[Math.floor(Math.random() * wordList.length)];
+                attempts++;
+            } while (this.usedWords.has(word.toLowerCase()) && attempts < 10);
+            
+            return word;
+        },
+        
+        fetchWordsFromAPI: async function() {
+            try {
+                // Tenta di scaricare parole italiane dall'API
+                const response = await fetch('https://raw.githubusercontent.com/napolux/parole-italiane/master/parole-italiane.txt');
+                if (response.ok) {
+                    const text = await response.text();
+                    const words = text.split('\n').filter(w => w.trim().length > 0);
+                    // Filtra per lunghezza ragionevole (3-15 caratteri) per il gioco di dattilografia
+                    this.apiWords = words.filter(w => w.length >= 3 && w.length <= 15 && /^[a-zàèéìòù]+$/i.test(w.trim())).map(w => w.toLowerCase().trim());
+                    console.log('Parole italiane dall\'API caricate:', this.apiWords.length);
+                    if (this.apiWords.length > 0) {
+                        this.useAPI = true;
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.warn('Caricamento API fallito, uso parole di fallback:', error);
+            }
+            // Se l'API fallisce, usa il fallback locale
+            this.useAPI = false;
+            // Combina tutte le parole di fallback in una lista per varietà
+            this.apiWords = [...fallbackWords.easy, ...fallbackWords.medium, ...fallbackWords.hard];
+            console.log('Uso parole di fallback locale:', this.apiWords.length);
         },
 
         handleTypingInput: function() {

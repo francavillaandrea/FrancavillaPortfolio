@@ -1,0 +1,15 @@
+Impiccato --> Funziona
+Black Jack --> Funziona (Grandi Schermi)
+Morra Cinese --> Sistemare Estetica
+Quindi Numeri --> Funziona
+Accendi le luci --> Sistemare Logica ed Estetica
+Campo Minato --> Funziona
+Forza 4 --> Sistemare Logica
+Mastermind --> Sistemare Logica ed Estetica
+2048 --> Funziona ma implementare movimenti con frecce e WASD --> Sistemare pulsante come si gioca
+Bomba --> Funziona
+Snake --> Sistemare estetica (Quando si allarga il campo cambiando la difficoltà) [fare in modo che si restringa il campo per con l'aumentare della difficoltà]
+Memory --> Mettere in un layout a griglia perché al momento è inline
+Speed Type --> Fare in modo che le parole gia uscite non escano più, e non usare un vettore ma un api che da delle parole diverse ogni voltA
+Color Sequence --> Funziona
+Stelle Cadenti --> Funziona ma rendere più difficle

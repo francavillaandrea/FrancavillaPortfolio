@@ -13,7 +13,9 @@ const bestElement = document.getElementById("best");
 const gameOverElement = document.getElementById("game-over");
 const gameOverTitle = document.getElementById("game-over-title");
 const gameOverMessage = document.getElementById("game-over-message");
-const howToPlayModal = new bootstrap.Modal(document.getElementById('howToPlayModal'));
+// Cerca il modal solo se esiste
+const howToPlayModalEl = document.getElementById('howToPlayModal');
+const howToPlayModal = howToPlayModalEl ? new bootstrap.Modal(howToPlayModalEl) : null;
 
 // Carica il miglior punteggio dal localStorage
 bestScore = parseInt(localStorage.getItem("2048-best")) || 0;
@@ -188,26 +190,34 @@ function resetGame() {
 }
 
 function showHowToPlay() {
-    howToPlayModal.show();
+    if (howToPlayModal) {
+        howToPlayModal.show();
+    } else {
+        alert("Come si gioca 2048:\n- Usa le frecce o WASD per muovere i numeri\n- Unisci i numeri uguali per crear numeri più grandi\n- Raggiungi 2048 per vincere!");
+    }
 }
 
 // Gestione eventi tastiera
 document.addEventListener("keydown", (event) => {
     if (gameOver) return;
-    switch (event.key) {
-        case "ArrowUp":
+    switch (event.key.toLowerCase()) {
+        case "arrowup":
+        case "w":
             event.preventDefault();
             move('up');
             break;
-        case "ArrowDown":
+        case "arrowdown":
+        case "s":
             event.preventDefault();
             move('down');
             break;
-        case "ArrowLeft":
+        case "arrowleft":
+        case "a":
             event.preventDefault();
             move('left');
             break;
-        case "ArrowRight":
+        case "arrowright":
+        case "d":
             event.preventDefault();
             move('right');
             break;

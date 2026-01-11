@@ -47,15 +47,24 @@ function init() {
 }
 
 function shufflePuzzle() {
-    // Perform random moves to shuffle the board
-    for (let i = 0; i < dim * dim; i++) {
+    // Genera uno stato casuale garantendo che il puzzle sia risolvibile
+    // Inizia da uno stato completamente acceso (tutti true)
+    grid = Array(dim).fill(null).map(() => Array(dim).fill(true));
+    
+    // Applica mosse casuali per creare uno stato iniziale risolvibile
+    const numShuffles = Math.floor(Math.random() * (dim * dim)) + (dim * 2);
+    for (let i = 0; i < numShuffles; i++) {
         const randomRow = Math.floor(Math.random() * dim);
         const randomCol = Math.floor(Math.random() * dim);
         toggleLights(randomRow, randomCol);
     }
-    // Ensure the puzzle is not already solved
+    
+    // Assicura che il puzzle non sia già risolto
+    // Se tutte le luci sono accese, spegni una casella casuale
     if (grid.every(row => row.every(cell => cell))) {
-        toggleLights(0, 0); // Make at least one move if solved
+        const row = Math.floor(Math.random() * dim);
+        const col = Math.floor(Math.random() * dim);
+        grid[row][col] = false;
     }
 }
 
