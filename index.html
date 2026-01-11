@@ -14,37 +14,27 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
     />
-    <link rel="stylesheet" href="./Css/styles.css" />
+    <link rel="stylesheet" href="./css/styles.css" />
     <!-- Favicon -->
     <link
       rel="icon"
       type="image/png"
-      href="./Assets/img/Favicon/favicon.ico"
+      href="./assets/img/Favicon/favicon.ico"
       sizes="96x96"
     />
     <link
       rel="apple-touch-icon"
       sizes="180x180"
-      href="./Assets/img/Favicon/apple-touch-icon.png"
+      href="./assets/img/Favicon/apple-touch-icon.png"
     />
     <meta name="apple-mobile-web-app-title" content="Francavilla Andrea" />
-    <link rel="manifest" href="./Assets/img/Favicon/site.webmanifest" />
+    <link rel="manifest" href="./assets/img/Favicon/site.webmanifest" />
 
     <!-- Scripts -->
     <script
       defer
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     ></script>
-    <script defer src="./Js/theme.js"></script>
-    <script defer src="./Js/hover.js"></script>
-    <script defer src="./Js/smoothScroll.js"></script>
-
-    <!-- Scripts di traduzione -->
-    <script src="https://cdn.jsdelivr.net/npm/i18next@21.6.10/dist/umd/i18next.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@1.3.0/dist/umd/i18nextHttpBackend.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/i18next-browser-languagedetector@6.1.3/dist/umd/i18nextBrowserLanguageDetector.min.js"></script>
-    <script defer src="./Js/translations.js"></script>
-    <script defer src="./Js/language.js"></script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -86,44 +76,44 @@
               <a
                 class="nav-link active"
                 href="./index.html"
-                data-i18n="nav.home"
+               
                 >Home</a
               >
             </li>
             <li class="nav-item">
               <a
                 class="nav-link"
-                href="./Html/chisono.html"
-                data-i18n="nav.about"
+                href="./html/chisono.html"
+               
                 >Chi Sono</a
               >
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" data-i18n="nav.hobby"
+              <a class="nav-link dropdown-toggle" href="#"
                 >Hobby</a
               >
               <ul class="dropdown-menu">
                 <li>
                   <a
                     class="dropdown-item"
-                    href="./Html/moto.html"
-                    data-translate="hobby.moto"
+                    href="./html/moto.html"
+                   
                     >Moto</a
                   >
                 </li>
                 <li>
                   <a
                     class="dropdown-item"
-                    href="./Html/musica.html"
-                    data-translate="hobby.music"
+                    href="./html/musica.html"
+                   
                     >Musica
                   </a>
                 </li>
                 <li>
                   <a
                     class="dropdown-item"
-                    href="./Html/sport.html"
-                    data-translate="hobby.sport"
+                    href="./html/sport.html"
+                   
                     >Sport</a
                   >
                 </li>
@@ -132,8 +122,8 @@
             <li class="nav-item">
               <a
                 class="nav-link"
-                href="./Html/contact.html"
-                data-translate="nav.contacts"
+                href="./html/contact.html"
+               
                 >Contatti</a
               >
             </li>
@@ -142,12 +132,6 @@
 
         <!-- Language & Theme Switcher -->
         <div class="d-flex align-items-center">
-          <select class="form-select form-select-sm me-2" id="languageSelect">
-            <option value="it">🇮🇹</option>
-            <option value="en">🇬🇧</option>
-            <option value="fr">🇫🇷</option>
-            <option value="de">🇩🇪</option>
-          </select>
           <div class="mode-switch d-flex gap-1">
             <button class="btn btn-outline-secondary btn-sm" id="light">
               <i class="bi bi-sun-fill"></i>
@@ -171,17 +155,17 @@
       class="flex-grow-1 d-flex align-items-center justify-content-center position-relative overflow-hidden"
     >
       <div class="text-center position-relative">
-        <a href="./Html/games.html"
+        <a href="./html/games.html"
           ><img
-            src="./Assets/img/Beta.jpg"
+            src="./assets/img/Beta.jpg"
             alt="Sfondo Beta"
             class="rounded-circle mb-4"
             style="width: 300px; height: 300px; object-fit: cover"
         /></a>
-        <h1 class="display-4 mb-3" data-translate="main.title">
+        <h1 class="display-4 mb-3">
           Andrea Francavilla
         </h1>
-        <p class="lead floating" data-translate="main.subtitle">
+        <p class="lead floating">
           --- Portfolio ---
         </p>
 
@@ -240,7 +224,7 @@
           <div class="modal-header">
             <h5
               class="modal-title text-danger"
-              data-translate="modals.webDev.title"
+             
             >
               Web Developing
             </h5>
@@ -253,23 +237,23 @@
           <div class="modal-body">
             <div class="row">
               <div class="col-md-6">
-                <p class="fw-bold" data-translate="modals.webDev.skillsTitle">
+                <p class="fw-bold">
                   Competenze nel Web Developing:
                 </p>
                 <ul>
-                  <li data-translate="modals.webDev.skills.html">
+                  <li>
                     Conoscenze consolidate di HTML
                   </li>
-                  <li data-translate="modals.webDev.skills.css">
+                  <li>
                     Conoscenze consolidate di CSS
                   </li>
-                  <li data-translate="modals.webDev.skills.js">
+                  <li>
                     Una conoscenza minima e non consolidata di JavaScript
                   </li>
                 </ul>
               </div>
               <div class="col-md-6">
-                <p class="fw-bold" data-translate="modals.webDev.projectsTitle">
+                <p class="fw-bold">
                   Progetti Realizzati:
                 </p>
                 <div class="accordion" id="webExamples">
@@ -280,7 +264,7 @@
                         type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#htmlExample"
-                        data-translate="modals.webDev.projects.portfolio.title"
+                       
                       >
                         Portfolio Personale
                       </button>
@@ -293,28 +277,28 @@
                       <div class="accordion-body">
                         <div class="d-flex flex-column gap-2">
                           <p
-                            data-translate="modals.webDev.projects.portfolio.description"
+                           
                           >
                             Sito portfolio personale realizzato con:
                           </p>
                           <ul>
                             <li
-                              data-translate="modals.webDev.projects.portfolio.features.html"
+                             
                             >
                               HTML5 semantico
                             </li>
                             <li
-                              data-translate="modals.webDev.projects.portfolio.features.bootstrap"
+                             
                             >
                               Bootstrap 5 per il layout
                             </li>
                             <li
-                              data-translate="modals.webDev.projects.portfolio.features.animations"
+                             
                             >
                               Animazioni CSS personalizzate
                             </li>
                             <li
-                              data-translate="modals.webDev.projects.portfolio.features.theme"
+                             
                             >
                               Tema chiaro/scuro dinamico
                             </li>
@@ -330,7 +314,7 @@
                         type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#futureWeb"
-                        data-translate="modals.webDev.projects.other.title"
+                       
                       >
                         Altri Progetti
                       </button>
@@ -344,7 +328,7 @@
                         <div class="d-flex flex-column gap-2">
                           <p
                             class="text-muted fst-italic"
-                            data-translate="modals.webDev.projects.other.description"
+                           
                           >
                             Altri progetti in arrivo prossimamente...
                           </p>
@@ -366,7 +350,7 @@
           <div class="modal-header">
             <h5
               class="modal-title text-warning"
-              data-translate="modals.bash.title"
+             
             >
               Command Line (Bash)
             </h5>
@@ -379,23 +363,23 @@
           <div class="modal-body">
             <div class="row">
               <div class="col-md-6">
-                <p class="fw-bold" data-translate="modals.bash.skillsTitle">
+                <p class="fw-bold">
                   Competenze Bash:
                 </p>
                 <ul>
-                  <li data-translate="modals.bash.skills.files">
+                  <li>
                     Gestione file e directory
                   </li>
-                  <li data-translate="modals.bash.skills.permissions">
+                  <li>
                     Gestione permessi
                   </li>
-                  <li data-translate="modals.bash.skills.pipeline">
+                  <li>
                     Pipeline e redirezione
                   </li>
                 </ul>
               </div>
               <div class="col-md-6">
-                <p class="fw-bold" data-translate="modals.bash.scriptsTitle">
+                <p class="fw-bold">
                   Esempi di Script:
                 </p>
                 <div class="accordion" id="bashExamples">
@@ -406,7 +390,7 @@
                         type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#futureBash"
-                        data-translate="modals.bash.scripts.other.title"
+                       
                       >
                         Altri Script
                       </button>
@@ -419,7 +403,7 @@
                       <div class="accordion-body">
                         <p
                           class="text-muted fst-italic"
-                          data-translate="modals.bash.scripts.other.description"
+                         
                         >
                           Altri script in arrivo prossimamente...
                         </p>
@@ -440,7 +424,7 @@
           <div class="modal-header">
             <h5
               class="modal-title text-success"
-              data-translate="modals.clike.title"
+             
             >
               Linguaggi C-like
             </h5>
@@ -453,24 +437,24 @@
           <div class="modal-body">
             <div class="row">
               <div class="col-md-6">
-                <p class="fw-bold" data-translate="modals.clike.skillsTitle">
+                <p class="fw-bold">
                   Competenze:
                 </p>
                 <ul>
-                  <li data-translate="modals.clike.skills.c">
+                  <li>
                     C, nel quale ho una conoscenza abbastanza consolidata
                   </li>
-                  <li data-translate="modals.clike.skills.cpp">
+                  <li>
                     C++, nel quale ho conoscenze minime dato che è un linguaggio
                     a cui mi sono approcciato recentemente
                   </li>
-                  <li data-translate="modals.clike.skills.csharp">
+                  <li>
                     C#, nel quale ho delle buone conoscenze ma poco approfondite
                   </li>
                 </ul>
               </div>
               <div class="col-md-6">
-                <p class="fw-bold" data-translate="modals.clike.projectsTitle">
+                <p class="fw-bold">
                   Progetti realizzati:
                 </p>
                 <div class="accordion" id="clikeExamples">
@@ -481,7 +465,7 @@
                         type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#futureCliке"
-                        data-translate="modals.clike.projects.other.title"
+                       
                       >
                         Altri Progetti
                       </button>
@@ -494,7 +478,7 @@
                       <div class="accordion-body">
                         <p
                           class="text-muted fst-italic"
-                          data-translate="modals.clike.projects.other.description"
+                         
                         >
                           Altri progetti in arrivo prossimamente...
                         </p>
@@ -563,7 +547,7 @@
                             <li>Visualizzazione stato</li>
                           </ul>
                           <a
-                            href="./Assets/projects/todoList.zip"
+                            href="./assets/projects/todoList.zip"
                             download
                             class="btn btn-info text-white d-flex align-items-center gap-2 w-100 justify-content-center"
                           >

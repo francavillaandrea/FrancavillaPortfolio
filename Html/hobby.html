@@ -4,51 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-translate="hobby.title">I Miei Hobby</title>
+    <title>I Miei Hobby</title>
 
     <!-- CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="../Css/styles.css">    <!-- Scripts -->
+    <link rel="stylesheet" href="../css/styles.css">    <!-- Scripts -->
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/i18next@21.6.10/dist/umd/i18next.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@1.3.0/dist/umd/i18nextHttpBackend.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/i18next-browser-languagedetector@6.1.3/dist/umd/i18nextBrowserLanguageDetector.min.js"></script>
-    <script defer src="../Js/theme.js"></script>
-
-    <script>
-        // i18next initialization
-        i18next
-            .use(i18nextHttpBackend)
-            .use(i18nextBrowserLanguageDetector)
-            .init({
-                fallbackLng: 'it',
-                backend: {
-                    loadPath: '../Assets/locales/{{lng}}/{{lng}}.json'
-                }
-            })
-            .then(function(t) {
-                updateContent();
-            });
-
-        function updateContent() {
-            document.querySelectorAll('[data-translate]').forEach(element => {
-                const key = element.getAttribute('data-translate');
-                element.textContent = i18next.t(key);
-            });
-        }        i18next.on('languageChanged', () => {
-            updateContent();
-            document.documentElement.lang = i18next.language;
-        });
-
-        // Language selector
-        document.getElementById('languageSelect').addEventListener('change', (e) => {
-            i18next.changeLanguage(e.target.value);
-        });
-
-        // Set initial language selector value
-        document.getElementById('languageSelect').value = i18next.language;
-    </script>
+    <script defer src="../js/theme.js"></script>
 </head>
 
 <body class="min-vh-100 d-flex flex-column">
@@ -65,35 +28,29 @@
             <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="../index.html" data-translate="nav.home">Home</a>
+                        <a class="nav-link" href="../index.html">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="./chisono.html" data-translate="nav.about">Me</a>
+                        <a class="nav-link" href="./chisono.html">Me</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle active" href="#" data-translate="nav.hobby">Hobby</a>
+                        <a class="nav-link dropdown-toggle active" href="#">Hobby</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="./moto.html" data-translate="hobby.moto">Moto</a></li>
-                            <li><a class="dropdown-item" href="./musica.html" data-translate="hobby.music">Musica</a>
+                            <li><a class="dropdown-item" href="./moto.html">Moto</a></li>
+                            <li><a class="dropdown-item" href="./musica.html">Musica</a>
                             </li>
-                            <li><a class="dropdown-item" href="./sport.html" data-translate="hobby.sport">Sport</a>
+                            <li><a class="dropdown-item" href="./sport.html">Sport</a>
                             </li>
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="./contact.html" data-translate="nav.contacts">Contatti</a>
+                        <a class="nav-link" href="./contact.html">Contatti</a>
                     </li>
                 </ul>
             </div>
 
             <!-- Language & Theme Switcher -->
             <div class="d-flex align-items-center">
-                <select class="form-select form-select-sm me-2" id="languageSelect">
-                    <option value="it">🇮🇹</option>
-                    <option value="en">🇬🇧</option>
-                    <option value="fr">🇫🇷</option>
-                    <option value="de">🇩🇪</option>
-                </select>
                 <div class="mode-switch d-flex gap-1">
                     <button class="btn btn-outline-secondary btn-sm" id="light">
                         <i class="bi bi-sun-fill"></i>
@@ -112,38 +69,38 @@
     <!-- Main Content -->
     <main class="flex-grow-1">
         <div class="container my-5">
-            <h1 class="display-4 text-center mb-4" data-translate="hobby.title">I Miei Hobby</h1>
+            <h1 class="display-4 text-center mb-4">I Miei Hobby</h1>
             <div class="row g-4">
                 <!-- Moto Card -->
                 <div class="col-md-4">
                     <div class="card h-100">
-                        <img src="../Assets/img/moto.jpg" class="card-img-top" alt="Moto">
+                        <img src="../assets/img/moto.jpg" class="card-img-top" alt="Moto">
                         <div class="card-body">
-                            <h5 class="card-title" data-translate="hobby.moto">Moto</h5>
-                            <p class="card-text" data-translate="hobby.motoDesc">La mia passione per le due ruote...</p>
-                            <a href="./moto.html" class="btn btn-primary" data-translate="common.readMore">Leggi di più</a>
+                            <h5 class="card-title">Moto</h5>
+                            <p class="card-text">La mia passione per le due ruote...</p>
+                            <a href="./moto.html" class="btn btn-primary">Leggi di più</a>
                         </div>
                     </div>
                 </div>
                 <!-- Musica Card -->
                 <div class="col-md-4">
                     <div class="card h-100">
-                        <img src="../Assets/img/musica.jpg" class="card-img-top" alt="Musica">
+                        <img src="../assets/img/musica.jpg" class="card-img-top" alt="Musica">
                         <div class="card-body">
-                            <h5 class="card-title" data-translate="hobby.music">Musica</h5>
-                            <p class="card-text" data-translate="hobby.musicDesc">Il mio amore per la musica...</p>
-                            <a href="./musica.html" class="btn btn-primary" data-translate="common.readMore">Leggi di più</a>
+                            <h5 class="card-title">Musica</h5>
+                            <p class="card-text">Il mio amore per la musica...</p>
+                            <a href="./musica.html" class="btn btn-primary">Leggi di più</a>
                         </div>
                     </div>
                 </div>
                 <!-- Sport Card -->
                 <div class="col-md-4">
                     <div class="card h-100">
-                        <img src="../Assets/img/sport.jpg" class="card-img-top" alt="Sport">
+                        <img src="../assets/img/sport.jpg" class="card-img-top" alt="Sport">
                         <div class="card-body">
-                            <h5 class="card-title" data-translate="hobby.sport">Sport</h5>
-                            <p class="card-text" data-translate="hobby.sportDesc">La mia passione per lo sport...</p>
-                            <a href="./sport.html" class="btn btn-primary" data-translate="common.readMore">Leggi di più</a>
+                            <h5 class="card-title">Sport</h5>
+                            <p class="card-text">La mia passione per lo sport...</p>
+                            <a href="./sport.html" class="btn btn-primary">Leggi di più</a>
                         </div>
                     </div>
                 </div>
