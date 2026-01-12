@@ -1,15 +1,26 @@
 <!DOCTYPE html>
 <html lang="it" data-bs-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2048</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="index.css"/>
-    <script defer src="../../../js/theme.js"></script>
+    <link rel="stylesheet" href="index.css" />
     <script defer src="script.js"></script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/Assets/img/Favicon/favicon.ico" sizes="96x96">
+    <link rel="apple-touch-icon" sizes="180x180" href="/Assets/img/Favicon/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="Francavilla Andrea">
+    <link rel="manifest" href="/Assets/img/Favicon/site.webmanifest">
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Relief:wght@400;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <div class="container py-4">
         <div class="text-center mb-4">
@@ -34,7 +45,7 @@
                 </button>
             </div>
         </div>
-        
+
         <div id="game-container">
             <div id="wrapper"></div>
             <div id="game-over" class="game-over hidden">
@@ -45,7 +56,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="text-center mt-4">
             <p class="text-muted">
                 <i class="bi bi-keyboard"></i> Usa le frecce della tastiera o i pulsanti qui sotto
@@ -79,19 +90,24 @@
                 </div>
                 <div class="modal-body">
                     <h6>Muovi le tessere:</h6>
-                    <p>Usa le frecce della tastiera (<kbd>↑</kbd>, <kbd>↓</kbd>, <kbd>←</kbd>, <kbd>→</kbd>) o i pulsanti direzionali sullo schermo per far scorrere tutte le tessere nella direzione scelta.</p>
-                    
+                    <p>Usa le frecce della tastiera (<kbd>↑</kbd>, <kbd>↓</kbd>, <kbd>←</kbd>, <kbd>→</kbd>) o i
+                        pulsanti direzionali sullo schermo per far scorrere tutte le tessere nella direzione scelta.</p>
+
                     <h6>Combina i numeri:</h6>
-                    <p>Quando due tessere con lo stesso numero si toccano durante il movimento, si fondono in una singola tessera che contiene la somma dei due numeri (es. due '2' diventano un '4').</p>
-                    
+                    <p>Quando due tessere con lo stesso numero si toccano durante il movimento, si fondono in una
+                        singola tessera che contiene la somma dei due numeri (es. due '2' diventano un '4').</p>
+
                     <h6>Generazione di nuove tessere:</h6>
-                    <p>Dopo ogni mossa valida, una nuova tessera (un '2' o un '4') appare casualmente in una cella vuota.</p>
-                    
+                    <p>Dopo ogni mossa valida, una nuova tessera (un '2' o un '4') appare casualmente in una cella
+                        vuota.</p>
+
                     <h6>L'obiettivo:</h6>
-                    <p>Raggiungi la tessera '2048'! Puoi continuare a giocare anche dopo averla creata, cercando di ottenere punteggi più alti.</p>
-                    
+                    <p>Raggiungi la tessera '2048'! Puoi continuare a giocare anche dopo averla creata, cercando di
+                        ottenere punteggi più alti.</p>
+
                     <h6>Fine del gioco:</h6>
-                    <p>Il gioco termina quando non ci sono più celle vuote e non è possibile fare altre mosse (cioè, nessuna tessera può essere fusa con un'altra).</p>
+                    <p>Il gioco termina quando non ci sono più celle vuote e non è possibile fare altre mosse (cioè,
+                        nessuna tessera può essere fusa con un'altra).</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ho capito!</button>
@@ -100,4 +116,5 @@
         </div>
     </div>
 </body>
+
 </html>

@@ -1,5 +1,3 @@
-Impiccato --> Funziona
-Black Jack --> Funziona (Grandi Schermi)
 Morra Cinese --> Sistemare Estetica
 Quindi Numeri --> Funziona
 Accendi le luci --> Sistemare Logica ed Estetica
@@ -13,3 +11,6 @@ Memory --> Mettere in un layout a griglia perché al momento è inline
 Speed Type --> Fare in modo che le parole gia uscite non escano più, e non usare un vettore ma un api che da delle parole diverse ogni voltA
 Color Sequence --> Funziona
 Stelle Cadenti --> Funziona ma rendere più difficle
+
+
+Mettere a tutti font e favicon, e fixare quelli non funzionanti (Alcuni da testare)

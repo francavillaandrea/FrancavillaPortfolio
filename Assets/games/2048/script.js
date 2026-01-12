@@ -1,65 +1,58 @@
 "use strict";
 
+/* =======================
+   CONFIGURAZIONE
+======================= */
 const DIM = 4;
 let grid = [];
 let score = 0;
 let bestScore = 0;
 let gameOver = false;
-let moved = false;
 
+/* =======================
+   ELEMENTI DOM
+======================= */
 const wrapper = document.getElementById("wrapper");
 const scoreElement = document.getElementById("score");
 const bestElement = document.getElementById("best");
 const gameOverElement = document.getElementById("game-over");
 const gameOverTitle = document.getElementById("game-over-title");
 const gameOverMessage = document.getElementById("game-over-message");
-// Cerca il modal solo se esiste
-const howToPlayModalEl = document.getElementById('howToPlayModal');
-const howToPlayModal = howToPlayModalEl ? new bootstrap.Modal(howToPlayModalEl) : null;
 
-// Carica il miglior punteggio dal localStorage
+/* =======================
+   INIT
+======================= */
 bestScore = parseInt(localStorage.getItem("2048-best")) || 0;
 bestElement.textContent = bestScore;
 
-// Inizializza il gioco
 init();
 
 function init() {
-    grid = Array(DIM).fill().map(() => Array(DIM).fill(0));
+    grid = Array.from({ length: DIM }, () => Array(DIM).fill(0));
     score = 0;
     gameOver = false;
-    updateScore();
+
     createGrid();
     addRandomTile();
     addRandomTile();
+
+    updateScore();
     render();
     gameOverElement.classList.add("hidden");
 }
 
+/* =======================
+   GRIGLIA
+======================= */
 function createGrid() {
     wrapper.innerHTML = "";
     for (let i = 0; i < DIM; i++) {
         for (let j = 0; j < DIM; j++) {
             const cell = document.createElement("div");
-            cell.classList.add("cella", "empty");
+            cell.className = "cella empty";
             cell.id = `${i}-${j}`;
             wrapper.appendChild(cell);
         }
-    }
-}
-
-function addRandomTile() {
-    const emptyCells = [];
-    for (let i = 0; i < DIM; i++) {
-        for (let j = 0; j < DIM; j++) {
-            if (grid[i][j] === 0) {
-                emptyCells.push({ i, j });
-            }
-        }
-    }
-    if (emptyCells.length > 0) {
-        const { i, j } = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-        grid[i][j] = Math.random() < 0.9 ? 2 : 4;
     }
 }
 
@@ -69,96 +62,131 @@ function render() {
             const cell = document.getElementById(`${i}-${j}`);
             const value = grid[i][j];
             cell.textContent = value === 0 ? "" : value;
-            cell.setAttribute("data-value", value);
+            cell.dataset.value = value;
             cell.classList.toggle("empty", value === 0);
         }
     }
 }
 
-// --- Refactored Move Logic ---
-
-function operate(row) {
-    const newRow = row.filter(val => val);
-    for (let i = 0; i < newRow.length - 1; i++) {
-        if (newRow[i] === newRow[i + 1]) {
-            newRow[i] *= 2;
-            score += newRow[i];
-            newRow.splice(i + 1, 1);
+/* =======================
+   TILE RANDOM
+======================= */
+function addRandomTile() {
+    const empty = [];
+    for (let i = 0; i < DIM; i++) {
+        for (let j = 0; j < DIM; j++) {
+            if (grid[i][j] === 0) empty.push({ i, j });
         }
     }
-    while (newRow.length < DIM) {
-        newRow.push(0);
+    if (empty.length) {
+        const { i, j } = empty[Math.floor(Math.random() * empty.length)];
+        grid[i][j] = Math.random() < 0.9 ? 2 : 4;
     }
-    return newRow;
 }
 
-function rotateGrid(grid) {
-    const newGrid = Array(DIM).fill().map(() => Array(DIM).fill(0));
+/* =======================
+   LOGICA 2048 ORIGINALE
+======================= */
+function slide(row) {
+    const arr = row.filter(v => v !== 0);
+    while (arr.length < DIM) arr.push(0);
+    return arr;
+}
+
+function combine(row) {
+    for (let i = 0; i < DIM - 1; i++) {
+        if (row[i] !== 0 && row[i] === row[i + 1]) {
+            row[i] *= 2;
+            score += row[i];
+            row[i + 1] = 0;
+        }
+    }
+    return row;
+}
+
+function operateRow(row) {
+    row = slide(row);
+    row = combine(row);
+    row = slide(row);
+    return row;
+}
+
+/* =======================
+   ROTAZIONE
+======================= */
+function rotateRight() {
+    const newGrid = Array.from({ length: DIM }, () => Array(DIM).fill(0));
     for (let i = 0; i < DIM; i++) {
         for (let j = 0; j < DIM; j++) {
             newGrid[j][DIM - 1 - i] = grid[i][j];
         }
     }
-    return newGrid;
+    grid = newGrid;
+}
+
+/* =======================
+   MOVIMENTI
+======================= */
+function moveLeft() {
+    const oldGrid = JSON.stringify(grid);
+
+    for (let i = 0; i < DIM; i++) {
+        grid[i] = operateRow(grid[i]);
+    }
+
+    if (JSON.stringify(grid) !== oldGrid) {
+        addRandomTile();
+        updateScore();
+        render();
+        checkEndGame();
+    }
 }
 
 function move(direction) {
     if (gameOver) return;
 
-    let originalGrid = JSON.stringify(grid);
-    let tempGrid = grid.map(row => [...row]);
-    let rotations = 0;
-
     switch (direction) {
-        case 'up': rotations = 1; break;
-        case 'right': rotations = 2; break;
-        case 'down': rotations = 3; break;
-    }
+        case "left":
+            moveLeft();
+            break;
 
-    for (let i = 0; i < rotations; i++) {
-        tempGrid = rotateGrid(tempGrid);
-    }
+        case "right":
+            rotateRight();
+            rotateRight();
+            moveLeft();
+            rotateRight();
+            rotateRight();
+            break;
 
-    for (let i = 0; i < DIM; i++) {
-        tempGrid[i] = operate(tempGrid[i]);
-    }
-    
-    // Rotate back
-    for (let i = 0; i < (4 - rotations) % 4; i++) {
-        tempGrid = rotateGrid(tempGrid);
-    }
+        case "up":
+            rotateRight();
+            rotateRight();
+            rotateRight();
+            moveLeft();
+            rotateRight();
+            break;
 
-    grid = tempGrid;
-    moved = JSON.stringify(grid) !== originalGrid;
-
-    if (moved) {
-        addRandomTile();
-        render();
-        updateScore();
-        checkEndGame();
-    }
-}
-
-// --- End of Refactored Move Logic ---
-
-function checkEndGame() {
-    if (hasWon()) {
-        endGame(true);
-    } else if (isGameOver()) {
-        endGame(false);
+        case "down":
+            rotateRight();
+            moveLeft();
+            rotateRight();
+            rotateRight();
+            rotateRight();
+            break;
     }
 }
 
+/* =======================
+   GAME OVER / WIN
+======================= */
 function hasWon() {
     return grid.some(row => row.includes(2048));
 }
 
 function isGameOver() {
-    if (grid.some(row => row.includes(0))) {
-        return false;
-    }
     for (let i = 0; i < DIM; i++) {
         for (let j = 0; j < DIM; j++) {
+            if (grid[i][j] === 0) return false;
             if (j < DIM - 1 && grid[i][j] === grid[i][j + 1]) return false;
             if (i < DIM - 1 && grid[i][j] === grid[i + 1][j]) return false;
         }
@@ -166,6 +194,23 @@ function isGameOver() {
     return true;
 }
 
+function checkEndGame() {
+    if (hasWon()) endGame(true);
+    else if (isGameOver()) endGame(false);
+}
+
+function endGame(won) {
+    gameOver = true;
+    gameOverElement.classList.remove("hidden");
+    gameOverTitle.textContent = won ? "Hai vinto!" : "Game Over";
+    gameOverMessage.textContent = won
+        ? `Hai raggiunto 2048! Punteggio: ${score}`
+        : `Punteggio finale: ${score}`;
+}
+
+/* =======================
+   SCORE
+======================= */
 function updateScore() {
     scoreElement.textContent = score;
     if (score > bestScore) {
@@ -175,51 +220,42 @@ function updateScore() {
     }
 }
 
-function endGame(won) {
-    gameOver = true;
-    gameOverElement.classList.remove("hidden");
-    gameOverTitle.textContent = won ? "🎉 Hai Vinto!" : "Game Over!";
-    gameOverMessage.textContent = won
-        ? `Complimenti! Hai raggiunto 2048 con un punteggio di ${score}!`
-        : `Il tuo punteggio finale è ${score}. Riprova!`;
-}
-
+/* =======================
+   RESET
+======================= */
 function resetGame() {
-    gameOver = false;
     init();
 }
 
-function showHowToPlay() {
-    if (howToPlayModal) {
-        howToPlayModal.show();
-    } else {
-        alert("Come si gioca 2048:\n- Usa le frecce o WASD per muovere i numeri\n- Unisci i numeri uguali per crear numeri più grandi\n- Raggiungi 2048 per vincere!");
-    }
-}
-
-// Gestione eventi tastiera
-document.addEventListener("keydown", (event) => {
+/* =======================
+   INPUT TASTIERA
+======================= */
+document.addEventListener("keydown", e => {
     if (gameOver) return;
-    switch (event.key.toLowerCase()) {
-        case "arrowup":
-        case "w":
-            event.preventDefault();
-            move('up');
-            break;
-        case "arrowdown":
-        case "s":
-            event.preventDefault();
-            move('down');
-            break;
+
+    switch (e.key.toLowerCase()) {
         case "arrowleft":
         case "a":
-            event.preventDefault();
-            move('left');
+            e.preventDefault();
+            move("left");
             break;
+
         case "arrowright":
         case "d":
-            event.preventDefault();
-            move('right');
+            e.preventDefault();
+            move("right");
+            break;
+
+        case "arrowup":
+        case "w":
+            e.preventDefault();
+            move("up");
+            break;
+
+        case "arrowdown":
+        case "s":
+            e.preventDefault();
+            move("down");
             break;
     }
 });
