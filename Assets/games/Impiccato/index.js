@@ -70,8 +70,7 @@ $(document).ready(function() {
             this._gameOverTitle = document.getElementById("game-over-title");
             this._gameOverMessage = document.getElementById("game-over-message");
             this._keyboardButtons = document.querySelectorAll(".key-btn");
-            // Modal Bootstrap non disponibile nel contesto di questo gioco
-            // this._howToPlayModal = new bootstrap.Modal(document.getElementById('howToPlayModal'));
+            this._howToPlayModal = new bootstrap.Modal(document.getElementById('howToPlayModal'));
         },
 
         setupEventListeners: function() {

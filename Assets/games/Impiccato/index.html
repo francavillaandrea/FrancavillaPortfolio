@@ -8,15 +8,24 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="index.css" />
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/Assets/img/Favicon/favicon.ico" sizes="96x96">
+    <link rel="apple-touch-icon" sizes="180x180" href="/Assets/img/Favicon/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="Francavilla Andrea">
+    <link rel="manifest" href="/Assets/img/Favicon/site.webmanifest">
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Relief:wght@400;700&display=swap" rel="stylesheet">
 
     <title>Impiccato</title>
 
 <body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <div id="wrapper">
         <div class="header-section">
             <h1>Gioco dell'Impiccato</h1>
             <div class="stats-bar">
-                <div class="stat-item">
                     <div class="stat-label">Partite</div>
                     <div class="stat-value" id="games-played">0</div>
                 </div>
@@ -55,7 +64,7 @@
                     <p>Inserisci una lettera:</p>
                     <div id="input-group">
                         <input type="text" id="txtLettera" maxlength="1" placeholder="A-Z" autofocus>
-                        <button id="btnInvia" onclick="elabora()">
+                        <button id="btnInvia" onclick="elabora()" class="bg-danger">
                             <i class="bi bi-send-fill"></i> Invia
                         </button>
                     </div>
@@ -63,6 +72,9 @@
                         <p>Lettere usate: <span id="lettereUsate"></span></p>
                     </div>
                 </div>
+                <button type="button" id="how-to-play-btn" class="btn btn-info btn-lg text-white">
+                    <i class="bi bi-question-lg"></i> Come si gioca?
+                </button>
 
                 <div id="virtual-keyboard">
                     <div class="keyboard-row">
@@ -118,7 +130,7 @@
                         <p id="game-over-message"></p>
                         <div class="game-over-buttons">
                             <button id="btnReset" class="btn-reset" onclick="resetGame()">
-                                <i class="bi bi-arrow-clockwise"></i> Nuova Partita
+                                <i class="bi bi-arrow-clockwise bg-danger"></i> Nuova Partita
                             </button>
                         </div>
                     </div>
@@ -126,8 +138,39 @@
             </div>
         </div>
     </div>
+
+
+    <div class="modal fade" id="howToPlayModal" tabindex="-1" aria-labelledby="howToPlayModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="howToPlayModalLabel">Come si gioca all'Impiccato</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Obiettivo:</h6>
+                    <p>Indovina la parola segreta prima che il disegno dell'impiccato si completi!</p>
+                    <h6>Come giocare:</h6>
+                    <ol>
+                        <li>Ti viene mostrata una parola con le lettere nascoste (rappresentate da trattini).</li>
+                        <li>Inserisci una lettera alla volta nel campo di testo o clicca sui tasti della tastiera virtuale.</li>
+                        <li>Se la lettera è corretta, apparirà nella parola.</li>
+                        <li>Se la lettera è sbagliata, il disegno dell'impiccato avanzerà di uno step.</li>
+                        <li>Hai <b>6 tentativi sbagliati</b> prima di perdere la partita.</li>
+                        <li>Indovina la parola prima che finiscano i tentativi per vincere!</li>
+                    </ol>
+                    <h6>Categorie:</h6>
+                    <p>Puoi scegliere una categoria specifica (Cibo, Nazioni, Animali, Sport, Tecnologia) per rendere il gioco più facile o difficile.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ho capito!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 
-    <script defer type="application/javascript" src="index.js"></script>
+<script defer type="application/javascript" src="index.js"></script>
 
 </html>

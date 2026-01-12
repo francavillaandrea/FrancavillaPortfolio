@@ -228,14 +228,14 @@ body {
 
 #txtLettera:focus {
     outline: none;
-    border-color: var(--bs-primary);
+    border-color: var(--bs-danger);
     box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
 }
 
 #btnInvia {
     padding: 12px 25px;
     font-size: 1.1rem;
-    background-color: var(--bs-primary);
+    background-color: var(--bs-danger);
     color: white;
     border: none;
     border-radius: 8px;
@@ -317,7 +317,7 @@ body {
 }
 
 .key-btn:hover:not(:disabled) {
-    background-color: var(--bs-primary);
+    background-color: var(--bs-danger);
     color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

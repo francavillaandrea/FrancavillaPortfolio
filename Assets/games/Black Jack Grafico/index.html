@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,11 +8,25 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="index.css" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/Assets/img/Favicon/favicon.ico" sizes="96x96">
+    <link rel="apple-touch-icon" sizes="180x180" href="/Assets/img/Favicon/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="Francavilla Andrea">
+    <link rel="manifest" href="/Assets/img/Favicon/site.webmanifest">
+    <!-- Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <script defer src="../../../js/theme.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Relief:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Montserrat:wght@400;700&display=swap"
+        rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer type="text/javascript" src="index.js"></script>
 </head>
+
 <body>
     <div class="container-fluid game-table">
         <!-- Dealer's Area -->
@@ -46,7 +61,8 @@
         <!-- Add Player Form -->
         <div id="add-player-form" class="add-player-form">
             <div class="input-group">
-                <input type="text" id="player-name-input" class="form-control" placeholder="Nome Giocatore" maxlength="15">
+                <input type="text" id="player-name-input" class="form-control" placeholder="Nome Giocatore"
+                    maxlength="15">
                 <button id="add-player-btn" class="btn btn-secondary">Aggiungi</button>
             </div>
         </div>
@@ -77,12 +93,15 @@
                     <ol>
                         <li><b>Aggiungi Giocatori:</b> Inserisci i nomi dei giocatori (fino a 4).</li>
                         <li><b>Inizia Partita:</b> Premi "Inizia Partita" per distribuire le carte.</li>
-                        <li><b>Pesca o Stai:</b> Durante il tuo turno, scegli se pescare un'altra carta ("Pesca") o fermarti ("Stai").</li>
+                        <li><b>Pesca o Stai:</b> Durante il tuo turno, scegli se pescare un'altra carta ("Pesca") o
+                            fermarti ("Stai").</li>
                         <li><b>Sballare (Bust):</b> Se il tuo punteggio supera 21, hai "sballato" e perdi la mano.</li>
-                        <li><b>Turno del Banco:</b> Una volta che tutti i giocatori hanno finito, il banco rivela la sua carta coperta e pesca fino a raggiungere un punteggio di 17 o più.</li>
+                        <li><b>Turno del Banco:</b> Una volta che tutti i giocatori hanno finito, il banco rivela la sua
+                            carta coperta e pesca fino a raggiungere un punteggio di 17 o più.</li>
                     </ol>
                     <h6>Vincere:</h6>
-                    <p>Vinci se il tuo punteggio è più alto di quello del banco senza sballare, o se il banco sballa.</p>
+                    <p>Vinci se il tuo punteggio è più alto di quello del banco senza sballare, o se il banco sballa.
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ho capito!</button>
@@ -91,7 +110,6 @@
         </div>
     </div>
 
-    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script defer type="text/javascript" src="index.js"></script>
 </body>
+
 </html>
